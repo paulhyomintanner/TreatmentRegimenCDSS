@@ -1,2 +1,2 @@
 # TreatmentRegimenCDSS
-Thesis topic on adynamically selecting treatment regimens for clinicians.
+Thesis topic on dynamically selecting treatment regimens for clinicians.
