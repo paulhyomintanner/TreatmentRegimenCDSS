@@ -1,5 +1,5 @@
 from filters import TreatmentFilteringSystem
-from ranking import rank_treatments
+from ranking_list import rank_treatments
 from treatments import Treatment
 from user_exclusion import remove_treatments
 
