@@ -1,9 +1,17 @@
-from filters import IndicationFilter, ExclusionFilter
 from filters import TreatmentFilteringSystem
 from ranking import rank_treatments
 from treatments import Treatment
+from user_exclusion import remove_treatments
 
 def main():
+    """
+    The main function that executes the treatment regimen decision support system.
+    It prompts the user for primary diagnosis, comorbidity, exclusion criteria,
+    and filters the available treatments.
+    It then ranks the treatments based on a pre-defined ranking. Then it displays the filtered treatments for the primary diagnosis
+    and comorbidity (if applicable).
+    Finally it allows the user to remove treatments from the list. Before printing the final list. 
+    """
     treatments = [
         Treatment(name="TreatmentA", indications=[("DiseaseA", "High")], drugs=["Drug1", "Drug2"], exclusions=["ConditionX"], eligible_for_all=False, rank=2),
         Treatment(name="TreatmentB", indications=[("DiseaseA", "High"), ("DiseaseB", "Moderate")], drugs=["Drug3"], exclusions=[], eligible_for_all=True, rank=1),
@@ -51,7 +59,7 @@ def main():
     print("\nAvailable treatments for the primary diagnosis:")
     if ranked_primary_treatments:
         for treatment in ranked_primary_treatments:
-            print(treatment)
+            print(f"Name: {treatment.name}, Drugs: {', '.join(treatment.drugs)}")
     else:
         print("No available treatments match the primary diagnosis criteria.")
 
@@ -60,10 +68,52 @@ def main():
         print("\nAvailable treatments for the comorbidity:")
         if ranked_comorbidity_treatments:
             for treatment in ranked_comorbidity_treatments:
-                print(treatment)
+                print(f"Name: {treatment.name}, Drugs: {', '.join(treatment.drugs)}")
         else:
             print("No available treatments match the comorbidity criteria.")
 
+    # Display the filtered treatments for the primary diagnosis
+    print("\nAvailable treatments for the primary diagnosis:")
+    if ranked_primary_treatments:
+        for treatment in ranked_primary_treatments:
+            print(f"Name: {treatment.name}, Drugs: {', '.join(treatment.drugs)}")
+        # Allow the user to remove treatments
+        ranked_primary_treatments = remove_treatments(ranked_primary_treatments)
+        # Re-rank the treatments
+        ranked_primary_treatments = rank_treatments(ranked_primary_treatments)
+    else:
+        print("No available treatments match the primary diagnosis criteria.")
+
+    # Display the filtered treatments for the comorbidity (if applicable)
+    if has_comorbidity == "yes":
+        print("\nAvailable treatments for the comorbidity:")
+        if ranked_comorbidity_treatments:
+            for treatment in ranked_comorbidity_treatments:
+                print(f"Name: {treatment.name}, Drugs: {', '.join(treatment.drugs)}")
+            # Allow the user to remove treatments
+            ranked_comorbidity_treatments = remove_treatments(ranked_comorbidity_treatments)
+            # Re-rank the treatments
+            ranked_comorbidity_treatments = rank_treatments(ranked_comorbidity_treatments)
+        else:
+            print("No available treatments match the comorbidity criteria.")
+
+    # Display the final list of treatments for the primary diagnosis
+    print("\nFinal list of treatments for the primary diagnosis:")
+    if ranked_primary_treatments:
+        for treatment in ranked_primary_treatments:
+            print(f"Name: {treatment.name}, Drugs: {', '.join(treatment.drugs)}")
+    else:
+        print("No treatments left for the primary diagnosis.")
+
+    # Display the final list of treatments for the comorbidity (if applicable)
+    if has_comorbidity == "yes":
+        print("\nFinal list of treatments for the comorbidity:")
+        if ranked_comorbidity_treatments:
+            for treatment in ranked_comorbidity_treatments:
+                print(f"Name: {treatment.name}, Drugs: {', '.join(treatment.drugs)}")
+        else:
+            print("No treatments left for the comorbidity.")
 
 if __name__ == "__main__":
     main()
+
