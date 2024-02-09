@@ -7,10 +7,11 @@ def main():
 #Added a bunch of fake treatments to test the system so  far.
     treatments = [
         Treatment(name="TreatmentA", indications=[("DiseaseA", "High")], drugs=["Drug1", "Drug2"], exclusions=["ConditionX"], eligible_for_all=False, rank=2),
-        Treatment(name="TreatmentB", indications=[("DiseaseA", "High"), ("DiseaseB", "Moderate")], drugs=["Drug3"], exclusions=[], eligible_for_all=True, rank=1),
+        Treatment(name="TreatmentB", indications=[("DiseaseA", "High")], drugs=["Drug3"], exclusions=[], eligible_for_all=True, rank=1),
         Treatment(name="TreatmentC", indications=[("DiseaseB", "High")], drugs=["Drug4"], exclusions=["ConditionY"], eligible_for_all=False, rank=4),
-        Treatment(name="TreatmentD", indications=[("DiseaseC", "Low"), ("DiseaseB", "Moderate")], drugs=["Drug5", "Drug6"], exclusions=["ConditionX", "ConditionZ"], eligible_for_all=False, rank=5),
-        Treatment(name="TreatmentE", indications=[("DiseaseA", "Moderate"), ("DiseaseC", "High")], drugs=["Drug7"], exclusions=["ConditionY"], eligible_for_all=True, rank=3),
+        Treatment(name="TreatmentD", indications=[("DiseaseB", "Low")], drugs=["Drug5", "Drug6"], exclusions=["ConditionX", "ConditionZ"], eligible_for_all=False, rank=5),
+        Treatment(name="TreatmentE", indications=[("DiseaseA", "High")], drugs=["Drug7"], exclusions=["ConditionA"], eligible_for_all=True, rank=3),
+        Treatment(name="TreatmentF", indications=[("DiseaseA", "High")], drugs=["Drug8"], exclusions=["ConditionB"], eligible_for_all=True, rank=7),
     ]
 
     filtering_system = TreatmentFilteringSystem(treatments)
