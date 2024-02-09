@@ -4,14 +4,7 @@ from treatments import Treatment
 from user_exclusion import remove_treatments
 
 def main():
-    """
-    The main function that executes the treatment regimen decision support system.
-    It prompts the user for primary diagnosis, comorbidity, exclusion criteria,
-    and filters the available treatments.
-    It then ranks the treatments based on a pre-defined ranking. Then it displays the filtered treatments for the primary diagnosis
-    and comorbidity (if applicable).
-    Finally it allows the user to remove treatments from the list. Before printing the final list. 
-    """
+#Added a bunch of fake treatments to test the system so  far.
     treatments = [
         Treatment(name="TreatmentA", indications=[("DiseaseA", "High")], drugs=["Drug1", "Drug2"], exclusions=["ConditionX"], eligible_for_all=False, rank=2),
         Treatment(name="TreatmentB", indications=[("DiseaseA", "High"), ("DiseaseB", "Moderate")], drugs=["Drug3"], exclusions=[], eligible_for_all=True, rank=1),
@@ -25,89 +18,71 @@ def main():
     primary_disease = input("Enter the primary diagnosis name: ")
     primary_severity = input("Enter the primary diagnosis severity (High/Moderate/Low): ")
 
-    # Criteria tuple for the primary diagnosis
     primary_criteria = (primary_disease, primary_severity)
 
-    # Ask the user if they have a comorbidity
     has_comorbidity = input("Comorbidity (Yes or No): ").strip().lower()
 
     comorbidity_criteria = None
     if has_comorbidity == "yes":
-        # If yes, prompt for comorbidity and its severity
         comorbidity = input("Input Comorbidity: ").strip()
         comorbidity_severity = input("Comorbidity Severity (High/Moderate/Low): ").strip()
 
-        # Criteria tuple for the comorbidity
         comorbidity_criteria = (comorbidity, comorbidity_severity)
 
-    # Prompt the user for any exclusion criteria (applies to both diagnosis and comorbidity)
-    exclusion_criteria = input("Enter any exclusion criteria (leave blank if none): ").strip()
+    exclusion_criteria = input("Enter exclusion criteria (blank if no): ").strip()
 
-    # Apply filters for the primary diagnosis
     primary_filtered_treatments = filtering_system.apply_filters(primary_criteria, exclusion_criteria)
     ranked_primary_treatments = rank_treatments(primary_filtered_treatments)
 
-    # Initialize an empty list for comorbidity filtered treatments
     comorbidity_filtered_treatments = []
 
-    # If comorbidity is provided, apply filters for the comorbidity
     if comorbidity_criteria:
         comorbidity_filtered_treatments = filtering_system.apply_filters(comorbidity_criteria, exclusion_criteria)
         ranked_comorbidity_treatments = rank_treatments(comorbidity_filtered_treatments)
 
-    # Display the filtered treatments for the primary diagnosis
-    print("\nAvailable treatments for the primary diagnosis:")
+    print("\nCandidate treatments for the primary diagnosis:")
     if ranked_primary_treatments:
         for treatment in ranked_primary_treatments:
             print(f"Name: {treatment.name}, Drugs: {', '.join(treatment.drugs)}")
     else:
-        print("No available treatments match the primary diagnosis criteria.")
+        print("No treatments match the primary diagnosis criteria.")
 
-    # Display the filtered treatments for the comorbidity (if applicable)
     if has_comorbidity == "yes":
-        print("\nAvailable treatments for the comorbidity:")
+        print("\nCandidate treatments for the comorbidity:")
         if ranked_comorbidity_treatments:
             for treatment in ranked_comorbidity_treatments:
                 print(f"Name: {treatment.name}, Drugs: {', '.join(treatment.drugs)}")
         else:
-            print("No available treatments match the comorbidity criteria.")
+            print("No treatments match the comorbidity criteria.")
 
-    # Display the filtered treatments for the primary diagnosis
-    print("\nAvailable treatments for the primary diagnosis:")
+    print("\nCandidate treatments for the primary diagnosis:")
     if ranked_primary_treatments:
         for treatment in ranked_primary_treatments:
             print(f"Name: {treatment.name}, Drugs: {', '.join(treatment.drugs)}")
-        # Allow the user to remove treatments
         ranked_primary_treatments = remove_treatments(ranked_primary_treatments)
-        # Re-rank the treatments
         ranked_primary_treatments = rank_treatments(ranked_primary_treatments)
     else:
-        print("No available treatments match the primary diagnosis criteria.")
+        print("No treatments match the primary diagnosis criteria.")
 
-    # Display the filtered treatments for the comorbidity (if applicable)
     if has_comorbidity == "yes":
-        print("\nAvailable treatments for the comorbidity:")
+        print("\nCandidate treatments for the comorbidity:")
         if ranked_comorbidity_treatments:
             for treatment in ranked_comorbidity_treatments:
                 print(f"Name: {treatment.name}, Drugs: {', '.join(treatment.drugs)}")
-            # Allow the user to remove treatments
             ranked_comorbidity_treatments = remove_treatments(ranked_comorbidity_treatments)
-            # Re-rank the treatments
             ranked_comorbidity_treatments = rank_treatments(ranked_comorbidity_treatments)
         else:
-            print("No available treatments match the comorbidity criteria.")
+            print("No treatments match the comorbidity criteria.")
 
-    # Display the final list of treatments for the primary diagnosis
-    print("\nFinal list of treatments for the primary diagnosis:")
+    print("\nDiagnosis treatment candidate list for the primary diagnosis:")
     if ranked_primary_treatments:
         for treatment in ranked_primary_treatments:
             print(f"Name: {treatment.name}, Drugs: {', '.join(treatment.drugs)}")
     else:
         print("No treatments left for the primary diagnosis.")
 
-    # Display the final list of treatments for the comorbidity (if applicable)
     if has_comorbidity == "yes":
-        print("\nFinal list of treatments for the comorbidity:")
+        print("\nComorbidity treatment candidate list:")
         if ranked_comorbidity_treatments:
             for treatment in ranked_comorbidity_treatments:
                 print(f"Name: {treatment.name}, Drugs: {', '.join(treatment.drugs)}")
@@ -117,3 +92,22 @@ def main():
 if __name__ == "__main__":
     main()
 
+"""
+    The main process to run the program. It takes the disease, severity of the disease and whether there are any exclusions
+    for the diagnosis as an input. It'll also then ask the user if they have a comorbidity. If yes then the filtering process
+    will then be run for the disease in the comorbidity. The treatments will then be ranked according to a pre-defined rank
+    that is decided upon by a clincian. They will then be displayed to the user, who will then be able to exclude treatments.
+    Once the user exclusion funtion is completed, the final list will be printed for the user to see. 
+
+    Filter process: essentially filters all available treatments based on the the disease - severity input by the user. This 
+    is the indication for the treatment, similar to howe a drug is indicated for a specific disease. 
+    This could be changed to anythin theoretically, but as of now that is the main basis in which treatments are selected. 
+
+    The ranking process is allows the system to prioritise certain treatments for the user, and identifies which ones are more 
+    important than other ones. It also allows the treatments to be given priority even once the user has excluded them. 
+
+    The user exclusion process lets the user have ultimnate control over the list of treatments. They could exclude them for any reason, 
+    cultural, stock, no equipment (syringges), etc. This data is not available to the system, is in the context of the setting (low-income)
+    there would be no way to allow for the system to automatically know the stock of teh supplies as there is no electronnic system
+    keeping tabs on the stock. The cultural aspect is important, as perhaps in some countries a form of the medicaion may not be ideally used. 
+"""
