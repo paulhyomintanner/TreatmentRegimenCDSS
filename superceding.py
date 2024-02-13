@@ -104,6 +104,19 @@ def main():
 if __name__ == "__main__":
     main()
     
-"""adds the rules for superceding in the rules_db.json and tiny db. Then selects the top treatments and prints them for now. 
+"""
+Adds the rules for superceding in the rules_db.json and tiny db. Then selects the top treatments and prints them for now. It also ranks the 
+treatments for exclusion accordning to the user inputted CPG. This corresponds to a rank that each treatment has per CPG. For now there is WHO and NICE
+guidelines that are used. The lower the number the higher the rank. 
 The next step would be the treatment validation and the regimen builder. The next stage would be to refactor the code into 
-different modules for clarity and maintaibility. """
+different modules for clarity and maintaibility. 
+Process is as follows:
+
+1. Primary filter applied using the disease from the user input.
+2. Eligiblity criteria: exclusion and severity filters applied.
+3. Ranking of treatments based on CPG.
+4. User exclusion
+5. Treatments re-ranked after the user exclusion.
+6. Superseding rules applied.
+7. Top treatments printed or treatment if rules are applied.
+"""
