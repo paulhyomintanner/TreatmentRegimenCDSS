@@ -7,7 +7,7 @@ treatment_data = [
         "treatment_id": "A",
         "disease": "DiseaseA",
         "severity": "High",
-        "rank": [{"WHO": 1, "NICE": 2}],
+        "rank": [{"WHO": 1, "NICE": 4}],
         "medication": [
             {
                 "name": "Drug1",
@@ -20,10 +20,34 @@ treatment_data = [
         ]
     },
     {
+        "treatment_id": "234",
+        "disease": "DiseaseA",
+        "severity": "High",
+        "rank": [{"WHO": 4, "NICE": 1}],
+        "medication": [
+            {
+                "name": "Drug67",
+                "exclusion": [],
+            }
+        ]
+    },
+    {
+        "treatment_id": "345",
+        "disease": "DiseaseA",
+        "severity": "High",
+        "rank": [{"WHO": 3, "NICE": 3}],
+        "medication": [
+            {
+                "name": "Drug45",
+                "exclusion": [],
+            }
+        ]
+    },
+    {
         "treatment_id": "B",
         "disease": "DiseaseA",
         "severity": "High",
-        "rank": [{"WHO": 2, "NICE": 1}],
+        "rank": [{"WHO": 2, "NICE": 2}],
         "medication": [
             {
                 "name": "Drug3",
@@ -91,7 +115,7 @@ treatment_data = [
         "medication": [
             {
                 "name": "amoxicillin",
-                "brand": "amoxil", "drug1234" 
+                "brand": ["amoxil", "drug1234"], 
                 "exclusion": ["pregnant", "penicillin"],
                 "form": "solid",
                 "unit": "film tablet",
