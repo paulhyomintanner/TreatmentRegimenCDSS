@@ -38,6 +38,6 @@ class TreatmentFilteringSystem:
 
 
 
-#the filters module is the fist set of functions that are called to filter the treatments
-#the indication filter filters based on teh severity-disease pair, then the exclusion filter deals with the exclusion criteria. Specific treatment selection.
-#there is also teh need potentially for the postcoordination filter as well, as this would further allow for a more specific treatment selection.
+"""the filters module is the fist set of functions that are called to filter the treatments
+the indication filter filters based on teh severity-disease pair, then the exclusion filter deals with the exclusion criteria. Specific treatment selection.
+there is also teh need potentially for the postcoordination filter as well, as this would further allow for a more specific treatment selection."""
