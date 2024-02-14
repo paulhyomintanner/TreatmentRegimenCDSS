@@ -66,7 +66,7 @@ def superseding_rules(ranked_treatments_diagnosis, ranked_treatments_comorbidity
     top_comorbidity_treatment = ranked_treatments_comorbidity[0]
 
     # Open the rules database and retrieve all rules
-    db = TinyDB('flexible_rules_db.json')
+    db = TinyDB('superseding_rules_db.json')
     rules = db.all()
 
     # Check if the top treatments match any rule

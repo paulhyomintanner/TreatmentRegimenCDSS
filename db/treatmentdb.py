@@ -1,8 +1,8 @@
 from tinydb import TinyDB
 
-dosage_guide_db = TinyDB('dosage_guide.json')
+treatment_db = TinyDB('treatment_db.json')
 
-treatment_dose = [
+treatment_data = [
     {
         "treatment_id": "A",
         "disease": "DiseaseA",
@@ -18,19 +18,19 @@ treatment_dose = [
                         "standard": [
                             {
                                 "dose_mg": 500,
-                                "frequency_hours": 8
+                                "frequency_per_day": 8
                             }
                         ],
                         "neonate": [
                             {
                                 "mg/kg": 30,
-                                "frequency_hours": 12
+                                "frequency_per_day": 12
                             }
                         ],
                         "children": [
                             {
                                 "mg/kg": 40,
-                                "frequency_hours": 8
+                                "frequency_per_day": 8
                             }
                         ]
                     }
@@ -45,19 +45,19 @@ treatment_dose = [
                         "standard": [
                             {
                                 "dose_mg": 50,
-                                "frequency_hours": 8
+                                "frequency_per_day": 8
                             }
                         ],
                         "neonate": [
                             {
                                 "mg/kg": 30,
-                                "frequency_hours": 12
+                                "frequency_per_day": 12
                             }
                         ],
                         "children": [
                             {
                                 "mg/kg": 10,
-                                "frequency_hours": 8
+                                "frequency_per_day": 8
                             }
                         ]
                     }
@@ -80,16 +80,19 @@ treatment_dose = [
                         "standard": [
                             {
                                 "dose_mg": 50,
+                                "frequency_per_day": 2
                             }
                         ],
                         "neonate": [
                             {
                                 "mg/kg": 60,
+                                "frequency_per_day": 6
                             }
                         ],
                         "children": [
                             {
                                 "mg/kg": 40,
+                                "frequency_per_day": 3
                             }
                         ]
                     }
@@ -112,19 +115,19 @@ treatment_dose = [
                         "standard": [
                             {
                                 "dose_mg": 60,
-                                "frequency_hours": 8
+                                "frequency_per_day": 8
                             }
                         ],
                         "neonate": [
                             {
                                 "mg/kg": 35,
-                                "frequency_hours": 12
+                                "frequency_per_day": 12
                             }
                         ],
                         "children": [
                             {
                                 "mg/kg": 20,
-                                "frequency_hours": 8
+                                "frequency_per_day": 8
                             }
                         ]
                     }
@@ -147,19 +150,19 @@ treatment_dose = [
                         "standard": [
                             {
                                 "dose_mg": 70,
-                                "frequency_hours": 8
+                                "frequency_per_day": 8
                             }
                         ],
                         "neonate": [
                             {
                                 "mg/kg": 40,
-                                "frequency_hours": 12
+                                "frequency_per_day": 12
                             }
                         ],
                         "children": [
                             {
                                 "mg/kg": 25,
-                                "frequency_hours": 8
+                                "frequency_per_day": 8
                             }
                         ]
                     }
@@ -182,19 +185,19 @@ treatment_dose = [
                         "standard": [
                             {
                                 "dose_mg": 80,
-                                "frequency_hours": 8
+                                "frequency_per_day": 8
                             }
                         ],
                         "neonate": [
                             {
                                 "mg/kg": 45,
-                                "frequency_hours": 12
+                                "frequency_per_day": 12
                             }
                         ],
                         "children": [
                             {
                                 "mg/kg": 30,
-                                "frequency_hours": 8
+                                "frequency_per_day": 8
                             }
                         ]
                     }
@@ -217,19 +220,19 @@ treatment_dose = [
                         "standard": [
                             {
                                 "dose_mg": 90,
-                                "frequency_hours": 8
+                                "frequency_per_day": 8
                             }
                         ],
                         "neonate": [
                             {
                                 "mg/kg": 50,
-                                "frequency_hours": 12
+                                "frequency_per_day": 12
                             }
                         ],
                         "children": [
                             {
                                 "mg/kg": 35,
-                                "frequency_hours": 8
+                                "frequency_per_day": 8
                             }
                         ]
                     }
@@ -244,7 +247,7 @@ treatment_dose = [
         "rank": [{"WHO":  3, "NICE":  2}],
         "medication": [
             {
-                "name": "drug901",
+                "drug": "drug901",
                 "brand": ["amoxil", "drug1234"],
                 "exclusion": [],
                 "dose_guideline": [
@@ -252,19 +255,19 @@ treatment_dose = [
                         "standard": [
                             {
                                 "dose_mg": 100,
-                                "frequency_hours": 8
+                                "frequency_per_day": 8
                             }
                         ],
                         "neonate": [
                             {
                                 "mg/kg": 55,
-                                "frequency_hours": 12
+                                "frequency_per_day": 12
                             }
                         ],
                         "children": [
                             {
                                 "mg/kg": 40,
-                                "frequency_hours": 8
+                                "frequency_per_day": 8
                             }
                         ]
                     }
@@ -274,10 +277,10 @@ treatment_dose = [
     }
 ]
 
-dosage_guide_db.insert_multiple(treatment_dose)
+treatment_db.insert_multiple(treatment_data)
 
 print("All treatments in the database:")
-for treatment_dose in dosage_guide_db.all():
-    print(treatment_dose)
+for treatment in treatment_db:
+    print(treatment)
 
-dosage_guide_db.close()
+treatment_db.close()
