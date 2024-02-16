@@ -17,3 +17,8 @@ Core functions: filtering, ranking, user_exclusion, treatments in db, supercedin
 5. Treatments re-ranked after the user exclusion.
 6. Superseding rules applied.
 7. Top treatments printed or treatment if rules are applied.
+
+
+have the superceding before the the user exclusion. onlz dispplay top ranked treatment. then loop again if rejected.
+onlz have eligibility and exclusion / severitz is eligibility
+simple dosing strategy
