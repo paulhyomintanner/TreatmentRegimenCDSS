@@ -27,14 +27,15 @@ Version 3
 Version 4
 
 1. Changed the data structure from "exclusion" and "severity" as seperate lists, into a dictionary called "eligibility". Add post-coordination as a aligibility. 
+2. Have the superceding before the the user exclusion. only display top ranked treatment. The user exclusion wil only be the top ranked treatments being displayed. IF they reject the treatment THEN the whole treatment evaluation process will be looped, until either the user accepts a treatment. OR there are no more treatments available. - each time the user rejects a tretment it enters a rejection list which is used as a filter the next loop. 
+3. Instead of "diagnosis" and "comobidity" there is now diagnosis, and additional diseases added. All the treatments are stored ina  dictionary - before it was two seperate lists. - allows for a more flexible approach. 
+- This will move the user acceptance of the treatment plan from before the drug is calculated to before that to after the superceding rules. 
 
 to be done:
 
 - change the dosing strategies from "neonate" etc, into the "dosing strategies" e.g. anti-biotic peak strategy, > 50's strategy. 
 - key changes - data structure, dosing strategies, post-coordination,
-- have the superceding before the the user exclusion. only display top ranked treatment. The user exclusion wil only be the top ranked treatments being displayed.
-- This will move the user acceptance of the treatment plan from before the drug is calculated to before that to after the superceding rules. 
-- Once the user has accepted the treatment 
+
 
 
 
