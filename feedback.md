@@ -43,3 +43,16 @@ Questions:
      or just print the corresponding guideline?
 
 Actions:
+
+- have the superceding before the the user exclusion. only display top ranked treatment. The user exclusion wil only be the top ranked treatments being displayed.
+- This will move the user acceptance of the treatment plan from before the drug is calculated to before that to after the superceding rules. 
+- Once the user has accepted the treatment 
+- Change the data structure from "exclusion" and "severity" as seperate lists, into a dictionary called "eligibility". Add post-coordination as a aligibility. 
+- change the dosing strategies from "neonate" etc, into the "dosing strategies" e.g. anti-biotic peak strategy, > 50's strategy. 
+- simple dosing strategy. 
+
+- key changes - data structure, dosing strategies, post-coordination, 
+
+have the superceding before the the user exclusion. onlz dispplay top ranked treatment. then loop again if rejected.
+onlz have eligibility and exclusion / severitz is eligibility
+simple dosing strategy

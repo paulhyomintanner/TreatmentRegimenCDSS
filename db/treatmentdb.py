@@ -6,13 +6,12 @@ treatment_data = [
     {
         "treatment_id": "A",
         "disease": "DiseaseA",
-        "severity": "High",
+        "eligibility": [{ "severity":  "High", "exclusion": ["penicillin"]}],
         "rank": [{"WHO": 1, "NICE": 2}],
         "medication": [
             {
                 "drug": "Ampicillin",
                 "brand": ["brandU"],
-                "exclusion": ["penicillin"],
                 "dose_guideline": [
                     {
                         "standard": [
@@ -39,7 +38,6 @@ treatment_data = [
             {
                 "drug": "drug123",
                 "brand": ["brandASD, brandX"],
-                "exclusion": [],
                 "dose_guideline": [
                     {
                         "standard": [
@@ -68,13 +66,12 @@ treatment_data = [
     {
         "treatment_id": "B",  
         "disease": "DiseaseA",
-        "severity": "High",
+        "eligibility": [{ "severity":  "High", "exclusion": ["pregnant"]}],
         "rank": [{"WHO": 2, "NICE": 3}],
         "medication": [
             {
                 "drug": "drug456",
-                "brand": ["brandU"],
-                "exclusion": ["pregnant"],  
+                "brand": ["brandU"],  
                 "dose_guideline": [
                     {
                         "standard": [
@@ -103,13 +100,12 @@ treatment_data = [
     {
         "treatment_id": "C",
         "disease": "DiseaseA",
-        "severity": "High",
+        "eligibility": [{ "severity":  "High", "exclusion": []}],
         "rank": [{"WHO":  3, "NICE":  2}],
         "medication": [
             {
                 "drug": "drug789",
                 "brand": ["brandU, brandV"],
-                "exclusion": [],
                 "dose_guideline": [
                     {
                         "standard": [
@@ -138,13 +134,12 @@ treatment_data = [
     {
         "treatment_id": "D",
         "disease": "DiseaseB",
-        "severity": "Low",
+        "eligibility": [{ "severity":  "Low", "exclusion": []}],
         "rank": [{"WHO":  4, "NICE":  1}],
         "medication": [
             {
                 "drug": "drug012",
                 "brand": ["brandU"],
-                "exclusion": [],
                 "dose_guideline": [
                     {
                         "standard": [
@@ -173,13 +168,12 @@ treatment_data = [
     {
         "treatment_id": "E",
         "disease": "DiseaseB",
-        "severity": "Low",
+        "eligibility": [{ "severity":  "Low", "exclusion": ["pregnant"]}],
         "rank": [{"WHO":  1, "NICE":  4}],
         "medication": [
             {
                 "drug": "drug345",
                 "brand": ["brandZ"],
-                "exclusion": ["pregnant"],
                 "dose_guideline": [
                     {
                         "standard": [
@@ -208,13 +202,12 @@ treatment_data = [
     {
         "treatment_id": "F",
         "disease": "DiseaseB",
-        "severity": "Low",
+        "eligibility": [{ "severity":  "Low", "exclusion": []}],
         "rank": [{"WHO":  3, "NICE":  2}],
         "medication": [
             {
                 "drug": "drug678",
                 "brand": ["brand123", "drug1235"],
-                "exclusion": [],
                 "dose_guideline": [
                     {
                         "standard": [
@@ -243,13 +236,12 @@ treatment_data = [
     {
         "treatment_id": "G",
         "disease": "DiseaseB",
-        "severity": "Low",
+        "eligibility": [{ "severity":  "Low", "exclusion": []}],
         "rank": [{"WHO":  3, "NICE":  2}],
         "medication": [
             {
                 "drug": "drug901",
                 "brand": ["amoxil", "drug1234"],
-                "exclusion": [],
                 "dose_guideline": [
                     {
                         "standard": [

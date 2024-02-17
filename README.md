@@ -6,7 +6,7 @@ None of the example drugs and examples are accurate and are just placeholders.
 
 Core funtions: filtering, ranking, user_exclusion, treaments as instances. 
 
-Current version - use superceding.py to run from treatment evaluation process to the superceding process. It will take the IDs of the top ranking treatments, then run them against the superceding_rules_db rules, if non-are matched then the both the top treatments will print. If there is a match
+Version 2 - use superceding.py to run from treatment evaluation process to the superceding process. It will take the IDs of the top ranking treatments, then run them against the superceding_rules_db rules, if non-are matched then the both the top treatments will print. If there is a match
 then only the superceeding treatment will match. Will refactor code once the core process has been done - run superceding.py.
 
 Core functions: filtering, ranking, user_exclusion, treatments in db, superceding rules and db.  The ranking is also dealt with using the CPG guideline that the user can select. This will indicate to the system which CPG ranking should be used. 
@@ -18,7 +18,24 @@ Core functions: filtering, ranking, user_exclusion, treatments in db, supercedin
 6. Superseding rules applied.
 7. Top treatments printed or treatment if rules are applied.
 
+Version 3
 
-have the superceding before the the user exclusion. onlz dispplay top ranked treatment. then loop again if rejected.
-onlz have eligibility and exclusion / severitz is eligibility
-simple dosing strategy
+1. Validation for treatment
+2. Dosing function added - strategies are based on "standard", "child" , "neonate" that determine the dose. 
+3. Takes weight as a parameter to be used in the calculation. 
+
+Version 4
+
+1. Changed the data structure from "exclusion" and "severity" as seperate lists, into a dictionary called "eligibility". Add post-coordination as a aligibility. 
+
+to be done:
+
+- change the dosing strategies from "neonate" etc, into the "dosing strategies" e.g. anti-biotic peak strategy, > 50's strategy. 
+- key changes - data structure, dosing strategies, post-coordination,
+- have the superceding before the the user exclusion. only display top ranked treatment. The user exclusion wil only be the top ranked treatments being displayed.
+- This will move the user acceptance of the treatment plan from before the drug is calculated to before that to after the superceding rules. 
+- Once the user has accepted the treatment 
+
+
+
+
