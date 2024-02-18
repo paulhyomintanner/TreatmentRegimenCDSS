@@ -23,7 +23,13 @@ def rules(treatments_by_disease):
     db = TinyDB('superseding_rules_db.json')
     rules = db.all()
 
-    top_treatments = {disease: treatments[0]['treatment_id'] for disease, treatments in treatments_by_disease.items()}
+    top_treatments = {}
+
+    for disease, treatments in treatments_by_disease.items():
+        if treatments:  
+            top_treatments[disease] = treatments[0]['treatment_id']
+    
+    recommended_treatments = {}
 
     for rule in rules:
         rule_pair = rule['pair']
@@ -33,11 +39,16 @@ def rules(treatments_by_disease):
             for disease, treatment_id in top_treatments.items():
                 if treatment_id == superseding_id:
                     superseding_treatment = treatments_by_disease[disease][0]
-                    print(f"Recommended treatment plan for all diseases: {disease} - {superseding_treatment}")
-                    return  
-
+                    recommended_treatments[disease] = superseding_treatment
+                    return recommended_treatments  
+    
+    
     for disease, treatment in top_treatments.items():
-        print(f"{disease} - Recommended treatment: {treatments_by_disease[disease][0]}")
+        if disease in treatments_by_disease and treatments_by_disease[disease]:  
+            recommended_treatments[disease] = treatments_by_disease[disease][0]
+
+    return recommended_treatments
+
 
 def main():
     diseases = []
@@ -55,7 +66,7 @@ def main():
         if add_extra_disease != "yes":
             break
 
-    while True:  
+    while True:
         for disease_info in diseases:
             treatments_for_disease = filter_by_disease(all_treatments, disease_info['name'])
             treatments_for_severity = filter_by_severity(treatments_for_disease, disease_info['severity'])
@@ -64,42 +75,41 @@ def main():
 
             treatments_by_disease[disease_info['name']] = ranked_treatments
 
-        if len(treatments_by_disease) == 1:
-            disease_name = next(iter(treatments_by_disease))
-            if treatments_by_disease[disease_name]:
-                top_treatment = treatments_by_disease[disease_name][0]
-                print(f"Top treatment for {disease_name}: {top_treatment}")
-            else:
-                print(f"No treatments found for {disease_name} after applying exclusions and rejections.")
-        elif len(treatments_by_disease) > 1:
-            rules(treatments_by_disease)
+            if not ranked_treatments:
+                print(f"No treatments found for {disease_info['name']} after applying exclusions and rejections.")
+                return  
 
-        user_input = input("Accept the recommended treatment? (yes/no): ").strip().lower()
+        recommended_treatments = rules(treatments_by_disease)
+        for disease, treatment in recommended_treatments.items():
+            print(f"Recommended treatment for {disease}: {treatment}")
+
+        user_input = input("Do you accept the recommended treatment? (yes/no): ").strip().lower()
         if user_input == 'yes':
             break  
         else:
-            rejected_treatment_id = input("Enter treatment ID you want to reject: ").strip() 
-            for treatments in treatments_by_disease.values():
-                for treatment in treatments:
-                    if treatment['treatment_id'] == rejected_treatment_id:
-                        rejected_treatments.append(treatment)
-                        break
+            rejected_treatment_ids = input("Enter treatment IDs you want to reject (separated by commas): ").strip().split(',')
+            for rejected_treatment_id in rejected_treatment_ids:
+                rejected_treatment_id = rejected_treatment_id.strip()  
+                for treatments in treatments_by_disease.values():
+                    for treatment in treatments:
+                        if treatment['treatment_id'] == rejected_treatment_id:
+                            rejected_treatments.append(treatment)
+                            break
 
     if user_input == 'yes':
         print("You have accepted the following treatment plan:")
-        for disease, treatments in treatments_by_disease.items():
-            if treatments:  # Check if there are any treatments left after rejections
-                print(f"{disease} - Confirmed treatment: {treatments[0]}")
+        for disease, treatments in recommended_treatments.items():
+            if treatments:  
+                print(f"{disease} - Confirmed treatment: {treatments}")
             else:
                 print(f"No treatments available for {disease} after applying exclusions and rejections.")
-                break  
 
 
 if __name__ == "__main__":
-    db = TinyDB('treatment_db.json')
-    all_treatments = db.all()
     main()
-
+"""imporovements - added the ability to reject more than one treatment at a time.
+Also now the rules function returns the recommended_treatments dictionary instead of just printing the results. 
+NOw the print function at the end uses the that instead of the disease_treatment dictionary like previously - wihch was causing errors and the wrong treatment being printed. """
 
 """def regimen_builder(treatments, dosing_strategy, patient_weight):
     for treatment in treatments:
