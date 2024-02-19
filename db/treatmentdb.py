@@ -11,7 +11,6 @@ treatment_data = [
         "medication": [
             {
                 "drug": "Ampicillin",
-                "brand": ["brandU"],
                 "dose_guideline": [
                     {
                         "standard": [
@@ -37,7 +36,6 @@ treatment_data = [
             },
             {
                 "drug": "drug123",
-                "brand": ["brandASD, brandX"],
                 "dose_guideline": [
                     {
                         "standard": [
@@ -70,8 +68,7 @@ treatment_data = [
         "rank": [{"WHO": 2, "NICE": 3}],
         "medication": [
             {
-                "drug": "drug456",
-                "brand": ["brandU"],  
+                "drug": "drug456", 
                 "dose_guideline": [
                     {
                         "standard": [
@@ -105,7 +102,6 @@ treatment_data = [
         "medication": [
             {
                 "drug": "drug789",
-                "brand": ["brandU, brandV"],
                 "dose_guideline": [
                     {
                         "standard": [
@@ -139,7 +135,6 @@ treatment_data = [
         "medication": [
             {
                 "drug": "drug012",
-                "brand": ["brandU"],
                 "dose_guideline": [
                     {
                         "standard": [
@@ -173,7 +168,6 @@ treatment_data = [
         "medication": [
             {
                 "drug": "drug345",
-                "brand": ["brandZ"],
                 "dose_guideline": [
                     {
                         "standard": [
@@ -207,7 +201,6 @@ treatment_data = [
         "medication": [
             {
                 "drug": "drug678",
-                "brand": ["brand123", "drug1235"],
                 "dose_guideline": [
                     {
                         "standard": [
@@ -241,7 +234,6 @@ treatment_data = [
         "medication": [
             {
                 "drug": "drug901",
-                "brand": ["amoxil", "drug1234"],
                 "dose_guideline": [
                     {
                         "standard": [
@@ -270,9 +262,4 @@ treatment_data = [
 ]
 
 treatment_db.insert_multiple(treatment_data)
-
-print("All treatments in the database:")
-for treatment in treatment_db:
-    print(treatment)
-
 treatment_db.close()

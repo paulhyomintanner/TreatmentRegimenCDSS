@@ -35,6 +35,6 @@ Fixes:
 - allow you to add more than one treatment for rejection at once. 
 - loop ends when no more treatments found 
 
-
+-ignore version4.2.
 
 

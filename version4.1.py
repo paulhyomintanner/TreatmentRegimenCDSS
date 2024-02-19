@@ -1,10 +1,10 @@
 from tinydb import TinyDB
-db = TinyDB('new_db.json')
+db = TinyDB('treatment_db.json')
 all_treatments = db.all()
 
 def filter_by_disease(treatments, diagnosis):
     return [treatment for treatment in treatments 
-            if treatment['indication'].lower() == diagnosis.lower()]
+            if treatment['disease'].lower() == diagnosis.lower()]
 
 def filter_by_severity(treatments, severity):
     return [treatment for treatment in treatments for eligibility in treatment['eligibility'] 
@@ -17,7 +17,7 @@ def filter_by_exclusions(treatments, exclusions):
                            for exclusion in exclusions) for eligibility in treatment['eligibility'])]
 
 def rank_treatments(treatments, preferred_cpg):
-    return sorted(treatments, key=lambda x: x['guideline'][preferred_cpg][0]['rank'])
+    return sorted(treatments, key=lambda x: x['rank'][0][preferred_cpg])
 
 def rules(treatments_by_disease):
     db = TinyDB('superseding_rules_db.json')
@@ -53,7 +53,7 @@ def main():
     diseases = []
     treatments_by_disease = {}
     rejected_treatments = []  
-    preferred_cpg = input("Preferred CPG (WHO/BNF): ").strip()
+    preferred_cpg = input("Preferred CPG (WHO/NICE): ").strip()
     exclusions = input("Exclusions e.g allergy (comma-separated): ").strip().split(',')
 
     while True:
@@ -65,18 +65,6 @@ def main():
         if add_extra_disease != "yes":
             break
 
-    """while True:
-        for disease_info in diseases:
-            treatments_for_disease = filter_by_disease(all_treatments, disease_info['name'])
-            treatments_for_severity = filter_by_severity(treatments_for_disease, disease_info['severity'])
-            treatments_excluding_exclusions = filter_by_exclusions(treatments_for_severity, exclusions)
-            ranked_treatments = [treatment for treatment in rank_treatments(treatments_excluding_exclusions, preferred_cpg) if treatment not in rejected_treatments]
-
-            treatments_by_disease[disease_info['name']] = ranked_treatments
-
-            if not ranked_treatments:
-                print(f"No treatments found for {disease_info['name']} after applying exclusions and rejections.")
-                return  """
     while True:
     
         no_treatments_left = True  
@@ -128,9 +116,8 @@ def main():
 if __name__ == "__main__":
     main()
 
-"""Same process, just with new data structure for ranking and for the dosing strategies. Each treatment now has a number of different strategies
-depending on the scenario of the patient, 
+"""Loops until treatments are exhausted or the user accepts, 
 Also now the programme does not terminate if one disease treatment list has been exhausted, it continues
-with the next disease. """
+with the next disease. Uses the old data structure."""
 
 

@@ -134,6 +134,6 @@ if __name__ == "__main__":
     main()
 
 """Filter for CPG added: it will only show the part of the treatment that is relevant to the defined CPG that 
-the user has selected. """
+the user has selected. Could be used if the data structure is changed to be more mdeication centric"""
 
 
