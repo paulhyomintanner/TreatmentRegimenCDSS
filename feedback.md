@@ -68,10 +68,13 @@ Fixes:
 - added the recommended dictionary to be returned by the rules function
 - allow you to add more than one treatment for rejection at once. 
 - loop ends when no more treatments found 
-
+- changed the data structure for the treatments. Now the treatments are CPG specifc, with the treatments and strategies under each CPG.
+- rules.json updated - cleaner
+- the programme doesnt end when 1 disease treatment list has been exhausted, it continues with the other list instead of shutting down.
+- filter out the treatments that are not relevant to the user defined CPG
 to be done:
 
 - change the dosing strategies from "neonate" etc, into the "dosing strategies" e.g. anti-biotic peak strategy, > 50's strategy. 
 - key changes - data structure, dosing strategies, post-coordination,
-- notify user that treatments exhausted for one disease, but continue search for other. 
+ 
 

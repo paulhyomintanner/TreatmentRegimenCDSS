@@ -2,6 +2,22 @@ from tinydb import TinyDB
 db = TinyDB('new_db.json')
 all_treatments = db.all()
 
+def filter_by_cpg(treatments, preferred_cpg):
+    filtered_treatments = []
+
+    for treatment in treatments:
+        if preferred_cpg in treatment['guideline']:
+            guideline_data = treatment['guideline'][preferred_cpg]
+            filtered_treatments.append({
+                'treatment_id': treatment['treatment_id'],
+                'indication': treatment['indication'],
+                'administration': treatment['administration'],
+                'eligibility': treatment['eligibility'],
+                'guideline': {preferred_cpg: guideline_data}
+            })
+
+    return filtered_treatments
+
 def filter_by_disease(treatments, diagnosis):
     return [treatment for treatment in treatments 
             if treatment['indication'].lower() == diagnosis.lower()]
@@ -65,25 +81,14 @@ def main():
         if add_extra_disease != "yes":
             break
 
-    """while True:
-        for disease_info in diseases:
-            treatments_for_disease = filter_by_disease(all_treatments, disease_info['name'])
-            treatments_for_severity = filter_by_severity(treatments_for_disease, disease_info['severity'])
-            treatments_excluding_exclusions = filter_by_exclusions(treatments_for_severity, exclusions)
-            ranked_treatments = [treatment for treatment in rank_treatments(treatments_excluding_exclusions, preferred_cpg) if treatment not in rejected_treatments]
-
-            treatments_by_disease[disease_info['name']] = ranked_treatments
-
-            if not ranked_treatments:
-                print(f"No treatments found for {disease_info['name']} after applying exclusions and rejections.")
-                return  """
     while True:
     
         no_treatments_left = True  
 
         for disease_info in diseases:
             treatments_for_disease = filter_by_disease(all_treatments, disease_info['name'])
-            treatments_for_severity = filter_by_severity(treatments_for_disease, disease_info['severity'])
+            treatments_for_cpg = filter_by_cpg(treatments_for_disease, preferred_cpg)
+            treatments_for_severity = filter_by_severity(treatments_for_cpg, disease_info['severity'])
             treatments_excluding_exclusions = filter_by_exclusions(treatments_for_severity, exclusions)
             ranked_treatments = [treatment for treatment in rank_treatments(treatments_excluding_exclusions, preferred_cpg) if treatment not in rejected_treatments]
 
@@ -128,9 +133,7 @@ def main():
 if __name__ == "__main__":
     main()
 
-"""Same process, just with new data structure for ranking and for the dosing strategies. Each treatment now has a number of different strategies
-depending on the scenario of the patient, 
-Also now the programme does not terminate if one disease treatment list has been exhausted, it continues
-with the next disease. """
+"""Filter for CPG added: it will only show the part of the treatment that is relevant to the defined CPG that 
+the user has selected. """
 
 
