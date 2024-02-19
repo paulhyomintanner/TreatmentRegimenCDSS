@@ -74,3 +74,4 @@ to be done:
 - change the dosing strategies from "neonate" etc, into the "dosing strategies" e.g. anti-biotic peak strategy, > 50's strategy. 
 - key changes - data structure, dosing strategies, post-coordination,
 - notify user that treatments exhausted for one disease, but continue search for other. 
+
