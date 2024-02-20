@@ -53,7 +53,7 @@ def main():
     diseases = []
     treatments_by_disease = {}
     rejected_treatments = []  
-    preferred_cpg = input("Preferred CPG (WHO/NICE): ").strip()
+    preferred_cpg = input("Preferred CPG (WHO/BNF): ").strip()
     exclusions = input("Exclusions e.g allergy (comma-separated): ").strip().split(',')
 
     while True:
@@ -89,7 +89,12 @@ def main():
 
         recommended_treatments = rules(treatments_by_disease)
         for disease, treatment in recommended_treatments.items():
-            print(f"Recommended treatment for {disease}: {treatment}")
+            treatment_id = treatment['treatment_id']
+            description = treatment['description']
+            drugs = ', '.join([medication['drug'] for medication in treatment['medication']])
+            medication_details = ', '.join([f"{key}: {value}" for medication in treatment['medication'] for key, value in medication.items() if key in ["drug", "form", "site", "route", "method"]])
+            print(f"Recommended treatment for {disease}: Treatment ID: {treatment_id}, Description: {description}, Drugs: {drugs}, Medication Details: {medication_details}")
+            
 
         user_input = input("Do you accept the recommended treatment? (yes/no): ").strip().lower()
         if user_input == 'yes':
@@ -104,13 +109,23 @@ def main():
                             rejected_treatments.append(treatment)
                             break
 
+        confirmed_treatment = None
+
     if user_input == 'yes':
         print("You have accepted the following treatment plan:")
+        confirmed_treatment = {}
         for disease, treatments in recommended_treatments.items():
             if treatments:  
-                print(f"{disease} - Confirmed treatment: {treatments}")
+                treatment_id = treatments['treatment_id']
+                description = treatments['description']
+                drugs = ', '.join([medication['drug'] for medication in treatments['medication']])
+                medication_details = ', '.join([f"{key}: {value}" for medication in treatments['medication'] for key, value in medication.items() if key in ["drug", "form", "site", "route", "method"]])
+                print(f"{disease} - Confirmed treatment ID: {treatment_id}, Description: {description}, Drugs: {drugs}, Medication Details: {medication_details}")
+                confirmed_treatment[disease] = treatments
             else:
                 print(f"No treatments available for {disease} after applying exclusions and rejections.")
+
+        return confirmed_treatment
 
 
 if __name__ == "__main__":
@@ -118,6 +133,10 @@ if __name__ == "__main__":
 
 """Loops until treatments are exhausted or the user accepts, 
 Also now the programme does not terminate if one disease treatment list has been exhausted, it continues
-with the next disease. Uses the old data structure."""
+with the next disease. Uses the old data structure.
+- now prints less information for the user to deal with
+- confirmed treatment now returned for regimen building functions
+- added drug information to the treatment plan database
+- print only the information necessary"""
 
 
