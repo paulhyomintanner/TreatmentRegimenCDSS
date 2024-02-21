@@ -1,6 +1,7 @@
 from tinydb import TinyDB
-db = TinyDB('treatment_db.json')
+db = TinyDB('testing_db.json')
 all_treatments = db.all()
+import math 
 
 def filter_by_disease(treatments, diagnosis):
     return [treatment for treatment in treatments 
@@ -48,7 +49,23 @@ def rules(treatments_by_disease):
 
     return recommended_treatments
 
+def calculate_bsa(height_cm, weight_kg):
+    # Calculate the Body Surface Area using the Mosteller formula
+    return math.sqrt((height_cm * weight_kg) / 3600)
 
+def calculate_dose_based_on_weight(weight_kg, dose_mg_per_kg):
+    return weight_kg * dose_mg_per_kg
+
+def calculate_dose_based_on_bsa(bsa_m2, dose_mg_per_m2):
+    return bsa_m2 * dose_mg_per_m2
+
+def check_max_dose(calculated_dose, max_dose):
+    if calculated_dose > max_dose:
+        return max_dose
+    return calculated_dose
+
+def calculate_dose_per_administration(total_dose, frequency):
+    return total_dose / frequency
 def main():
     diseases = []
     treatments_by_disease = {}
@@ -125,11 +142,77 @@ def main():
             else:
                 print(f"No treatments available for {disease} after applying exclusions and rejections.")
 
-        return confirmed_treatment
+    if confirmed_treatment:
+        for disease, treatment in confirmed_treatment.items():
+            for medication in treatment['medication']:
+                if medication['dose_strategy'].get("calculation") == "yes": #added thius check to allow for a treatment plan that has no dose strategy but just a given dose. 
+                    calculate_dose_option = input("Do you want the dose calculated according to the CPG recommendation if available? (yes/no): ").strip().lower()
+                    if calculate_dose_option == 'yes':
+                        weight = float(input("Enter the patient's weight in kg: "))
+                        height = float(input("Enter the patient's height in cm: "))
+                        dose_and_rate = medication['dose_strategy']['doseAndRate'][0]
+                        dose_quantity = dose_and_rate['doseQuantity']['value']
+                        unit = dose_and_rate['doseQuantity']['unit']
+                        frequency = medication['dose_strategy']['timing']['repeat']['frequency']
+                        max_dose = medication['dose_strategy']['maxDosePerPeriod']['numerator']['value']
+
+                        if unit == 'mg/kg/day':
+                            total_dose = calculate_dose_based_on_weight(weight, dose_quantity)
+                        elif unit == 'mg/m^2':
+                            bsa = calculate_bsa(height, weight)
+                            total_dose = calculate_dose_based_on_bsa(bsa, dose_quantity)
+                        else:
+                            raise ValueError("Unknown dosing unit.")
+
+                        total_dose = check_max_dose(total_dose, max_dose)
+                        dose_per_administration = calculate_dose_per_administration(total_dose, frequency)
+
+                        print(f"The calculated dose per administration is: {dose_per_administration}mg")
+
+                        calculate_volume = input("Do you want to calculate the volume per dose? (yes/no): ").strip().lower()
+                        if calculate_volume == 'yes':
+                            concentration = float(input("Enter the drug concentration per unit (mg/ml or mg/tablet): "))
+                            volume_per_dose = dose_per_administration / concentration
+                            print(f"The volume per dose needed is: {volume_per_dose} units")
+    
+    
+    """if confirmed_treatment:
+        for disease, treatment in confirmed_treatment.items():
+            if treatment['medication'][0]['dose_strategy'].get("calculation") == "yes":
+                calculate_dose_option = input("Do you want the dose calculated according to the CPG recommendation if available? (yes/no): ").strip().lower()
+                if calculate_dose_option == 'yes':
+                    weight = float(input("Enter the patient's weight in kg: "))
+                    height = float(input("Enter the patient's height in cm: "))
+                    dose_and_rate = treatment['medication'][0]['dose_strategy']['doseAndRate'][0]
+                    dose_quantity = dose_and_rate['doseQuantity']['value']
+                    unit = dose_and_rate['doseQuantity']['unit']
+                    frequency = treatment['medication'][0]['dose_strategy']['timing']['repeat']['frequency']
+                    max_dose = treatment['medication'][0]['dose_strategy']['maxDosePerPeriod']['numerator']['value']
+
+                    if unit == 'mg/kg/day':
+                        total_dose = calculate_dose_based_on_weight(weight, dose_quantity)
+                    elif unit == 'mg/m^2':
+                        bsa = calculate_bsa(height, weight)
+                        total_dose = calculate_dose_based_on_bsa(bsa, dose_quantity)
+                    else:
+                        raise ValueError("Unknown dosing unit.")
+
+                    total_dose = check_max_dose(total_dose, max_dose)
+                    dose_per_administration = calculate_dose_per_administration(total_dose, frequency)
+
+                    print(f"The calculated dose per administration is: {dose_per_administration}mg")
+
+                    calculate_volume = input("Do you want to calculate the volume per dose? (yes/no): ").strip().lower()
+                    if calculate_volume == 'yes':
+                        concentration = float(input("Enter the drug concentration per unit (mg/ml or mg/tablet): "))
+                        volume_per_dose = dose_per_administration / concentration
+                        print(f"The volume per dose needed is: {volume_per_dose} units")"""
 
 
 if __name__ == "__main__":
     main()
+
+
 
 """Loops until treatments are exhausted or the user accepts, 
 Also now the programme does not terminate if one disease treatment list has been exhausted, it continues
@@ -137,6 +220,8 @@ with the next disease. Uses the old data structure.
 - now prints less information for the user to deal with
 - confirmed treatment now returned for regimen building functions
 - added drug information to the treatment plan database
-- print only the information necessary"""
+- print only the information necessary
+- calculating the dosing etc. 
+- needs to have a better way of displaying what drug is being dealt with at what time"""
 
 
