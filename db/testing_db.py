@@ -11,7 +11,8 @@ treatment_data = [
         "eligibility": [
             {
                 "severity": "High",
-                "exclusion": ["penicillin"]
+                "exclusion": ["penicillin"],
+                "patient_profile": {"age_range": {"min": 1, "max": 17}, "min_weight":  40}
             }
         ],
         "rank": [
@@ -57,9 +58,9 @@ treatment_data = [
                             },
                             "doseQuantity": {
                                 "value":  50,
-                                "unit": "mg/kg/day",
+                                "unit": "mg/kg",
                                 "system": "http://unitsofmeasure.org",
-                                "code": "mg/kg/d"
+                                "code": "mg/kg"
                             }
                         }
                     ],
@@ -115,9 +116,9 @@ treatment_data = [
                             },
                             "doseQuantity": {
                                 "value":  50,
-                                "unit": "mg/kg/day",
+                                "unit": "mg/kg",
                                 "system": "http://unitsofmeasure.org",
-                                "code": "mg/kg/d"
+                                "code": "mg/kg"
                             }
                         }
                     ],
@@ -146,7 +147,8 @@ treatment_data = [
         "eligibility": [
             {
                 "severity": "low",
-                "exclusion": ["allergy to cyclophosphamide"]
+                "exclusion": ["allergy to cyclophosphamide"],
+                "patient_profile": {"age_range": {"min": 18, "max": 65}, "min_weight":  10},
             }
         ],
         "rank": [

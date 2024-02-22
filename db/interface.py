@@ -1,7 +1,11 @@
+import tkinter as tk
+from tkinter import simpledialog
 from tinydb import TinyDB
+import math
+
 db = TinyDB('testing_db.json')
 all_treatments = db.all()
-import math 
+
 
 def filter_by_disease(treatments, diagnosis):
     return [treatment for treatment in treatments 
@@ -73,27 +77,31 @@ def calculate_dose_per_administration(total_dose, frequency):
     return total_dose / frequency
 
 def main():
+    root = tk.Tk()
+    root.withdraw()  
+
+    preferred_cpg = simpledialog.askstring("Input", "Preferred CPG (WHO/BNF):")
+    exclusions = simpledialog.askstring("Input", "Exclusions e.g allergy (comma-separated):")
+    if exclusions is not None:
+        exclusions = exclusions.split(',')
+    weight = simpledialog.askfloat("Input", "Enter the patient's weight in kg:")
+    height = simpledialog.askfloat("Input", "Enter the patient's height in cm:")
+    age = simpledialog.askfloat("Input", "Enter the patient's age in years:")
+
     diseases = []
-    treatments_by_disease = {}
-    rejected_treatments = []  
-    preferred_cpg = input("Preferred CPG (WHO/BNF): ").strip()
-    exclusions = input("Exclusions e.g allergy (comma-separated): ").strip().split(',')
-    weight = float(input("Enter the patient's weight in kg: "))
-    height = float(input("Enter the patient's height in cm: "))
-    age = float(input("Enter the patient's age in years: "))
-
     while True:
-        disease = input("Add diagnosis (name): ").strip()
-        severity = input("Diagnosis severity (low/high): ").strip()
-        diseases.append({'name': disease, 'severity': severity})
-
-        add_extra_disease = input("Add another disease? (yes/no): ").strip().lower()
-        if add_extra_disease != "yes":
+        disease = simpledialog.askstring("Input", "Add diagnosis (name):")
+        if not disease:
             break
-    user_input = ''        
+        severity = simpledialog.askstring("Input", "Diagnosis severity (low/high):")
+        diseases.append({'name': disease, 'severity': severity})
+        add_extra_disease = simpledialog.askstring("Input", "Add another disease? (yes/no):")
+        if add_extra_disease.lower() != "yes":
+            break
+    user_input = ''
+
     while True:
-    
-        no_treatments_left = True  
+        no_treatments_left = True   
 
         for disease_info in diseases:
             treatments_for_disease = filter_by_disease(all_treatments, disease_info['name'])
@@ -105,14 +113,14 @@ def main():
             treatments_by_disease[disease_info['name']] = ranked_treatments
 
             if ranked_treatments:
-                no_treatments_left = False  
+                no_treatments_left = False   
 
             else:
                 print(f"No treatments found for {disease_info['name']} after applying exclusions and rejections.")
 
         if no_treatments_left:
             print("No treatments available for all diseases after applying exclusions and rejections.")
-            break 
+            break   
 
         recommended_treatments = rules(treatments_by_disease)
         for disease, treatment in recommended_treatments.items():
@@ -125,11 +133,11 @@ def main():
 
         user_input = input("Do you accept the recommended treatment? (yes/no): ").strip().lower()
         if user_input == 'yes':
-            break  
+            break   
         else:
             rejected_treatment_ids = input("Enter treatment IDs for rejection (separated by commas): ").strip().split(',')
             for rejected_treatment_id in rejected_treatment_ids:
-                rejected_treatment_id = rejected_treatment_id.strip()  
+                rejected_treatment_id = rejected_treatment_id.strip()   
                 for treatments in treatments_by_disease.values():
                     for treatment in treatments:
                         if treatment['treatment_id'] == rejected_treatment_id:
@@ -142,7 +150,7 @@ def main():
         print("You have accepted the following treatment plan:")
         confirmed_treatment = {}
         for disease, treatments in recommended_treatments.items():
-            if treatments:  
+            if treatments:   
                 treatment_id = treatments['treatment_id']
                 description = treatments['description']
                 drugs = ', '.join([medication['drug'] for medication in treatments['medication']])
@@ -155,7 +163,7 @@ def main():
     if confirmed_treatment:
         for disease, treatment in confirmed_treatment.items():
             for medication in treatment['medication']:
-                if medication['dose_strategy'].get("calculation") == "yes": #added this check to allow for a treatment plan that has no dose strategy but just a given dose. 
+                if medication['dose_strategy'].get("calculation") == "yes": 
                     calculate_dose_option = input(f"Calculate dose for {medication['drug']} according to CPG provided formular? (yes/no): ").strip().lower()
                     if calculate_dose_option == 'yes':
                         dose_and_rate = medication['dose_strategy']['doseAndRate'][0]
@@ -186,54 +194,9 @@ def main():
                         print(f"No dose calculation requested {medication}.")               
                 else:
                     print(f"No dose calculation in plan {medication}.")
-
-
-""" if confirmed_treatment:
-        for disease, treatment in confirmed_treatment.items():
-            if treatment['medication'][0]['dose_strategy'].get("calculation") == "yes":
-                calculate_dose_option = input("Do you want the dose calculated according to the CPG recommendation if available? (yes/no): ").strip().lower()
-                if calculate_dose_option == 'yes':
-                    weight = float(input("Enter the patient's weight in kg: "))
-                    height = float(input("Enter the patient's height in cm: "))
-                    dose_and_rate = treatment['medication'][0]['dose_strategy']['doseAndRate'][0]
-                    dose_quantity = dose_and_rate['doseQuantity']['value']
-                    unit = dose_and_rate['doseQuantity']['unit']
-                    frequency = treatment['medication'][0]['dose_strategy']['timing']['repeat']['frequency']
-                    max_dose = treatment['medication'][0]['dose_strategy']['maxDosePerPeriod']['numerator']['value']
-
-                    if unit == 'mg/kg/day':
-                        total_dose = calculate_dose_based_on_weight(weight, dose_quantity)
-                    elif unit == 'mg/m^2':
-                        bsa = calculate_bsa(height, weight)
-                        total_dose = calculate_dose_based_on_bsa(bsa, dose_quantity)
-                    else:
-                        raise ValueError("Unknown dosing unit.")
-
-                    total_dose = check_max_dose(total_dose, max_dose)
-                    dose_per_administration = calculate_dose_per_administration(total_dose, frequency)
-
-                    print(f"The calculated dose per administration is: {dose_per_administration}mg")
-
-                    calculate_volume = input("Do you want to calculate the volume per dose? (yes/no): ").strip().lower()
-                    if calculate_volume == 'yes':
-                        concentration = float(input("Enter the drug concentration per unit (mg/ml or mg/tablet): "))
-                        volume_per_dose = dose_per_administration / concentration
-                        print(f"The volume per dose needed is: {volume_per_dose} units")"""
-
-
 if __name__ == "__main__":
     main()
 
-
-
-"""Loops until treatments are exhausted or the user accepts, 
-Also now the programme does not terminate if one disease treatment list has been exhausted, it continues
-with the next disease. Uses the old data structure.
-- now prints less information for the user to deal with
-- confirmed treatment now returned for regimen building functions
-- added drug information to the treatment plan database
-- print only the information necessary
-- calculating the dosing etc. 
-- needs to have a better way of displaying what drug is being dealt with at what time"""
+    root.mainloop()
 
 
