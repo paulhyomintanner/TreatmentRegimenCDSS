@@ -181,7 +181,6 @@ def main():
                 if medication['dose_strategy'].get("calculation") == "yes":
                     calculate_dose_option = input(f"Calculate dose for {medication['drug']} according to CPG provided formula? (yes/no): ").strip().lower()
                     if calculate_dose_option == 'yes':
-                        # Perform dose calculations
                         dose_and_rate = medication['dose_strategy']['doseAndRate'][0]
                         dose_quantity = dose_and_rate['doseQuantity']['value']
                         unit = dose_and_rate['doseQuantity']['unit']
