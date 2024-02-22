@@ -154,11 +154,34 @@ def main():
                 print(f"No treatments available for {disease} after applying exclusions and rejections.")
 
     if confirmed_treatment:
+        personalized_regimens = {}
         for disease, treatment in confirmed_treatment.items():
+            regimen_details = {
+                "disease": disease,
+                "description": treatment['description'],
+                "medications": []
+            }
             for medication in treatment['medication']:
-                if medication['dose_strategy'].get("calculation") == "yes": #added this check to allow for a treatment plan that has no dose strategy but just a given dose.   
-                    calculate_dose_option = input(f"Calculate dose for {medication['drug']} according to CPG provided formular? (yes/no): ").strip().lower()
+                med_details = {
+                    "drug": medication['drug'],
+                    "form": medication['form'],
+                    "site": medication['site'],
+                    "route": medication['route'],
+                    "method": medication['method'],
+                    "instruction": medication['dose_strategy']['text'],
+                    "additional_instruction": medication['dose_strategy']['additionalInstruction'][0]['text'],
+                    "patient_instruction": medication['dose_strategy']['patientInstruction'],
+                    "max_dose": medication['dose_strategy']['maxDosePerPeriod']['numerator']['value'], 
+                    "max_dose_unit": medication['dose_strategy']['maxDosePerPeriod']['numerator']['unit'],
+                    "period": medication['dose_strategy']['maxDosePerPeriod']['denominator']['value'],
+                    "period_unit": medication['dose_strategy']['maxDosePerPeriod']['denominator']['unit']
+
+                }
+                
+                if medication['dose_strategy'].get("calculation") == "yes":
+                    calculate_dose_option = input(f"Calculate dose for {medication['drug']} according to CPG provided formula? (yes/no): ").strip().lower()
                     if calculate_dose_option == 'yes':
+                        # Perform dose calculations
                         dose_and_rate = medication['dose_strategy']['doseAndRate'][0]
                         dose_quantity = dose_and_rate['doseQuantity']['value']
                         unit = dose_and_rate['doseQuantity']['unit']
@@ -176,16 +199,38 @@ def main():
                         total_dose = check_max_dose(total_dose, max_dose)
                         dose_per_administration = calculate_dose_per_administration(total_dose, frequency)
 
-                        print(f"The calculated dose per administration is: {dose_per_administration}mg")
-
                         calculate_volume = input("Do you want to calculate the volume per dose? (yes/no): ").strip().lower()
                         if calculate_volume == 'yes':
                             concentration = float(input("Enter the drug concentration per unit (mg/ml or mg/tablet): "))
                             volume_per_dose = dose_per_administration / concentration
-                            print(f"The volume per dose needed is: {volume_per_dose} units")
+                            med_details.update({"dose_per_administration": dose_per_administration, "volume_per_dose": volume_per_dose})
+                        else:
+                            med_details.update({"dose_per_administration": dose_per_administration, "volume_per_dose": "Not calculated"})
                     else:
-                        print(f"No dose calculation requested {medication}.")               
+                        print(f"No dose calculation requested for {medication['drug']}.")                      
                 else:
-                    print(f"No dose calculation in plan {medication}.")
+                    print(f"No dose calculation in plan for {medication['drug']}.")
+
+                regimen_details['medications'].append(med_details)
+
+            personalized_regimens[disease] = regimen_details
+
+        # Print the personalized regimen plan
+        for disease, regimen in personalized_regimens.items():
+            print(f"Disease: {regimen['disease']}")
+            print(f"Description: {regimen['description']}")
+            for med in regimen['medications']:
+                print(f"Medication: {med['drug']}")
+                print(f"Form: {med['form']}, Site: {med['site']}, Route: {med['route']}, Method: {med['method']}")
+                if "dose_per_administration" in med:
+                    print(f"Dose per administration: {med['dose_per_administration']}mg")
+                if "volume_per_dose" in med:
+                    print(f"Volume unit per dose (per ml or tablet): {med['volume_per_dose']}")
+                print(f"Instruction: {med['instruction']}")
+                print(f"Additional instruction: {med['additional_instruction']}")
+                print(f"Patient instruction: {med['patient_instruction']}")
+                print(f"Max dose: {med['max_dose']} {med['max_dose_unit']} per {med['period']} {med['period_unit']} \n")
+
 if __name__ == "__main__":
     main()
+"""added patient profile for the filtering treatments according to patient profile under eligibility criteria"""
