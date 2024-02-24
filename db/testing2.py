@@ -54,8 +54,7 @@ def rules(treatments_by_disease):
 
     return recommended_treatments
 
-def calculate_bsa(height_cm, weight_kg):
-    # Calculate the Body Surface Area using the Mosteller formula
+def calculate_bsa(height_cm, weight_kg):    # Calculate the Body Surface Area using the Mosteller formula
     return math.sqrt((height_cm * weight_kg) / 3600)
 
 def calculate_dose_based_on_weight(weight_kg, dose_mg_per_kg):
@@ -114,7 +113,28 @@ def main():
         if no_treatments_left:
             print("No treatments available for all diseases after applying exclusions and rejections.")
             break   
+        """
+        recommended_treatments = rules(treatments_by_disease)
+        
+        # Collect all unique recommended treatments
+        unique_treatments = {treatment['treatment_id']: treatment for treatment in recommended_treatments.values()}
 
+        if len(unique_treatments) == 1:
+            treatment = next(iter(unique_treatments.values()))  
+            treatment_id = treatment['treatment_id']
+            description = treatment['description']
+            drugs = ', '.join([medication['drug'] for medication in treatment['medication']])
+            medication_details = ', '.join([f"{key}: {value}" for medication in treatment['medication'] for key, value in medication.items() if key in ["drug", "form", "site", "route", "method"]])
+            print(f"Treatment recommended for all conditions: Treatment ID: {treatment_id}, Description: {description}, Drugs: {drugs}, Medication Details: {medication_details}")
+        else:
+            for disease, treatment in recommended_treatments.items():
+                treatment_id = treatment['treatment_id']
+                description = treatment['description']
+                drugs = ', '.join([medication['drug'] for medication in treatment['medication']])
+                medication_details = ', '.join([f"{key}: {value}" for medication in treatment['medication'] for key, value in medication.items() if key in ["drug", "form", "site", "route", "method"]])
+                print(f"Recommended treatment for {disease}: Treatment ID: {treatment_id}, Description: {description}, Drugs: {drugs}, Medication Details: {medication_details}")"""
+
+                
         recommended_treatments = rules(treatments_by_disease)
         for disease, treatment in recommended_treatments.items():
             treatment_id = treatment['treatment_id']
@@ -123,7 +143,6 @@ def main():
             medication_details = ', '.join([f"{key}: {value}" for medication in treatment['medication'] for key, value in medication.items() if key in ["drug", "form", "site", "route", "method"]])
             print(f"Recommended treatment for {disease}: Treatment ID: {treatment_id}, Description: {description}, Drugs: {drugs}, Medication Details: {medication_details}")
             
-
         user_input = input("Do you accept the recommended treatment? (yes/no): ").strip().lower()
         if user_input == 'yes':
             break   
