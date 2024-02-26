@@ -12,18 +12,18 @@ treatment_data = [
             {
                 "severity": "High",
                 "exclusion": ["penicillin"],
-                "patient_profile": {"age_range": {"min": 1, "max": 20}, "min_weight":  2}
+                "patient_profile": {"age_range": {"min": 18, "max": 65}, "min_weight":  45}
             }
         ],
         "rank": [
             {
                 "WHO":  1,
-                "BNF":  2
+                "BNF":  5
             }
         ],
         "medication": [
             {
-                "drug": "Amoxicillin",
+                "drug": "Drug1",
                 "form": "oral suspension",
                 "site": "mouth",
                 "route": "oral",
@@ -81,7 +81,7 @@ treatment_data = [
                 }
             },
             {
-                "drug": "Amoxil",
+                "drug": "drug2",
                 "form": "oral suspension",
                 "site": "mouth",
                 "route": "oral",
@@ -148,13 +148,13 @@ treatment_data = [
             {
                 "severity": "high",
                 "exclusion": ["allergy to cyclophosphamide"],
-                "patient_profile": {"age_range": {"min": 18, "max": 65}, "min_weight":  10},
+                "patient_profile": {"age_range": {"min": 18, "max": 65}, "min_weight":  50},
             }
         ],
         "rank": [
             {
                 "WHO":  2,
-                "BNF":  1
+                "BNF":  4
             }
         ],
         "medication": [
@@ -226,7 +226,7 @@ treatment_data = [
             {
                 "severity": "high",
                 "exclusion": ["allergy to cyclophosphamide"],
-                "patient_profile": {"age_range": {"min": 18, "max": 65}, "min_weight":  10},
+                "patient_profile": {"age_range": {"min": 1, "max": 17}, "min_weight":  2},
             }
         ],
         "rank": [
@@ -237,7 +237,7 @@ treatment_data = [
         ],
         "medication": [
             {
-                "drug": "Cyclophosphamide",
+                "drug": "drug3",
                 "form": "IV injection",
                 "site": "vein",
                 "route": "intravenous",
@@ -298,24 +298,24 @@ treatment_data = [
     },
     {
         "treatment_id": "D",
-        "disease": "DiseaseB",
+        "disease": "DiseaseA",
         "description": "Used in lymphoma treatment cases",
         "eligibility": [
             {
-                "severity": "low",
+                "severity": "high",
                 "exclusion": ["allergy to cyclophosphamide"],
-                "patient_profile": {"age_range": {"min": 18, "max": 65}, "min_weight":  10},
+                "patient_profile": {"age_range": {"min": 1, "max": 17}, "min_weight":  5},
             }
         ],
         "rank": [
             {
-                "WHO":  3,
-                "BNF":  1
+                "WHO":  4,
+                "BNF":  2
             }
         ],
         "medication": [
             {
-                "drug": "Cyclophosphamide",
+                "drug": "drug4",
                 "form": "IV injection",
                 "site": "vein",
                 "route": "intravenous",
@@ -376,24 +376,24 @@ treatment_data = [
     },
     {
         "treatment_id": "E",
-        "disease": "DiseaseB",
+        "disease": "DiseaseA",
         "description": "Used in lymphoma treatment cases",
         "eligibility": [
             {
-                "severity": "low",
+                "severity": "high",
                 "exclusion": ["allergy to cyclophosphamide"],
-                "patient_profile": {"age_range": {"min": 18, "max": 65}, "min_weight":  10},
+                "patient_profile": {"age_range": {"min": 1, "max": 100}, "min_weight":  1},
             }
         ],
         "rank": [
             {
-                "WHO":  2,
-                "BNF":  2
+                "WHO":  5,
+                "BNF":  1
             }
         ],
         "medication": [
             {
-                "drug": "Cyclophosphamide",
+                "drug": "drug5",
                 "form": "IV injection",
                 "site": "vein",
                 "route": "intravenous",
@@ -460,13 +460,325 @@ treatment_data = [
             {
                 "severity": "low",
                 "exclusion": ["allergy to cyclophosphamide"],
-                "patient_profile": {"age_range": {"min": 18, "max": 65}, "min_weight":  10},
+                "patient_profile": {"age_range": {"min": 18, "max": 65}, "min_weight":  40},
             }
         ],
         "rank": [
             {
                 "WHO":  1,
+                "BNF":  5
+            }
+        ],
+        "medication": [
+            {
+                "drug": "drug6",
+                "form": "IV injection",
+                "site": "vein",
+                "route": "intravenous",
+                "method": "inject",
+                "dose_strategy": {
+                    "calculation": "yes",
+                    "sequence":  1,
+                    "text": "Administer Cyclophosphamide  750 mg/m^2 IV on Day  1 of each  28-day cycle.",
+                    "additionalInstruction": [
+                        {
+                            "text": "Pre-hydration and post-hydration required."
+                        }
+                    ],
+                    "patientInstruction": "Administered on the first day of a  28-day cycle. Ensure proper hydration before and after administration.",
+                    "timing": {
+                        "repeat": {
+                            "frequency":  1,
+                            "period":  28,
+                            "periodUnit": "d",
+                            "code": {
+                                "text": "Every  28 days"
+                            }
+                        }
+                    },
+                    "route": {
+                        "text": "Intravenous"
+                    },
+                    "doseAndRate": [
+                        {
+                            "type": {
+                                "text": "Single dose per cycle"
+                            },
+                            "doseQuantity": {
+                                "value":  750,
+                                "unit": "mg/m^2",
+                                "system": "http://unitsofmeasure.org",
+                                "code": "mg/m2"
+                            }
+                        }
+                    ],
+                    "maxDosePerPeriod": {
+                        "numerator": {
+                            "value":  750,
+                            "unit": "mg",
+                            "system": "http://unitsofmeasure.org",
+                            "code": "mg"
+                        },
+                        "denominator": {
+                            "value":  28,
+                            "unit": "day",
+                            "system": "http://unitsofmeasure.org",
+                            "code": "d"
+                        }
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "treatment_id": "G",
+        "disease": "DiseaseB",
+        "description": "Used in lymphoma treatment cases",
+        "eligibility": [
+            {
+                "severity": "low",
+                "exclusion": ["allergy to cyclophosphamide"],
+                "patient_profile": {"age_range": {"min": 18, "max": 65}, "min_weight":  40},
+            }
+        ],
+        "rank": [
+            {
+                "WHO":  2,
+                "BNF":  4
+            }
+        ],
+        "medication": [
+            {
+                "drug": "drug7",
+                "form": "IV injection",
+                "site": "vein",
+                "route": "intravenous",
+                "method": "inject",
+                "dose_strategy": {
+                    "calculation": "yes",
+                    "sequence":  1,
+                    "text": "Administer Cyclophosphamide  750 mg/m^2 IV on Day  1 of each  28-day cycle.",
+                    "additionalInstruction": [
+                        {
+                            "text": "Pre-hydration and post-hydration required."
+                        }
+                    ],
+                    "patientInstruction": "Administered on the first day of a  28-day cycle. Ensure proper hydration before and after administration.",
+                    "timing": {
+                        "repeat": {
+                            "frequency":  1,
+                            "period":  28,
+                            "periodUnit": "d",
+                            "code": {
+                                "text": "Every  28 days"
+                            }
+                        }
+                    },
+                    "route": {
+                        "text": "Intravenous"
+                    },
+                    "doseAndRate": [
+                        {
+                            "type": {
+                                "text": "Single dose per cycle"
+                            },
+                            "doseQuantity": {
+                                "value":  750,
+                                "unit": "mg/m^2",
+                                "system": "http://unitsofmeasure.org",
+                                "code": "mg/m2"
+                            }
+                        }
+                    ],
+                    "maxDosePerPeriod": {
+                        "numerator": {
+                            "value":  750,
+                            "unit": "mg",
+                            "system": "http://unitsofmeasure.org",
+                            "code": "mg"
+                        },
+                        "denominator": {
+                            "value":  28,
+                            "unit": "day",
+                            "system": "http://unitsofmeasure.org",
+                            "code": "d"
+                        }
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "treatment_id": "H",
+        "disease": "DiseaseB",
+        "description": "Used in lymphoma treatment cases",
+        "eligibility": [
+            {
+                "severity": "high",
+                "exclusion": ["allergy to cyclophosphamide"],
+                "patient_profile": {"age_range": {"min": 1, "max": 65}, "min_weight":  10},
+            }
+        ],
+        "rank": [
+            {
+                "WHO":  3,
                 "BNF":  3
+            }
+        ],
+        "medication": [
+            {
+                "drug": "drug8",
+                "form": "IV injection",
+                "site": "vein",
+                "route": "intravenous",
+                "method": "inject",
+                "dose_strategy": {
+                    "calculation": "yes",
+                    "sequence":  1,
+                    "text": "Administer Cyclophosphamide  750 mg/m^2 IV on Day  1 of each  28-day cycle.",
+                    "additionalInstruction": [
+                        {
+                            "text": "Pre-hydration and post-hydration required."
+                        }
+                    ],
+                    "patientInstruction": "Administered on the first day of a  28-day cycle. Ensure proper hydration before and after administration.",
+                    "timing": {
+                        "repeat": {
+                            "frequency":  1,
+                            "period":  28,
+                            "periodUnit": "d",
+                            "code": {
+                                "text": "Every  28 days"
+                            }
+                        }
+                    },
+                    "route": {
+                        "text": "Intravenous"
+                    },
+                    "doseAndRate": [
+                        {
+                            "type": {
+                                "text": "Single dose per cycle"
+                            },
+                            "doseQuantity": {
+                                "value":  750,
+                                "unit": "mg/m^2",
+                                "system": "http://unitsofmeasure.org",
+                                "code": "mg/m2"
+                            }
+                        }
+                    ],
+                    "maxDosePerPeriod": {
+                        "numerator": {
+                            "value":  750,
+                            "unit": "mg",
+                            "system": "http://unitsofmeasure.org",
+                            "code": "mg"
+                        },
+                        "denominator": {
+                            "value":  28,
+                            "unit": "day",
+                            "system": "http://unitsofmeasure.org",
+                            "code": "d"
+                        }
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "treatment_id": "I",
+        "disease": "drug9",
+        "description": "Used in lymphoma treatment cases",
+        "eligibility": [
+            {
+                "severity": "high",
+                "exclusion": ["allergy to cyclophosphamide"],
+                "patient_profile": {"age_range": {"min": 1, "max": 65}, "min_weight":  10},
+            }
+        ],
+        "rank": [
+            {
+                "WHO":  4,
+                "BNF":  2
+            }
+        ],
+        "medication": [
+            {
+                "drug": "Cyclophosphamide",
+                "form": "IV injection",
+                "site": "vein",
+                "route": "intravenous",
+                "method": "inject",
+                "dose_strategy": {
+                    "calculation": "yes",
+                    "sequence":  1,
+                    "text": "Administer Cyclophosphamide  750 mg/m^2 IV on Day  1 of each  28-day cycle.",
+                    "additionalInstruction": [
+                        {
+                            "text": "Pre-hydration and post-hydration required."
+                        }
+                    ],
+                    "patientInstruction": "Administered on the first day of a  28-day cycle. Ensure proper hydration before and after administration.",
+                    "timing": {
+                        "repeat": {
+                            "frequency":  1,
+                            "period":  28,
+                            "periodUnit": "d",
+                            "code": {
+                                "text": "Every  28 days"
+                            }
+                        }
+                    },
+                    "route": {
+                        "text": "Intravenous"
+                    },
+                    "doseAndRate": [
+                        {
+                            "type": {
+                                "text": "Single dose per cycle"
+                            },
+                            "doseQuantity": {
+                                "value":  750,
+                                "unit": "mg/m^2",
+                                "system": "http://unitsofmeasure.org",
+                                "code": "mg/m2"
+                            }
+                        }
+                    ],
+                    "maxDosePerPeriod": {
+                        "numerator": {
+                            "value":  750,
+                            "unit": "mg",
+                            "system": "http://unitsofmeasure.org",
+                            "code": "mg"
+                        },
+                        "denominator": {
+                            "value":  28,
+                            "unit": "day",
+                            "system": "http://unitsofmeasure.org",
+                            "code": "d"
+                        }
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "treatment_id": "J",
+        "disease": "DiseaseB",
+        "description": "Used in lymphoma treatment cases",
+        "eligibility": [
+            {
+                "severity": "low",
+                "exclusion": ["allergy to cyclophosphamide"],
+                "patient_profile": {"age_range": {"min": 1, "max": 65}, "min_weight":  10},
+            }
+        ],
+        "rank": [
+            {
+                "WHO":  5,
+                "BNF":  1
             }
         ],
         "medication": [

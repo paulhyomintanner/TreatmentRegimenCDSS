@@ -1,1 +1,1 @@
-{"_default": {"1": {"pair": ["A", "D"], "superseding_id": "A"}, "2": {"pair": ["B", "C"], "superseding_id": "B"}, "3": {"pair": ["A", "E"], "superseding_id": "E"}}}
+{"_default": {"1": {"pair": ["A", "D"], "superseding_id": "A"}, "2": {"pair": ["A", "F"], "superseding_id": "F"}, "3": {"pair": ["A", "E"], "superseding_id": "E"}}}
