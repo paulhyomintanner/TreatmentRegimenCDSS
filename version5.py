@@ -113,27 +113,6 @@ def main():
         if no_treatments_left:
             print("No treatments available for all diseases after applying exclusions and rejections.")
             break   
-        """
-        recommended_treatments = rules(treatments_by_disease)
-        
-        # Collect all unique recommended treatments
-        unique_treatments = {treatment['treatment_id']: treatment for treatment in recommended_treatments.values()}
-
-        if len(unique_treatments) == 1:
-            treatment = next(iter(unique_treatments.values()))  
-            treatment_id = treatment['treatment_id']
-            description = treatment['description']
-            drugs = ', '.join([medication['drug'] for medication in treatment['medication']])
-            medication_details = ', '.join([f"{key}: {value}" for medication in treatment['medication'] for key, value in medication.items() if key in ["drug", "form", "site", "route", "method"]])
-            print(f"Treatment recommended for all conditions: Treatment ID: {treatment_id}, Description: {description}, Drugs: {drugs}, Medication Details: {medication_details}")
-        else:
-            for disease, treatment in recommended_treatments.items():
-                treatment_id = treatment['treatment_id']
-                description = treatment['description']
-                drugs = ', '.join([medication['drug'] for medication in treatment['medication']])
-                medication_details = ', '.join([f"{key}: {value}" for medication in treatment['medication'] for key, value in medication.items() if key in ["drug", "form", "site", "route", "method"]])
-                print(f"Recommended treatment for {disease}: Treatment ID: {treatment_id}, Description: {description}, Drugs: {drugs}, Medication Details: {medication_details}")"""
-
                 
         recommended_treatments = rules(treatments_by_disease)
         for disease, treatment in recommended_treatments.items():
@@ -251,4 +230,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-"""added patient profile for the filtering treatments according to patient profile under eligibility criteria"""
+"""added patient profile for the filtering treatments according to patient profile under eligibility criteria, so age now splits the treatments as well """
