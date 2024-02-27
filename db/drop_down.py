@@ -123,6 +123,7 @@ class TreatmentApp:
         self.disease_dropdown = ctk.CTkOptionMenu(self.page_two, values=diseases)
         self.disease_dropdown.pack(pady=5)
 
+
         ctk.CTkLabel(self.page_two, text="Select a severity:").pack(pady=5)
         self.severity_dropdown = ctk.CTkOptionMenu(self.page_two, values=severity)
         self.severity_dropdown.pack(pady=5)
@@ -170,9 +171,8 @@ class TreatmentApp:
             else:
                 ctk.CTkLabel(self.page_two, text="No recommended treatments after applying rules.").pack(pady=10)
             
-            """
             self.recommended_treatments = recommended_treatments  
-            print(self.recommended_treatments)  """
+            print(self.recommended_treatments)  
 
 
 
@@ -241,6 +241,14 @@ class TreatmentApp:
         self.reject_entry = ctk.CTkEntry(self.page_two, placeholder_text="Type ID or IDs to reject")
         self.reject_entry.pack(pady=5)
         ctk.CTkButton(self.page_two, text="Confirm Rejection", command=self.handle_rejection).pack(pady=10)
+
+
+
+
+
+
+
+
 
 
 def main():
