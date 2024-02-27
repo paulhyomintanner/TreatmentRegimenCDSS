@@ -60,7 +60,6 @@ class TreatmentApp:
     def filter_patient_profile(self, treatments, age, weight):
         age = int(age)
         weight = int(weight)
-        age = int(age)
         return [treatment for treatment in treatments for eligibility in treatment['eligibility'] 
                 if eligibility['patient_profile']['age_range']['min'] <= age <= eligibility['patient_profile']['age_range']['max'] 
                 and weight >= eligibility['patient_profile']['min_weight']]
@@ -69,9 +68,13 @@ class TreatmentApp:
         return sorted(treatments, key=lambda x: x['rank'][0][preferred_cpg])
 
     def submit_page_one(self):
-        self.user_data["weight"] = self.weight_entry.get()
-        self.user_data["height"] = self.height_entry.get()
-        self.user_data["age"] = self.age_entry.get()
+        try:
+            self.user_data["weight"] = int(self.weight_entry.get())
+            self.user_data["height"] = int(self.height_entry.get())
+            self.user_data["age"] = int(self.age_entry.get())
+        except ValueError:
+            print("Please enter a valid number for weight, height, and age.")
+            return
         self.user_data["cpg"] = self.cpg_dropdown.get()
         self.user_data["exclusions"] = [text for text, cb in self.exclusion_checkboxes.items() if cb.get() == 1]
         self.page_one.pack_forget()  
