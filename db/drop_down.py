@@ -153,8 +153,7 @@ class TreatmentApp:
         self.canvas.update_idletasks() 
         self.canvas.configure(scrollregion=self.canvas.bbox("all"))
 
-
-
+    
     def load_superseding_rules(self):
         with open('superseding_rules_db.json') as f:
             rules = json.load(f)
@@ -181,6 +180,12 @@ class TreatmentApp:
                     no_treatment_text = f"No treatments found for {disease_info['disease']}"
                     ctk.CTkLabel(self.inner_frame, text=no_treatment_text).pack(pady=10)
             
+            if not candidate_treatments:
+                ctk.CTkLabel(self.inner_frame, text="No treatments found for any diseases.").pack(pady=10)
+                break
+
+            self.root.update_idletasks()  
+            self.canvas.configure(scrollregion=self.canvas.bbox("all"))
             recommended_treatments = {}
             
             if candidate_treatments:
@@ -204,6 +209,7 @@ class TreatmentApp:
             if self.recommended_treatments:
                 break
 
+   
     def handle_rejection(self):
         rejected_ids = self.reject_entry.get().split(',')  
         self.user_data['exclusions'].extend(rejected_ids)  

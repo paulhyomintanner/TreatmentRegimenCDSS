@@ -10,8 +10,8 @@ treatment_data = [
         "description": "Used in pediatric bacterial infection cases",
         "eligibility": [
             {
-                "severity": {"CURB-65": "High"},
-                "exclusion": ["penicillin"],
+                "severity": "High",
+                "exclusion": ["penicillin", "dysphagia"],
                 "patient_profile": {"age_range": {"min": 18, "max": 65}, "min_weight":  45}
             }
         ],
@@ -24,12 +24,12 @@ treatment_data = [
         "medication": [
             {
                 "drug": "Drug1",
-                "form": "oral suspension",
+                "form": {"type": "tablet","divisible":  False},
                 "site": "mouth",
                 "route": "oral",
                 "method": "swallow",
                 "dose_strategy": {
-                    "calculation": "yes",
+                    "calculation": "weight",
                     "sequence":  1,
                     "text": "Administer Amoxicillin  50 mg/kg/day in divided doses every  8 hours.",
                     "additionalInstruction": [
@@ -82,12 +82,12 @@ treatment_data = [
             },
             {
                 "drug": "drug2",
-                "form": "oral suspension",
+                "form": {"type": "liquid","divisible":  True},
                 "site": "mouth",
                 "route": "oral",
                 "method": "swallow",
                 "dose_strategy": {
-                    "calculation": "yes",
+                    "calculation": "bsa",
                     "sequence":  1,
                     "text": "Administer Amoxicillin  50 mg/kg/day in divided doses every  8 hours.",
                     "additionalInstruction": [
@@ -146,7 +146,7 @@ treatment_data = [
         "description": "bacterial infection treatment for adults",
         "eligibility": [
             {
-                "severity": {"CURB-65": "Low"},
+                "severity": "high",
                 "exclusion": ["allergy to cyclophosphamide"],
                 "patient_profile": {"age_range": {"min": 18, "max": 65}, "min_weight":  50},
             }
@@ -160,12 +160,12 @@ treatment_data = [
         "medication": [
             {
                 "drug": "Cyclophosphamide",
-                "form": "IV injection",
+                "form": {"type": "IV","divisible":  True},
                 "site": "vein",
                 "route": "intravenous",
                 "method": "inject",
                 "dose_strategy": {
-                    "calculation": "yes",
+                    "calculation": "weight",
                     "sequence":  1,
                     "text": "Administer Cyclophosphamide  750 mg/m^2 IV on Day  1 of each  28-day cycle.",
                     "additionalInstruction": [
@@ -224,7 +224,7 @@ treatment_data = [
         "description": "Used in lymphoma treatment cases",
         "eligibility": [
             {
-                "severity": {"CURB-65": "High"},
+                "severity": "high",
                 "exclusion": ["allergy to cyclophosphamide"],
                 "patient_profile": {"age_range": {"min": 1, "max": 17}, "min_weight":  2},
             }
@@ -238,12 +238,12 @@ treatment_data = [
         "medication": [
             {
                 "drug": "drug3",
-                "form": "IV injection",
+                "form": {"type": "tablet","divisible": True},
                 "site": "vein",
                 "route": "intravenous",
                 "method": "inject",
                 "dose_strategy": {
-                    "calculation": "yes",
+                    "calculation": "weight",
                     "sequence":  1,
                     "text": "Administer Cyclophosphamide  750 mg/m^2 IV on Day  1 of each  28-day cycle.",
                     "additionalInstruction": [
@@ -302,7 +302,7 @@ treatment_data = [
         "description": "Used in lymphoma treatment cases",
         "eligibility": [
             {
-                "severity": {"CURB-65": "High"},
+                "severity": "high",
                 "exclusion": ["allergy to cyclophosphamide"],
                 "patient_profile": {"age_range": {"min": 1, "max": 17}, "min_weight":  5},
             }
@@ -316,12 +316,12 @@ treatment_data = [
         "medication": [
             {
                 "drug": "drug4",
-                "form": "IV injection",
+                "form": {"type": "tablet","divisible":  False},
                 "site": "vein",
                 "route": "intravenous",
                 "method": "inject",
                 "dose_strategy": {
-                    "calculation": "yes",
+                    "calculation": "weight",
                     "sequence":  1,
                     "text": "Administer Cyclophosphamide  750 mg/m^2 IV on Day  1 of each  28-day cycle.",
                     "additionalInstruction": [
@@ -380,7 +380,7 @@ treatment_data = [
         "description": "Used in lymphoma treatment cases",
         "eligibility": [
             {
-                "severity": {"CURB-65": "High"},
+                "severity": "high",
                 "exclusion": ["allergy to cyclophosphamide"],
                 "patient_profile": {"age_range": {"min": 1, "max": 100}, "min_weight":  1},
             }
@@ -394,12 +394,12 @@ treatment_data = [
         "medication": [
             {
                 "drug": "drug5",
-                "form": "IV injection",
+                "form": {"type": "liquid","divisible": True},
                 "site": "vein",
                 "route": "intravenous",
                 "method": "inject",
                 "dose_strategy": {
-                    "calculation": "yes",
+                    "calculation": "bsa",
                     "sequence":  1,
                     "text": "Administer Cyclophosphamide  750 mg/m^2 IV on Day  1 of each  28-day cycle.",
                     "additionalInstruction": [
@@ -458,7 +458,7 @@ treatment_data = [
         "description": "Used in lymphoma treatment cases",
         "eligibility": [
             {
-                "severity": {"Pain": "Low"},
+                "severity": "low",
                 "exclusion": ["allergy to cyclophosphamide"],
                 "patient_profile": {"age_range": {"min": 18, "max": 65}, "min_weight":  40},
             }
@@ -472,12 +472,12 @@ treatment_data = [
         "medication": [
             {
                 "drug": "drug6",
-                "form": "IV injection",
+                "form": {"type": "tablet","divisible":  True},
                 "site": "vein",
                 "route": "intravenous",
                 "method": "inject",
                 "dose_strategy": {
-                    "calculation": "yes",
+                    "calculation": "weight",
                     "sequence":  1,
                     "text": "Administer Cyclophosphamide  750 mg/m^2 IV on Day  1 of each  28-day cycle.",
                     "additionalInstruction": [
@@ -536,7 +536,7 @@ treatment_data = [
         "description": "Used in lymphoma treatment cases",
         "eligibility": [
             {
-                "severity": {"Pain": "Low"},
+                "severity": "low",
                 "exclusion": ["allergy to cyclophosphamide"],
                 "patient_profile": {"age_range": {"min": 18, "max": 65}, "min_weight":  40},
             }
@@ -550,12 +550,12 @@ treatment_data = [
         "medication": [
             {
                 "drug": "drug7",
-                "form": "IV injection",
+                "form": {"type": "tablet","divisible":  True},
                 "site": "vein",
                 "route": "intravenous",
                 "method": "inject",
                 "dose_strategy": {
-                    "calculation": "yes",
+                    "calculation": "bsa",
                     "sequence":  1,
                     "text": "Administer Cyclophosphamide  750 mg/m^2 IV on Day  1 of each  28-day cycle.",
                     "additionalInstruction": [
@@ -614,7 +614,7 @@ treatment_data = [
         "description": "Used in lymphoma treatment cases",
         "eligibility": [
             {
-                "severity": {"Pain": "Low"},
+                "severity": "high",
                 "exclusion": ["allergy to cyclophosphamide"],
                 "patient_profile": {"age_range": {"min": 1, "max": 65}, "min_weight":  10},
             }
@@ -628,12 +628,12 @@ treatment_data = [
         "medication": [
             {
                 "drug": "drug8",
-                "form": "IV injection",
+                "form": {"type": "tablet","divisible":  False},
                 "site": "vein",
                 "route": "intravenous",
                 "method": "inject",
                 "dose_strategy": {
-                    "calculation": "yes",
+                    "calculation": "bsa",
                     "sequence":  1,
                     "text": "Administer Cyclophosphamide  750 mg/m^2 IV on Day  1 of each  28-day cycle.",
                     "additionalInstruction": [
@@ -692,7 +692,7 @@ treatment_data = [
         "description": "Used in lymphoma treatment cases",
         "eligibility": [
             {
-                "severity": {"Pain": "High"},
+                "severity": "high",
                 "exclusion": ["allergy to cyclophosphamide"],
                 "patient_profile": {"age_range": {"min": 1, "max": 65}, "min_weight":  10},
             }
@@ -706,12 +706,12 @@ treatment_data = [
         "medication": [
             {
                 "drug": "Cyclophosphamide",
-                "form": "IV injection",
+                "form": {"type": "tablet","divisible":  False},
                 "site": "vein",
                 "route": "intravenous",
                 "method": "inject",
                 "dose_strategy": {
-                    "calculation": "yes",
+                    "calculation": "bsa",
                     "sequence":  1,
                     "text": "Administer Cyclophosphamide  750 mg/m^2 IV on Day  1 of each  28-day cycle.",
                     "additionalInstruction": [
@@ -770,7 +770,7 @@ treatment_data = [
         "description": "Used in lymphoma treatment cases",
         "eligibility": [
             {
-                "severity": {"Pain": "High"},
+                "severity": "low",
                 "exclusion": ["allergy to cyclophosphamide"],
                 "patient_profile": {"age_range": {"min": 1, "max": 65}, "min_weight":  10},
             }
@@ -784,12 +784,12 @@ treatment_data = [
         "medication": [
             {
                 "drug": "Cyclophosphamide",
-                "form": "IV injection",
+                "form": {"type": "tablet","divisible": True},
                 "site": "vein",
                 "route": "intravenous",
                 "method": "inject",
                 "dose_strategy": {
-                    "calculation": "yes",
+                    "calculation": "bsa",
                     "sequence":  1,
                     "text": "Administer Cyclophosphamide  750 mg/m^2 IV on Day  1 of each  28-day cycle.",
                     "additionalInstruction": [
@@ -826,7 +826,7 @@ treatment_data = [
                     ],
                     "maxDosePerPeriod": {
                         "numerator": {
-                            "value":  750,
+                            "value":  70000,
                             "unit": "mg",
                             "system": "http://unitsofmeasure.org",
                             "code": "mg"
