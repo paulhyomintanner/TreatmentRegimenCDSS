@@ -1,7 +1,7 @@
 from tinydb import TinyDB
 from typing import List, Dict
 
-dosing_db = TinyDB('menu_db.json')
+menuTinyDB = TinyDB('menuTinyDB.json')
 
 treatment_data = [
     {
@@ -146,7 +146,7 @@ treatment_data = [
         "description": "bacterial infection treatment for adults",
         "eligibility": [
             {
-                "severity": {"CURB65": "High"},v
+                "severity": {"CURB65": "High"},
                 "exclusion": ["allergy to cyclophosphamide"],
                 "patient_profile": {"age_range": {"min": 18, "max": 65}, "min_weight":  50},
             }
@@ -688,7 +688,7 @@ treatment_data = [
     },
     {
         "treatment_id": "I",
-        "disease": "drug9",
+        "disease": "DiseaseC",
         "description": "Used in lymphoma treatment cases",
         "eligibility": [
             {
@@ -847,7 +847,7 @@ treatment_data = [
 
 
 
-dosing_db.insert_multiple(treatment_data)
-dosing_db.close()
+menuTinyDB.insert_multiple(treatment_data)
+menuTinyDB.close()
 
 
