@@ -10,9 +10,14 @@ treatment_data = [
         "description": "Used in pediatric bacterial infection cases",
         "eligibility": [
             {
+                "strategy": "basic" *the data trategy will change the way the user can input the actual data. SO basic will be below. CQL will be text field.
                 "severity": {"CURB65": "High"},
                 "exclusion": ["penicillin", "dysphagia"],
                 "patient_profile": {"age_range": {"min": 18, "max": 65}, "min_weight":  45}
+            },            
+            {
+                "strategy": "human" *the data trategy will change the way the user can input the actual data. SO basic will be below. CQL will be text field.
+                "text": "only for age between 18 and 65 and weight greater than 45, with no penicillin or dysphagia and severity of CURB65-high",              
             }
         ],
         "rank": [
@@ -29,7 +34,7 @@ treatment_data = [
                 "route": "oral",
                 "method": "swallow",
                 "dose_strategy": {
-                    "calculation": "weight",
+                    "strategy": "weight",
                     "sequence":  1,
                     "text": "Administer Amoxicillin  50 mg/kg/day in divided doses every  8 hours.",
                     "additionalInstruction": [
@@ -146,7 +151,7 @@ treatment_data = [
         "description": "bacterial infection treatment for adults",
         "eligibility": [
             {
-                "severity": {"CURB65": "High"},v
+                "severity": {"CURB65": "High"},
                 "exclusion": ["allergy to cyclophosphamide"],
                 "patient_profile": {"age_range": {"min": 18, "max": 65}, "min_weight":  50},
             }
