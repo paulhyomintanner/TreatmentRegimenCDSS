@@ -148,6 +148,10 @@ class App(ctk.CTk):
     def filter_by_disease(self, treatments, disease):
         return [treatment for treatment in treatments if treatment['disease'] == disease]
 
+    def rank_treatments(self, treatments, preferred_cpg):
+        return sorted(treatments, key=lambda x: x['rank'][0][preferred_cpg])
+    
+    
     def retrieve_treatments(self):
         user_diseases = {disease_info["disease"] for disease_info in self.user_data["diseases"]}
         candidate_treatments = []
@@ -155,7 +159,11 @@ class App(ctk.CTk):
         for user_disease in user_diseases:
             treatments = self.data['_default'].values()
             disease_treatments = self.filter_by_disease(treatments, user_disease)
-            candidate_treatments.extend(disease_treatments)
+            preferred_cpg = self.user_data["cpg"]
+            ranked_treatments = self.rank_treatments(disease_treatments, preferred_cpg)
+            if ranked_treatments:  
+                top_treatment = ranked_treatments[0]  
+                candidate_treatments.append(top_treatment)
 
         self.display_textbox.configure(state=tk.NORMAL)
         self.display_textbox.delete('1.0', tk.END)
@@ -163,7 +171,6 @@ class App(ctk.CTk):
             treatment_text = f"Treatment for {treatment['disease']}: treatment_id: {treatment['treatment_id']}\n"
             self.display_textbox.insert(tk.END, treatment_text)
         self.display_textbox.configure(state=tk.DISABLED)
-
 
 if __name__ == "__main__":
     app = App()
