@@ -100,6 +100,7 @@ class App(ctk.CTk):
 
         self.display_textbox = ctk.CTkTextbox(master=self)
         self.display_textbox.grid(row=0, column=2, columnspan=2, rowspan=14, padx=10, pady=10, sticky="nsew")
+        self.display_textbox.configure(state=tk.DISABLED)
 
         self.submit_button = ctk.CTkButton(master=self, text="Submit disease", command=self.submit_disease)
         self.submit_button.grid(row=14, column=0, columnspan=2, padx=10, pady=10, sticky="ew")
@@ -110,7 +111,6 @@ class App(ctk.CTk):
 
     def update_severity_dropdown(self, selected_disease):
         severities = self.disease_to_severity.get(selected_disease, [])
-        # Delete the old severity dropdown and create a new one with the updated values
         self.severity_dropdown.destroy()
         self.severity_dropdown = ctk.CTkOptionMenu(master=self, variable=self.severity_var, values=severities)
         self.severity_dropdown.grid(row=11, column=1, padx=10, pady=5)
@@ -130,7 +130,6 @@ class App(ctk.CTk):
     def submit_disease(self):
         disease = self.disease_dropdown.get()
         severity = self.severity_var.get()  # Use severity_var to get the current severity value
-        # Update to include severity value correctly
         self.user_data["diseases"].append({"disease": disease, "severity": severity})
         print(self.user_data)  # This will now show the updated diseases list with severities
 
@@ -144,10 +143,28 @@ class App(ctk.CTk):
         })
         print(self.user_data)  # For verification
 
+        self.retrieve_treatments()
+
+    def filter_by_disease(self, treatments, disease):
+        return [treatment for treatment in treatments if treatment['disease'] == disease]
+
+    def retrieve_treatments(self):
+        user_diseases = {disease_info["disease"] for disease_info in self.user_data["diseases"]}
+        candidate_treatments = []
+
+        for user_disease in user_diseases:
+            treatments = self.data['_default'].values()
+            disease_treatments = self.filter_by_disease(treatments, user_disease)
+            candidate_treatments.extend(disease_treatments)
+
+        self.display_textbox.configure(state=tk.NORMAL)
+        self.display_textbox.delete('1.0', tk.END)
+        for treatment in candidate_treatments:
+            treatment_text = f"Treatment for {treatment['disease']}: treatment_id: {treatment['treatment_id']}\n"
+            self.display_textbox.insert(tk.END, treatment_text)
+        self.display_textbox.configure(state=tk.DISABLED)
+
 
 if __name__ == "__main__":
     app = App()
     app.mainloop()
-
-
-
