@@ -2,7 +2,6 @@ import customtkinter as ctk
 import tkinter as tk
 import json
 
-# Set appearance and color theme
 ctk.set_appearance_mode("Dark")
 ctk.set_default_color_theme("dark-blue")
 
@@ -12,7 +11,6 @@ class Data:
         self.rules = self.load_superseding_rules()
         
     def load_data(self):
-        # Ensure the filename matches the file's actual location and name
         with open('menuTinyDB.json') as f:
             data = json.load(f)
         return data
@@ -57,7 +55,6 @@ class App(ctk.CTk):
         self.title("Small Example App")
         self.minsize(300, 200)
 
-        # create 2x2 grid system
         self.grid_rowconfigure(list(range(15)), weight=1)
         self.grid_columnconfigure((0, 1, 2, 3), weight=1)
 
@@ -123,15 +120,15 @@ class App(ctk.CTk):
     def get_exclusions(self):
         selected_exclusions = []
         for exclusion, checkbox in self.exclusion_checkboxes.items():
-            if checkbox.get() == 1:  # Adjusted for customtkinter
+            if checkbox.get() == 1: 
                 selected_exclusions.append(exclusion)
         return selected_exclusions
 
     def submit_disease(self):
         disease = self.disease_dropdown.get()
-        severity = self.severity_var.get()  # Use severity_var to get the current severity value
+        severity = self.severity_var.get()  
         self.user_data["diseases"].append({"disease": disease, "severity": severity})
-        print(self.user_data)  # This will now show the updated diseases list with severities
+        print(self.user_data)  
 
     def button_callback(self):
         self.user_data.update({
@@ -141,7 +138,7 @@ class App(ctk.CTk):
             "exclusions": self.get_exclusions(),
             "cpg": self.cpg_dropdown.get()
         })
-        print(self.user_data)  # For verification
+        print(self.user_data)  
 
         self.retrieve_treatments()
 
