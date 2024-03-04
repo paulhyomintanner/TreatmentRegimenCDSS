@@ -48,8 +48,7 @@ class App(ctk.CTk):
         "height": None,
         "age": None, 
         "cpg": None,
-        "diseases": [],
-        "exclusions": []
+        "diseases": []
     }
 
         self.geometry("1000x700")
@@ -98,7 +97,6 @@ class App(ctk.CTk):
 
         self.medication_entry = ctk.CTkEntry(master=self, placeholder_text="Current medication")
         self.medication_entry.grid(row=12, column=0, padx=10, pady=10, sticky="ew")
-        self.medication_entry.bind("<Return>")
 
         self.display_textbox = ctk.CTkTextbox(master=self)
         self.display_textbox.grid(row=0, column=2, columnspan=2, rowspan=8, padx=10, pady=10, sticky="nsew")
@@ -147,6 +145,10 @@ class App(ctk.CTk):
                 selected_exclusions.append(exclusion)
         return selected_exclusions
 
+    def get_medications(self):
+        medications = [medication.strip() for medication in self.medication_entry.get().split(',') if medication.strip()]
+        self.user_data['medications'] = medications
+
     def submit_disease(self):
         disease = self.disease_dropdown.get()
         severity = self.severity_var.get()  
@@ -154,12 +156,13 @@ class App(ctk.CTk):
         print(self.user_data)  
 
     def button_callback(self):
+        self.get_medications()
         self.user_data.update({
             "weight": self.weight_entry.get(),
             "height": self.height_entry.get(),
             "age": self.age_entry.get(),
             "exclusions": self.get_exclusions(),
-            "cpg": self.cpg_dropdown.get()
+            "cpg": self.cpg_dropdown.get(),
         })
         print(self.user_data)  
 
