@@ -41,6 +41,7 @@ class App(ctk.CTk):
         self.data = data_instance.data
         self.rules = data_instance.rules
         self.disease_to_severity = data_instance.map_disease_to_severity()
+        self.rejected_treatments = []
         
         self.user_data = {
         "weight": None,
@@ -95,6 +96,10 @@ class App(ctk.CTk):
         self.severity_dropdown = ctk.CTkOptionMenu(master=self, variable=self.severity_var, values=[])
         self.severity_dropdown.grid(row=11, column=1, padx=10, pady=5)
 
+        self.medication_entry = ctk.CTkEntry(master=self, placeholder_text="Current medication")
+        self.medication_entry.grid(row=12, column=0, padx=10, pady=10, sticky="ew")
+        self.medication_entry.bind("<Return>")
+
         self.display_textbox = ctk.CTkTextbox(master=self)
         self.display_textbox.grid(row=0, column=2, columnspan=2, rowspan=8, padx=10, pady=10, sticky="nsew")
         self.display_textbox.configure(state=tk.DISABLED)
@@ -107,21 +112,23 @@ class App(ctk.CTk):
 
         self.confirm_treatment_button = ctk.CTkButton(master=self, text="Confirm Treatment", command=self.confirm_treatment)
         self.confirm_treatment_button.grid(row=11, column=2, columnspan=1, padx=10, pady=10, sticky="ew")
-        
+        self.confirm_treatment_button.grid_remove()
+
         self.reject_treatment_entry = ctk.CTkEntry(master=self, placeholder_text="Enter treatment ID(s) to reject")
-        self.reject_treatment_entry.grid(row=12, column=3, columnspan=1, padx=10, pady=10, sticky="ew")
-        self.reject_treatment_entry.grid_remove()  
+        self.reject_treatment_entry.grid(row=11, column=3, columnspan=1, padx=10, pady=10, sticky="ew")
+        self.reject_treatment_entry.bind("<Return>", self.handle_rejection)
+        self.reject_treatment_entry.grid_remove()
 
-        self.reject_treatment_button = ctk.CTkButton(master=self, text="Reject Treatment", command=self.reject_treatment)
-        self.reject_treatment_button.grid(row=11, column=3, columnspan=1, padx=10, pady=10, sticky="ew")
 
-    def reject_treatment(self):
-        self.reject_treatment_entry.grid()  
+    def handle_rejection(self,event):
+        rejected_ids = self.reject_treatment_entry.get().split(',')  
+        self.user_data['exclusions'].extend(rejected_ids)  
+        self.rejected_treatments.extend(rejected_ids) 
+        self.reject_treatment_entry.delete(0, tk.END)
+        self.retrieve_treatments() 
 
     def confirm_treatment(self):
         pass
-
-
 
     def update_severity_dropdown(self, selected_disease):
         severities = self.disease_to_severity.get(selected_disease, [])
@@ -193,29 +200,32 @@ class App(ctk.CTk):
         superseding_rules = self.rules["_default"]
         recommended_treatments = {}
 
-        # Map each disease to its current treatment ID for easier lookup
-        disease_to_treatment_id = {disease: treatment.get('treatment_id') for disease, treatment in candidate_treatments.items()}
+        treatment_to_diseases = {}
+        for disease, treatment in candidate_treatments.items():
+            treatment_id = treatment.get('treatment_id')
+            if treatment_id not in treatment_to_diseases:
+                treatment_to_diseases[treatment_id] = [disease]
+            else:
+                treatment_to_diseases[treatment_id].append(disease)
 
         for rule in superseding_rules.values():
             pair = rule["pair"]
             superseding_id = rule["superseding_id"]
             
-            # Determine if both treatments in the pair are candidate treatments
-            if all(disease_to_treatment_id.get(disease) in pair for disease in candidate_treatments):
-                # Identify the diseases associated with treatments in the pair
-                for disease, treatment_id in disease_to_treatment_id.items():
-                    if treatment_id in pair:
-                        # If the current treatment is not the superseding one, remove or replace it
-                        if treatment_id != superseding_id:
-                            if treatment_id == candidate_treatments[disease].get('treatment_id'):
-                                # Replace with superseding treatment if available, or remove
-                                if any(t.get('treatment_id') == superseding_id for t in candidate_treatments.values()):
-                                    recommended_treatments[disease] = next(t for t in candidate_treatments.values() if t.get('treatment_id') == superseding_id)
-                        else:
-                            recommended_treatments[disease] = candidate_treatments[disease]
+            if all(treatment_id in treatment_to_diseases for treatment_id in pair):
+                for treatment_id in pair:
+                    for disease in treatment_to_diseases.get(treatment_id, []):
+                        recommended_treatments[disease] = next((t for t in candidate_treatments.values() if t.get('treatment_id') == superseding_id), candidate_treatments[disease])
             else:
-                for disease in candidate_treatments:
-                    recommended_treatments[disease] = candidate_treatments[disease]
+                for treatment_id in pair:
+                    diseases = treatment_to_diseases.get(treatment_id, [])
+                    for disease in diseases:
+                        if disease not in recommended_treatments:  
+                            recommended_treatments[disease] = candidate_treatments[disease]
+
+        for disease in candidate_treatments:
+            if disease not in recommended_treatments:
+                recommended_treatments[disease] = candidate_treatments[disease]
 
         return recommended_treatments
 
@@ -231,6 +241,7 @@ class App(ctk.CTk):
             severity_filtered_treatments = self.filter_treatments_by_severity(disease_treatments, user_severity)
             patient_eligibility_treatments = self.filter_patient_profile(severity_filtered_treatments, int(self.user_data["age"]), int(self.user_data["weight"]))
             exclusion_filtered_treatments = self.filter_by_exclusions(patient_eligibility_treatments, self.user_data["exclusions"])
+            exclusion_filtered_treatments = [treatment for treatment in exclusion_filtered_treatments if treatment['treatment_id'] not in self.rejected_treatments]
             preferred_cpg = self.user_data["cpg"]
             ranked_treatments = self.rank_treatments(exclusion_filtered_treatments, preferred_cpg)
             if ranked_treatments:  
@@ -238,9 +249,8 @@ class App(ctk.CTk):
                 candidate_treatments[user_disease] = top_treatment
             else:
                 candidate_treatments[user_disease] = {"For Disease": user_disease, "Message": "No treatments found according to specified parameters."}
-
+        
         recommended_treatments = self.apply_superseding_rules(candidate_treatments)
-
 
         self.display_textbox.configure(state=tk.NORMAL)
         self.display_textbox.delete('1.0', tk.END)
@@ -251,6 +261,11 @@ class App(ctk.CTk):
                 treatment_text = f"{treatment['For Disease']}: {treatment['Message']}\n"
             self.display_textbox.insert(tk.END, treatment_text)
         self.display_textbox.configure(state=tk.DISABLED)
+
+        self.confirm_treatment_button.grid()
+        self.reject_treatment_entry.grid()
+
+
 
 
 
