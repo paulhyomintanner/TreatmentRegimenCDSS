@@ -218,7 +218,7 @@ class TreatmentApp:
         self.setup_page_two()
         self.retrieve_treatments()  
 
-    def rules(self, candidate_treatments):
+    def rules(self, candidate_treatments, ):
         superseding_rules = self.load_superseding_rules()
         recommended_treatments = {}
         for disease, treatment in candidate_treatments.items():

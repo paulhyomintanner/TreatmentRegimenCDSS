@@ -18,7 +18,7 @@ class Data:
     def load_superseding_rules(self):
         with open('superseding_rules_db.json') as f:
             rules = json.load(f)
-        return rules["_default"]
+        return rules
 
     def map_disease_to_severity(self):
         disease_to_severity = {}
@@ -39,6 +39,7 @@ class App(ctk.CTk):
         super().__init__()
         data_instance = Data()
         self.data = data_instance.data
+        self.rules = data_instance.rules
         self.disease_to_severity = data_instance.map_disease_to_severity()
         
         self.user_data = {
@@ -122,9 +123,6 @@ class App(ctk.CTk):
 
 
 
-
-
-
     def update_severity_dropdown(self, selected_disease):
         severities = self.disease_to_severity.get(selected_disease, [])
         self.severity_dropdown.destroy()
@@ -134,7 +132,6 @@ class App(ctk.CTk):
             self.severity_var.set(severities[0])
         else:
             self.severity_var.set('')
-
 
     def get_exclusions(self):
         selected_exclusions = []
@@ -192,10 +189,39 @@ class App(ctk.CTk):
             if eligibility['patient_profile']['age_range']['min'] <= age_entry <= eligibility['patient_profile']['age_range']['max'] 
             and weight_entry >= eligibility['patient_profile']['min_weight']]
     
+    def apply_superseding_rules(self, candidate_treatments):
+        superseding_rules = self.rules["_default"]
+        recommended_treatments = {}
+
+        # Map each disease to its current treatment ID for easier lookup
+        disease_to_treatment_id = {disease: treatment.get('treatment_id') for disease, treatment in candidate_treatments.items()}
+
+        for rule in superseding_rules.values():
+            pair = rule["pair"]
+            superseding_id = rule["superseding_id"]
+            
+            # Determine if both treatments in the pair are candidate treatments
+            if all(disease_to_treatment_id.get(disease) in pair for disease in candidate_treatments):
+                # Identify the diseases associated with treatments in the pair
+                for disease, treatment_id in disease_to_treatment_id.items():
+                    if treatment_id in pair:
+                        # If the current treatment is not the superseding one, remove or replace it
+                        if treatment_id != superseding_id:
+                            if treatment_id == candidate_treatments[disease].get('treatment_id'):
+                                # Replace with superseding treatment if available, or remove
+                                if any(t.get('treatment_id') == superseding_id for t in candidate_treatments.values()):
+                                    recommended_treatments[disease] = next(t for t in candidate_treatments.values() if t.get('treatment_id') == superseding_id)
+                        else:
+                            recommended_treatments[disease] = candidate_treatments[disease]
+            else:
+                for disease in candidate_treatments:
+                    recommended_treatments[disease] = candidate_treatments[disease]
+
+        return recommended_treatments
 
     def retrieve_treatments(self):
         user_diseases = self.user_data["diseases"]
-        candidate_treatments = []
+        candidate_treatments = {}
 
         for disease_info in user_diseases:
             user_disease = disease_info["disease"]
@@ -207,26 +233,24 @@ class App(ctk.CTk):
             exclusion_filtered_treatments = self.filter_by_exclusions(patient_eligibility_treatments, self.user_data["exclusions"])
             preferred_cpg = self.user_data["cpg"]
             ranked_treatments = self.rank_treatments(exclusion_filtered_treatments, preferred_cpg)
-
             if ranked_treatments:  
                 top_treatment = ranked_treatments[0]  
-                candidate_treatments.append(top_treatment)
+                candidate_treatments[user_disease] = top_treatment
             else:
-                candidate_treatments.append({"For Disease": user_disease, "Message": "No treatments found according to specified parameters."})
-        
+                candidate_treatments[user_disease] = {"For Disease": user_disease, "Message": "No treatments found according to specified parameters."}
+
+        recommended_treatments = self.apply_superseding_rules(candidate_treatments)
+
+
         self.display_textbox.configure(state=tk.NORMAL)
         self.display_textbox.delete('1.0', tk.END)
-        for treatment in candidate_treatments:
+        for disease, treatment in recommended_treatments.items():
             if 'disease' in treatment and 'treatment_id' in treatment:
-                treatment_text = f"Treatment for {treatment['disease']}: treatment_id: {treatment['treatment_id']}\n"
+                treatment_text = f"Treatment for {disease}: treatment_id: {treatment['treatment_id']}\n"
             else:
                 treatment_text = f"{treatment['For Disease']}: {treatment['Message']}\n"
             self.display_textbox.insert(tk.END, treatment_text)
         self.display_textbox.configure(state=tk.DISABLED)
-
-
-
-
 
 
 
