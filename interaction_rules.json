@@ -1,18 +1,39 @@
 [
-  {
-    "rule_name": "interaction_drugA_drugB",
-    "conditions": {
-      "drug1": "DrugA",
-      "drug2": "DrugB"
-    },
-    "action": "Warning: DrugA may interact with DrugB. Consult healthcare provider."
-  },
-  {
-    "rule_name": "interaction_drugC_drugD",
-    "conditions": {
-      "drug1": "DrugC",
-      "drug2": "DrugD"
-    },
-    "action": "Warning: DrugC may interact with DrugD. Monitor for adverse effects."
-  }
-]
+    {
+       "conditions": {
+         "all": [
+           {
+             "fact": "user_data.condition",
+             "operator": "equal",
+             "value": "high_blood_pressure"
+           },
+           {
+             "fact": "medication",
+             "operator": "in",
+             "value": ["medication1", "medication2"]
+           },
+           {
+             "any": [
+               {
+                 "fact": "user_data.age",
+                 "operator": "greaterThanInclusive",
+                 "value": 65
+               },
+               {
+                 "fact": "user_data.age",
+                 "operator": "lessThan",
+                 "value": 30
+               }
+             ]
+           }
+         ]
+       },
+       "event": {
+         "type": "warning",
+         "params": {
+           "message": "Warning: High blood pressure detected with medication1 or medication2, and the patient's age is either above 65 or below 30."
+         }
+       }
+    }
+   ]
+   
