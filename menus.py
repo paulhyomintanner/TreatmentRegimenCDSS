@@ -98,6 +98,9 @@ class App(ctk.CTk):
         self.medication_entry = ctk.CTkEntry(master=self, placeholder_text="Current medication")
         self.medication_entry.grid(row=12, column=0, padx=10, pady=10, sticky="ew")
 
+        self.pre_existing_conditions_entry = ctk.CTkEntry(master=self, placeholder_text="Pre-existing conditions")
+        self.pre_existing_conditions_entry.grid(row=13, column=0, padx=10, pady=10, sticky="ew")
+
         self.display_textbox = ctk.CTkTextbox(master=self)
         self.display_textbox.grid(row=0, column=2, columnspan=2, rowspan=8, padx=10, pady=10, sticky="nsew")
         self.display_textbox.configure(state=tk.DISABLED)
@@ -149,6 +152,10 @@ class App(ctk.CTk):
         medications = [medication.strip() for medication in self.medication_entry.get().split(',') if medication.strip()]
         self.user_data['medications'] = medications
 
+    def get_pre_existing_conditions(self):
+        pre_existing_conditions = [condition.strip() for condition in self.pre_existing_conditions_entry.get().split(',') if condition.strip()]
+        self.user_data['pre_existing_conditions'] = pre_existing_conditions
+
     def submit_disease(self):
         disease = self.disease_dropdown.get()
         severity = self.severity_var.get()  
@@ -157,6 +164,7 @@ class App(ctk.CTk):
 
     def button_callback(self):
         self.get_medications()
+        self.get_pre_existing_conditions()
         self.user_data.update({
             "weight": self.weight_entry.get(),
             "height": self.height_entry.get(),
@@ -268,8 +276,7 @@ class App(ctk.CTk):
         self.confirm_treatment_button.grid()
         self.reject_treatment_entry.grid()
 
-
-
+        return recommended_treatments    
 
 
 if __name__ == "__main__":

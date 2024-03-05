@@ -1,0 +1,18 @@
+[
+  {
+    "rule_name": "interaction_drugA_drugB",
+    "conditions": {
+      "drug1": "DrugA",
+      "drug2": "DrugB"
+    },
+    "action": "Warning: DrugA may interact with DrugB. Consult healthcare provider."
+  },
+  {
+    "rule_name": "interaction_drugC_drugD",
+    "conditions": {
+      "drug1": "DrugC",
+      "drug2": "DrugD"
+    },
+    "action": "Warning: DrugC may interact with DrugD. Monitor for adverse effects."
+  }
+]
