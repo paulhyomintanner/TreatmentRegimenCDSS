@@ -122,7 +122,6 @@ class App(ctk.CTk):
         self.reject_treatment_entry.grid_remove()
 
 
-
     def handle_rejection(self,event):
         rejected_ids = self.reject_treatment_entry.get().split(',')  
         self.user_data['exclusions'].extend(rejected_ids)  
@@ -132,35 +131,35 @@ class App(ctk.CTk):
 
 
     def confirm_treatment(self):
+        confirmed_treatments = {}
+        self.display_textbox.configure(state='normal')
         for disease, treatment in self.recommended_treatments.items():
+            self.display_textbox.insert('end', f"Disease: {disease}\nTreatment ID: {treatment['treatment_id']}\nDescription: {treatment['description']}\n")
             for medication in treatment.get('medication', []):
                 strategy = medication.get('dose_strategy', {}).get('strategy')
-                frequency = medication.get('dose_strategy', {}).get('timing', {}).get('repeat', {}).get('frequency', 1)  # Defaulting to 1 if not specified
-                
-                if strategy == "weight":
-                    dose = self.calculate_dose_based_on_weight(self.user_data['weight'], medication['dose_strategy']['doseAndRate'][0]['doseQuantity']['value'])
-                elif strategy == "bsa":
-                    bsa = self.calculate_bsa(self.user_data['height'], self.user_data['weight'])
-                    dose = self.calculate_dose_based_on_bsa(bsa, medication['dose_strategy']['doseAndRate'][0]['doseQuantity']['value'])
-                else:
-                    dose = "Strategy not provided or applicable"  
+                frequency = medication.get('dose_strategy', {}).get('timing', {}).get('repeat', {}).get('frequency', 1)
+                dose_info_text = f"Strategy: {strategy}\n"
 
-                max_dose = medication.get('dose_strategy', {}).get('maxDosePerPeriod', {}).get('numerator', {}).get('value', float('inf'))
-                dose = min(dose, max_dose)
-                
-                # Calculate dose per administration
-                if isinstance(dose, (int, float)):  
-                    dose_per_administration = self.calculate_dose_per_administration(dose, frequency)
-                else:
-                    dose_per_administration = "Cannot calculate without valid dose"
+                if strategy in ["weight", "bsa"]:
+                    if strategy == "weight":
+                        dose = self.calculate_dose_based_on_weight(self.user_data['weight'], medication['dose_strategy']['doseAndRate'][0]['doseQuantity']['value'])
+                    elif strategy == "bsa":
+                        bsa = self.calculate_bsa(self.user_data['height'], self.user_data['weight'])
+                        dose = self.calculate_dose_based_on_bsa(bsa, medication['dose_strategy']['doseAndRate'][0]['doseQuantity']['value'])
 
-                # Display the information with dose per administration
-                self.display_textbox.configure(state='normal')
-                self.display_textbox.insert('end', f"Disease: {disease}\nMedication: {medication['drug']}\nStrategy: {strategy}\nCalculated Total Dose: {dose}\nDose per Administration: {dose_per_administration}\n\n")
-                self.display_textbox.configure(state='disabled')
+                    max_dose = medication.get('dose_strategy', {}).get('maxDosePerPeriod', {}).get('numerator', {}).get('value', float('inf'))
+                    dose = min(dose, max_dose)
+                    dose_per_administration = self.calculate_dose_per_administration(dose, frequency) if isinstance(dose, (int, float)) else "N/A"
+                    dose_info_text += f"Calculated Dose: {dose}\nDose per Administration: {dose_per_administration}\n"
 
+                self.display_textbox.insert(
+                    'end',
+                    f"Medication: {medication['drug']}\nForm: {medication['form']['type']}\nSite: {medication['site']}\nRoute: {medication['route']}\nMethod: {medication['method']}\n{dose_info_text}Instruction: {medication['dose_strategy']['text']}\nPatient Instruction: {medication['dose_strategy']['patientInstruction']}\nMax Dose: {medication['dose_strategy']['maxDosePerPeriod']['numerator']['value']} {medication['dose_strategy']['maxDosePerPeriod']['numerator']['unit']} per {medication['dose_strategy']['maxDosePerPeriod']['denominator']['value']} {medication['dose_strategy']['maxDosePerPeriod']['denominator']['unit']}\n\n")
 
+        self.display_textbox.configure(state='disabled')
+        return confirmed_treatments
 
+ 
     def calculate_bsa(self, height, weight):    
         return math.sqrt((height * weight) / 3600)
 
@@ -177,9 +176,6 @@ class App(ctk.CTk):
 
     def calculate_dose_per_administration(self, dose, frequency):
         return dose / frequency
-
-
-
 
 
     def update_severity_dropdown(self, selected_disease):
