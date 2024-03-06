@@ -136,25 +136,26 @@ class App(ctk.CTk):
         for disease, treatment in self.recommended_treatments.items():
             self.display_textbox.insert('end', f"Disease: {disease}\nTreatment ID: {treatment['treatment_id']}\nDescription: {treatment['description']}\n")
             for medication in treatment.get('medication', []):
-                strategy = medication.get('dose_strategy', {}).get('strategy')
-                frequency = medication.get('dose_strategy', {}).get('timing', {}).get('repeat', {}).get('frequency', 1)
-                dose_info_text = f"Strategy: {strategy}\n"
+                for dose_strategy in medication.get('dose_strategy', []):
+                    strategy = dose_strategy.get('strategy')
+                    frequency = dose_strategy.get('timing', {}).get('repeat', {}).get('frequency', 1)
+                    dose_info_text = f"Strategy: {strategy}\n"
 
-                if strategy in ["weight", "bsa"]:
-                    if strategy == "weight":
-                        dose = self.calculate_dose_based_on_weight(self.user_data['weight'], medication['dose_strategy']['doseAndRate'][0]['doseQuantity']['value'])
-                    elif strategy == "bsa":
-                        bsa = self.calculate_bsa(self.user_data['height'], self.user_data['weight'])
-                        dose = self.calculate_dose_based_on_bsa(bsa, medication['dose_strategy']['doseAndRate'][0]['doseQuantity']['value'])
+                    if strategy in ["weight", "bsa"]:
+                        if strategy == "weight":
+                            dose = self.calculate_dose_based_on_weight(self.user_data['weight'], dose_strategy['doseAndRate'][0]['doseQuantity']['value'])
+                        elif strategy == "bsa":
+                            bsa = self.calculate_bsa(self.user_data['height'], self.user_data['weight'])
+                            dose = self.calculate_dose_based_on_bsa(bsa, dose_strategy['doseAndRate'][0]['doseQuantity']['value'])
 
-                    max_dose = medication.get('dose_strategy', {}).get('maxDosePerPeriod', {}).get('numerator', {}).get('value', float('inf'))
-                    dose = min(dose, max_dose)
-                    dose_per_administration = self.calculate_dose_per_administration(dose, frequency) if isinstance(dose, (int, float)) else "N/A"
-                    dose_info_text += f"Calculated Dose: {dose}\nDose per Administration: {dose_per_administration}\n"
+                        max_dose = dose_strategy.get('maxDosePerPeriod', {}).get('numerator', {}).get('value', float('inf'))
+                        dose = min(dose, max_dose)
+                        dose_per_administration = self.calculate_dose_per_administration(dose, frequency) if isinstance(dose, (int, float)) else "N/A"
+                        dose_info_text += f"Calculated Dose: {dose}\nDose per Administration: {dose_per_administration}\n"
 
-                self.display_textbox.insert(
-                    'end',
-                    f"Medication: {medication['drug']}\nForm: {medication['form']['type']}\nSite: {medication['site']}\nRoute: {medication['route']}\nMethod: {medication['method']}\n{dose_info_text}Instruction: {medication['dose_strategy']['text']}\nPatient Instruction: {medication['dose_strategy']['patientInstruction']}\nMax Dose: {medication['dose_strategy']['maxDosePerPeriod']['numerator']['value']} {medication['dose_strategy']['maxDosePerPeriod']['numerator']['unit']} per {medication['dose_strategy']['maxDosePerPeriod']['denominator']['value']} {medication['dose_strategy']['maxDosePerPeriod']['denominator']['unit']}\n\n")
+                    self.display_textbox.insert(
+                        'end',
+                        f"Medication: {medication['drug']}\nForm: {medication['form']['type']}\nSite: {medication['site']}\nRoute: {medication['route']}\nMethod: {medication['method']}\n{dose_info_text}Instruction: {dose_strategy['text']}\nPatient Instruction: {dose_strategy['patientInstruction']}\nMax Dose: {dose_strategy['maxDosePerPeriod']['numerator']['value']} {dose_strategy['maxDosePerPeriod']['numerator']['unit']} per {dose_strategy['maxDosePerPeriod']['denominator']['value']} {dose_strategy['maxDosePerPeriod']['denominator']['unit']}\n\n")
 
         self.display_textbox.configure(state='disabled')
         return confirmed_treatments
