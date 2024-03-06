@@ -43,6 +43,8 @@ class App(ctk.CTk):
         self.rules = data_instance.rules
         self.disease_to_severity = data_instance.map_disease_to_severity()
         self.rejected_treatments = []
+        self.strategy_checkboxes = {}
+
         
         self.user_data = {
         "weight": None,
@@ -54,10 +56,13 @@ class App(ctk.CTk):
 
         self.geometry("1000x700")
         self.title("Small Example App")
-        self.minsize(400, 300)
+        self.minsize(300, 200)
 
         self.grid_rowconfigure(list(range(15)), weight=1)
         self.grid_columnconfigure((0, 1, 2, 3), weight=1)
+
+        self.frame = ctk.CTkScrollableFrame(master=self)
+        self.frame.grid(row=12, rowspan=3, column=2, columnspan=2, padx=10, pady=10, sticky="nsew")
 
         # Inputs for the UI
         cpgs = list(set(cpg for treatment in self.data['_default'].values() for cpg in treatment['rank'][0]))
@@ -97,56 +102,37 @@ class App(ctk.CTk):
         self.severity_dropdown.grid(row=11, column=1, padx=10, pady=5)
 
         self.medication_entry = ctk.CTkEntry(master=self, placeholder_text="Current medication")
-        self.medication_entry.grid(row=5, column=1, padx=10, pady=10, sticky="ew")
+        self.medication_entry.grid(row=0, column=1, padx=10, pady=10, sticky="ew")
 
         self.pre_existing_conditions_entry = ctk.CTkEntry(master=self, placeholder_text="Pre-existing conditions")
-        self.pre_existing_conditions_entry.grid(row=6, column=1, padx=10, pady=10, sticky="ew")
+        self.pre_existing_conditions_entry.grid(row=1, column=1, padx=10, pady=10, sticky="ew")
 
         self.display_textbox = ctk.CTkTextbox(master=self)
-        self.display_textbox.grid(row=0, column=2, columnspan=2, rowspan=8, padx=10, pady=10, sticky="nsew")
+        self.display_textbox.grid(row=0, column=2, columnspan=2, rowspan=7, padx=10, pady=5, sticky="nsew")
         self.display_textbox.configure(state=tk.DISABLED)
 
-        self.submit_button = ctk.CTkButton(master=self, text="Submit disease", command=self.submit_disease)
+        self.submit_button = ctk.CTkButton(master=self, text="Submit disease (click for each disease)", command=self.submit_disease)
         self.submit_button.grid(row=14, column=0, columnspan=2, padx=10, pady=10, sticky="ew")
         
-        self.button = ctk.CTkButton(master=self, text="Confirm Selection", command=self.button_callback)
+        self.button = ctk.CTkButton(master=self, text="Retrieve Treatments", command=self.button_callback)
         self.button.grid(row=15, column=0, columnspan=2, padx=10, pady=10, sticky="ew")
 
-        self.confirm_treatment_button = ctk.CTkButton(master=self, text="Confirm Treatment", command=self.collect_strategies)
-        self.confirm_treatment_button.grid(row=11, column=2, columnspan=1, padx=10, pady=10, sticky="ew")
+        self.confirm_treatment_button = ctk.CTkButton(master=self, text="Confirm Treatment", command=self.retrieve_strategies)
+        self.confirm_treatment_button.grid(row=10, column=2, padx=5, pady=5, sticky="ew")
         self.confirm_treatment_button.grid_remove()
 
+        self.rejection_label = ctk.CTkLabel(master=self, text="Enter treatment ID(s) press enter to reject")
+        self.rejection_label.grid(row=8, column=2, padx=1, pady=1, sticky="ew")
         self.reject_treatment_entry = ctk.CTkEntry(master=self, placeholder_text="Enter treatment ID(s) to reject")
-        self.reject_treatment_entry.grid(row=11, column=3, columnspan=1, padx=10, pady=10, sticky="ew")
+        self.reject_treatment_entry.grid(row=9, column=2, padx=5, pady=5, sticky="ew")
         self.reject_treatment_entry.bind("<Return>", self.handle_rejection)
         self.reject_treatment_entry.grid_remove()
 
-    def handle_strategy_selection(self):
+        self.strategy_label = ctk.CTkLabel(master=self, text="Recommended Strategies (select and enter drug concentration)")
+        self.strategy_label.grid(row=11, column=2, padx=1, pady=1, sticky="ew")
 
-        print("Strategies confirmed")
-
-    def collect_strategies(self, recommended_treatments):
-        self.strategy_selections = {}  
-        for disease, treatment in self.recommended_treatments.items():
-            for medication in treatment.get('medication', []):
-                drug = medication['drug']
-                strategy = medication.get('dose_strategy', {}).get('strategy')
-                if strategy:
-                    if drug not in self.strategy_selections:
-                        self.strategy_selections[drug] = []
-                    if strategy not in self.strategy_selections[drug]:
-                        self.strategy_selections[drug].append(strategy)
-                        
-        for drug, strategies in self.strategy_selections.items():
-            for strategy in strategies:
-                self.display_textbox.insert(tk.END, f"Drug: {drug}, Strategy: {strategy}\n")
-
-        
-
-        self.strategy_confirm_button = ctk.CTkButton(master=self, text="Confirm Strategies", command=self.handle_strategy_selection)
-        self.strategy_confirm_button.grid(row=12, column=2, columnspan=1, padx=10, pady=10, sticky="ew")
-        
- 
+        self.confirm_strategies_button = ctk.CTkButton(master=self, text="Confirm Strategies", command=self.confirm_strategies)
+        self.confirm_strategies_button.grid(row=15, column=2, padx=5, pady=5, sticky="ew")
 
     def handle_rejection(self,event):
         rejected_ids = self.reject_treatment_entry.get().split(',')  
@@ -156,6 +142,48 @@ class App(ctk.CTk):
         self.retrieve_treatments() 
 
     
+    def retrieve_strategies(self):
+        row_offset = len(self.exclusion_checkboxes)
+        for disease, treatment in self.recommended_treatments.items():
+            treatment_id = treatment.get('treatment_id')
+            for medication in treatment.get('medication', []):
+                medication_name = medication.get('drug')  
+                for dose_strategy in medication.get('dose_strategy', []):
+                    strategy = dose_strategy.get('strategy')
+                    strategy_var = tk.BooleanVar()
+                    strategy_text = f"Medication: {medication_name}, Treatment ID: {treatment_id}, Strategy: {strategy}"
+                    strategy_cb = ctk.CTkCheckBox(self.frame, text=strategy_text, variable=strategy_var)
+                    strategy_cb.grid(row=10 + row_offset, column=2, padx=10, pady=2, sticky="nsew")
+                    self.strategy_checkboxes[(treatment_id, strategy)] = strategy_var
+
+                    concentration_entry = ctk.CTkEntry(self.frame)
+                    concentration_entry.grid(row=10 + row_offset, column=3, padx=10, pady=2, sticky="nsew")
+                
+                    if hasattr(self, 'concentration_entries'):
+                        self.concentration_entries[(treatment_id, strategy)] = concentration_entry
+                    else:
+                        self.concentration_entries = {(treatment_id, strategy): concentration_entry}                 
+                    row_offset += 1
+
+
+    def confirm_strategies(self):
+        confirmed_strategies = {}
+        for (treatment_id, strategy), checkbox_var in self.strategy_checkboxes.items():
+            if checkbox_var.get():  
+                concentration_entry = self.concentration_entries[(treatment_id, strategy)]
+                concentration_str = concentration_entry.get()
+                if concentration_str:  
+                    try:
+                        concentration = float(concentration_str)
+                    except ValueError:
+                        print(f"Invalid concentration entered for strategy {strategy} in treatment {treatment_id}")
+                        continue
+                else:
+                    concentration = 0  
+                confirmed_strategies[(treatment_id, strategy)] = concentration
+        print(confirmed_strategies)
+
+
     def calculate_bsa(self, height, weight):    
         return math.sqrt((height * weight) / 3600)
 
@@ -342,17 +370,10 @@ class App(ctk.CTk):
         self.reject_treatment_entry.grid()
 
 
+
 if __name__ == "__main__":
     app = App()
     app.mainloop()
 
 
 
-
-
-
-
-
-
-
- 

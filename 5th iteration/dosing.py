@@ -129,7 +129,6 @@ class App(ctk.CTk):
         self.reject_treatment_entry.delete(0, tk.END)
         self.retrieve_treatments() 
 
-
     def confirm_treatment(self):
         confirmed_treatments = {}
         self.display_textbox.configure(state='normal')
