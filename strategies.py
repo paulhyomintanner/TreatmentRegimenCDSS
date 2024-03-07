@@ -156,6 +156,22 @@ class App(ctk.CTk):
         self.confirm_strategies_button = ctk.CTkButton(self.treatment_frame, text="Confirm Strategies", command=self.confirm_strategies)
         self.confirm_strategies_button.grid(row=19, column=0, columnspan=2, padx=10, pady=10, sticky="ew")
 
+        self.reset_button = ctk.CTkButton(self.treatment_frame, text="Reset", command=self.reset)
+        self.reset_button.grid(row=20, column=0, columnspan=1, padx=10, pady=10, sticky="ew")
+
+
+    def reset(self):
+        self.user_data = {
+            'weight': 0,
+            'height': 0,
+            'age': 0,
+            'cpg': '',
+            'diseases': [],
+            'medications': [],
+            'pre_existing_conditions': [],
+            'exclusions': []
+        }
+
     def handle_rejection(self,event):
         rejected_ids = self.reject_treatment_entry.get().split(',')  
         self.user_data['exclusions'].extend(rejected_ids)  
