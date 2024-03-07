@@ -175,26 +175,26 @@ class App(ctk.CTk):
                     strategy_text = f"Medication: {medication_name}, Treatment ID: {treatment_id}, Strategy: {strategy}"
                     strategy_cb = ctk.CTkCheckBox(self.frame, text=strategy_text, variable=strategy_var)
                     strategy_cb.grid(row=10 + row_offset, column=2, padx=10, pady=2, sticky="nsew")
-                    self.strategy_checkboxes[(treatment_id, strategy)] = strategy_var
+                    self.strategy_checkboxes[(treatment_id, medication_name, strategy)] = strategy_var
 
                     if medication['form']['divisible']: 
                         concentration_entry = ctk.CTkEntry(self.frame)
                         concentration_entry.grid(row=10 + row_offset, column=3, padx=10, pady=2, sticky="nsew")
                     
                         if hasattr(self, 'concentration_entries'):
-                            self.concentration_entries[(treatment_id, strategy)] = concentration_entry
+                            self.concentration_entries[(treatment_id, medication_name, strategy)] = concentration_entry
                         else:
-                            self.concentration_entries = {(treatment_id, strategy): concentration_entry}                 
+                            self.concentration_entries = {(treatment_id, medication_name, strategy): concentration_entry}                 
                     row_offset += 1
 
 
     def confirm_strategies(self):
         confirmed_strategies = {}
-        for (treatment_id, strategy), checkbox_var in self.strategy_checkboxes.items():
+        for (treatment_id, medication_name, strategy), checkbox_var in self.strategy_checkboxes.items():
             if checkbox_var.get():  
                 concentration = 0  
-                if (treatment_id, strategy) in self.concentration_entries:  
-                    concentration_entry = self.concentration_entries[(treatment_id, strategy)]
+                if (treatment_id, medication_name, strategy) in self.concentration_entries:  
+                    concentration_entry = self.concentration_entries[(treatment_id, medication_name, strategy)]
                     concentration_str = concentration_entry.get()
                     if concentration_str:  
                         try:
@@ -202,8 +202,13 @@ class App(ctk.CTk):
                         except ValueError:
                             print(f"Invalid concentration entered for strategy {strategy} in treatment {treatment_id}")
                             continue
-                confirmed_strategies[(treatment_id, strategy)] = concentration
+                confirmed_strategies[(treatment_id, medication_name, strategy)] = concentration
         print(confirmed_strategies)
+        self.personalize_regimens(confirmed_strategies)
+
+    
+    def personalize_regimens(self, confirmed_strategies):
+        pass
 
 
     def calculate_bsa(self, height, weight):    
