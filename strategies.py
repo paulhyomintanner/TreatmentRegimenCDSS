@@ -44,6 +44,7 @@ class App(ctk.CTk):
         self.disease_to_severity = data_instance.map_disease_to_severity()
         self.rejected_treatments = []
         self.strategy_checkboxes = {}
+        self.confirmed_strategies = []
 
         
         self.user_data = {
@@ -187,30 +188,6 @@ class App(ctk.CTk):
                             self.concentration_entries = {(treatment_id, medication_name, strategy): concentration_entry}                 
                     row_offset += 1
 
-
-    def confirm_strategies(self):
-        confirmed_strategies = {}
-        for (treatment_id, medication_name, strategy), checkbox_var in self.strategy_checkboxes.items():
-            if checkbox_var.get():  
-                concentration = 0  
-                if (treatment_id, medication_name, strategy) in self.concentration_entries:  
-                    concentration_entry = self.concentration_entries[(treatment_id, medication_name, strategy)]
-                    concentration_str = concentration_entry.get()
-                    if concentration_str:  
-                        try:
-                            concentration = float(concentration_str)
-                        except ValueError:
-                            print(f"Invalid concentration entered for strategy {strategy} in treatment {treatment_id}")
-                            continue
-                confirmed_strategies[(treatment_id, medication_name, strategy)] = concentration
-        print(confirmed_strategies)
-        self.personalize_regimens(confirmed_strategies)
-
-    
-    def personalize_regimens(self, confirmed_strategies):
-        pass
-
-
     def calculate_bsa(self, height, weight):    
         return math.sqrt((height * weight) / 3600)
 
@@ -227,6 +204,68 @@ class App(ctk.CTk):
 
     def calculate_dose_per_administration(self, dose, frequency):
         return dose / frequency
+
+    def confirm_strategies(self):
+        confirmed_strategies = []
+        for (treatment_id, medication_name, strategy), checkbox_var in self.strategy_checkboxes.items():
+            if checkbox_var.get():  
+                concentration = 0  
+                if (treatment_id, medication_name, strategy) in self.concentration_entries:  
+                    concentration_entry = self.concentration_entries[(treatment_id, medication_name, strategy)]
+                    concentration_str = concentration_entry.get()
+                    if concentration_str:  
+                        try:
+                            concentration = float(concentration_str)
+                        except ValueError:
+                            print(f"Invalid concentration entered for strategy {strategy} in treatment {treatment_id}")
+                            continue
+                confirmed_strategies.append({
+                    'treatment_id': treatment_id,
+                    'medication': medication_name,
+                    'strategy': strategy,
+                    'concentration': concentration
+                })
+        print(confirmed_strategies)
+        print(self.recommended_treatments)
+        self.confirmed_strategies = confirmed_strategies
+        self.calculate_personalized_treatment_plan()
+
+
+    def calculate_personalized_treatment_plan(self):
+        self.display_textbox.configure(state='normal')
+        for disease, treatment in self.recommended_treatments.items():
+            self.display_textbox.insert('end', f"Disease: {disease}\nTreatment ID: {treatment['treatment_id']}\nDescription: {treatment['description']}\n")
+            for medication in treatment.get('medication', []):
+                for dose_strategy in medication.get('dose_strategy', []):
+                    confirmed_strategy = next((item for item in self.confirmed_strategies if item['treatment_id'] == treatment['treatment_id'] and item['medication'] == medication['drug'] and item['strategy'] == dose_strategy['strategy']), None)
+                    if confirmed_strategy:
+                        strategy = dose_strategy.get('strategy')
+                        frequency = dose_strategy.get('timing', {}).get('repeat', {}).get('frequency', 1)
+                        concentration = confirmed_strategy.get('concentration', 0)
+                        dose_info_text = f"Strategy: {strategy}\n"
+
+                        if strategy in ["weight", "bsa"]:
+                            if strategy == "weight":
+                                dose = self.calculate_dose_based_on_weight(self.user_data['weight'], dose_strategy['doseAndRate'][0]['doseQuantity']['value'])
+                            elif strategy == "bsa":
+                                bsa = self.calculate_bsa(self.user_data['height'], self.user_data['weight'])
+                                dose = self.calculate_dose_based_on_bsa(bsa, dose_strategy['doseAndRate'][0]['doseQuantity']['value'])
+
+                            max_dose = dose_strategy.get('maxDosePerPeriod', {}).get('numerator', {}).get('value', float('inf'))
+                            dose = min(dose, max_dose)
+                            dose_per_administration = self.calculate_dose_per_administration(dose, frequency) if isinstance(dose, (int, float)) else "N/A"
+                            
+                            if concentration > 0:
+                                volume_per_dose = dose_per_administration / concentration
+                                dose_info_text += f"Volume per Dose: {volume_per_dose:.2f} units (ml/tablet)\n"
+                            
+                            dose_info_text += f"Calculated Dose: {dose}\nDose per Administration: {dose_per_administration} mg\n"
+
+                        self.display_textbox.insert(
+                            'end',
+                            f"Medication: {medication['drug']}\nForm: {medication['form']['type']}\nSite: {medication['site']}\nRoute: {medication['route']}\nMethod: {medication['method']}\n{dose_info_text}Instruction: {dose_strategy['text']}\nPatient Instruction: {dose_strategy['patientInstruction']}\nMax Dose: {dose_strategy['maxDosePerPeriod']['numerator']['value']} {dose_strategy['maxDosePerPeriod']['numerator']['unit']} per {dose_strategy['maxDosePerPeriod']['denominator']['value']} {dose_strategy['maxDosePerPeriod']['denominator']['unit']}\n\n")
+
+        self.display_textbox.configure(state='disabled')
 
 
     def update_severity_dropdown(self, selected_disease):
