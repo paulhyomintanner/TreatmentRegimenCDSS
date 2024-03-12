@@ -1,39 +1,9 @@
 [
-    {
-       "conditions": {
-         "all": [
-           {
-             "fact": "user_data.condition",
-             "operator": "equal",
-             "value": "high_blood_pressure"
-           },
-           {
-             "fact": "medication",
-             "operator": "in",
-             "value": ["medication1", "medication2"]
-           },
-           {
-             "any": [
-               {
-                 "fact": "user_data.age",
-                 "operator": "greaterThanInclusive",
-                 "value": 65
-               },
-               {
-                 "fact": "user_data.age",
-                 "operator": "lessThan",
-                 "value": 30
-               }
-             ]
-           }
-         ]
-       },
-       "event": {
-         "type": "warning",
-         "params": {
-           "message": "Warning: High blood pressure detected with medication1 or medication2, and the patient's age is either above 65 or below 30."
-         }
-       }
-    }
-   ]
-   
+  {
+    "conditions": {
+      "medication": "Drug1",
+      "user_medication": "weferin"
+    },
+    "action": "Warning: Strongly recommend selecting a different treatment containing penicillin due to interaction with Weferin."
+  }
+]
