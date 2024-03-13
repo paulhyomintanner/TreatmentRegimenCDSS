@@ -1,4 +1,5 @@
 import customtkinter as ctk
+import tkinter.messagebox as messagebox
 import tkinter as tk
 import json
 import math
@@ -110,7 +111,7 @@ class App(ctk.CTk):
         self.frame = ctk.CTkScrollableFrame(self.treatment_frame)
         self.frame.grid(row=20, rowspan=3, column=0, columnspan=2, padx=10, pady=10, sticky="nsew")
 
-        self.user_input_label = ctk.CTkLabel(self.input_frame, text="Input Data", font=("Arial", 14, "bold"))
+        self.user_input_label = ctk.CTkLabel(self.input_frame, text="Step 1: Input Data", font=("Arial", 14, "bold"))
         self.user_input_label.grid(row=0, column=0, columnspan=2, padx=10, pady=5)
 
         self.cpg_label = ctk.CTkLabel(self.input_frame, text="Select CPG:", font=("Arial", 12, "bold"))
@@ -165,7 +166,7 @@ class App(ctk.CTk):
         self.pre_existing_conditions_entry = ctk.CTkEntry(self.input_frame, placeholder_text="Pre-existing conditions")
         self.pre_existing_conditions_entry.grid(row=3, column=1, padx=10, pady=10, sticky="ew")
 
-        self.treatments_label = ctk.CTkLabel(self.treatment_frame, text="Treatment Regimen", font=("Arial", 14, "bold"))
+        self.treatments_label = ctk.CTkLabel(self.treatment_frame, text="Step 2: Confirm or Reject Treatment Regimens", font=("Arial", 14, "bold"))
         self.treatments_label.grid(row=0, column=0, columnspan=2, padx=10, pady=5)
 
         self.display_textbox = ctk.CTkTextbox(self.treatment_frame, height=300, width=300)
@@ -185,6 +186,9 @@ class App(ctk.CTk):
 
         self.confirm_treatment_button = ctk.CTkButton(self.treatment_frame, text="Confirm Treatment", command=self.retrieve_strategies)
         self.confirm_treatment_button.grid(row=18, column=0, columnspan=2, padx=5, pady=10, sticky="ew")
+
+        self.step_3_label = ctk.CTkLabel(self.treatment_frame, text="Step 3: Select Treatment Strategies", font=("Arial", 14, "bold"))
+        self.step_3_label.grid(row=19, column=0, columnspan=2, padx=1, pady=1, sticky="ew")
 
         self.rejection_label = ctk.CTkLabel(self.treatment_frame, text="Enter treatment ID(s) then press enter to reject")
         self.rejection_label.grid(row=16, column=0, columnspan=2, padx=1, pady=1, sticky="ew")
@@ -213,6 +217,21 @@ class App(ctk.CTk):
             'pre_existing_conditions': [],
             'exclusions': []
         }
+
+        self.display_treatment_selection.configure(state=tk.NORMAL)
+        self.display_treatment_selection.delete('1.0', tk.END)
+        self.display_treatment_selection.configure(state=tk.DISABLED)
+
+        self.display_textbox.configure(state=tk.NORMAL)
+        self.display_textbox.delete('1.0', tk.END)
+        self.display_textbox.configure(state=tk.DISABLED)
+
+        self.height_entry.delete(0, tk.END)
+        self.weight_entry.delete(0, tk.END)
+        self.age_entry.delete(0, tk.END)
+        self.medication_entry.delete(0, tk.END)
+
+
 
     def handle_rejection(self,event):
         rejected_ids = self.reject_treatment_entry.get().split(',')  
@@ -487,28 +506,31 @@ class App(ctk.CTk):
         self.recommended_treatments = self.apply_superseding_rules(candidate_treatments)
         warnings = self.rules_engine.evaluate(self.recommended_treatments, self.user_data)
 
-        print("Recommended Treatments:")
-        for treatment in self.recommended_treatments:
-            print(treatment)
-        if warnings:
-            print("\nWarnings:")
-            for warning in warnings:
-                print(warning)
-        
-
         self.display_textbox.configure(state=tk.NORMAL)
         self.display_textbox.delete('1.0', tk.END)
         for disease, treatment in self.recommended_treatments.items():
-            if 'disease' in treatment and 'treatment_id' in treatment:
-                treatment_text = f"Treatment for {disease}: treatment_id: {treatment['treatment_id']}\n"
+            if 'disease' in treatment and 'treatment_id' in treatment and 'medication' in treatment:
+                for med in treatment['medication']:
+                    treatment_text = f"Disease: {disease}\nTreatment ID: {treatment['treatment_id']}\nDescription: {treatment['description']}\nMedication: {med['drug']}\n"
             else:
                 treatment_text = f"{treatment['For Disease']}: {treatment['Message']}\n"
             self.display_textbox.insert(tk.END, treatment_text)
         self.display_textbox.configure(state=tk.DISABLED)
 
+
+        treatments_str = "Recommended Treatments:\n"
+        for treatment in self.recommended_treatments:
+            treatments_str += str(treatment) + "\n"
+
+        if warnings:
+            treatments_str += "\nWarnings:\n"
+            for warning in warnings:
+                treatments_str += str(warning) + "\n"
+            messagebox.showwarning("Warnings", treatments_str)
+
+
         self.confirm_treatment_button.grid()
         self.reject_treatment_entry.grid()
-
 
 
 
