@@ -3,8 +3,12 @@ import tkinter as tk
 import json
 import math
 
+
+
+
+
 ctk.set_appearance_mode("Dark")
-ctk.set_default_color_theme("dark-blue")
+ctk.set_default_color_theme("green")
 
 class Data:
     def __init__(self):
@@ -80,52 +84,59 @@ class App(ctk.CTk):
         "cpg": None,
         "diseases": []
     }
-
+        #UI page setup and widgets
         self.geometry("1000x700")
         self.title("Treatment Regimen CDSS")
         self.minsize(300, 200)
 
-        self.grid_rowconfigure(list(range(20)), weight=1)
+        self.grid_rowconfigure(list(range(30)), weight=1)
         self.grid_columnconfigure((0, 1, 2, 3), weight=1)
 
         self.input_frame = ctk.CTkFrame(master=self)
-        self.input_frame.grid(row=0, rowspan=20, column=0, columnspan=2, padx=10, pady=10, sticky="nsew")
+        self.input_frame.grid(row=0, rowspan=30, column=0, columnspan=2, padx=10, pady=10, sticky="nsew")
         self.input_frame.grid_rowconfigure(list(range(20)), weight=1)
         self.input_frame.grid_columnconfigure((0,1), weight=1)
 
         self.exclusion_frame = ctk.CTkScrollableFrame(self.input_frame)
-        self.exclusion_frame.grid(row=6, column=0, columnspan=2, padx=10, pady=10, sticky="nsew")
+        self.exclusion_frame.grid(row=13, column=0, rowspan=7, columnspan=2, padx=10, pady=10, sticky="nsew")
         self.exclusion_frame.grid_rowconfigure((0, 1), weight=1)
         self.exclusion_frame.grid_columnconfigure((0,1), weight=1)
 
         self.treatment_frame = ctk.CTkFrame(master=self)
-        self.treatment_frame.grid(row=0, rowspan=20, column=2, columnspan=2, padx=10, pady=10, sticky="nsew")
-        self.treatment_frame.grid_rowconfigure(list(range(20)), weight=1)
+        self.treatment_frame.grid(row=0, rowspan=30, column=2, columnspan=2, padx=10, pady=10, sticky="nsew")
+        self.treatment_frame.grid_rowconfigure(list(range(30)), weight=1)
         self.treatment_frame.grid_columnconfigure((0,1), weight=1)
 
         self.frame = ctk.CTkScrollableFrame(self.treatment_frame)
-        self.frame.grid(row=15, rowspan=3, column=0, columnspan=2, padx=10, pady=10, sticky="nsew")
+        self.frame.grid(row=20, rowspan=3, column=0, columnspan=2, padx=10, pady=10, sticky="nsew")
 
         self.user_input_label = ctk.CTkLabel(self.input_frame, text="Input Data", font=("Arial", 14, "bold"))
         self.user_input_label.grid(row=0, column=0, columnspan=2, padx=10, pady=5)
 
-        # Inputs for the UI
+        self.cpg_label = ctk.CTkLabel(self.input_frame, text="Select CPG:", font=("Arial", 12, "bold"))
+        self.cpg_label.grid(row=1, column=0, padx=10, pady=1)
         cpgs = list(set(cpg for treatment in self.data['_default'].values() for cpg in treatment['rank'][0]))
-        self.cpg_dropdown = ctk.CTkOptionMenu(self.input_frame, values=cpgs, width= 1, height = 1)
-        self.cpg_dropdown.grid(row=1, column=0, padx=10, pady=5, sticky="nsew")
+        self.cpg_dropdown = ctk.CTkOptionMenu(self.input_frame, values=cpgs)
+        self.cpg_dropdown.grid(row=2, column=0, padx=10, pady=3, sticky="nsew")
 
+        self.height_label = ctk.CTkLabel(self.input_frame, text="Enter Patient Height:", font=("Arial", 12, "bold"))
+        self.height_label.grid(row=3, column=0, padx=10, pady=1, sticky="ew")
         self.height_entry = ctk.CTkEntry(self.input_frame, placeholder_text="Height")
-        self.height_entry.grid(row=2, column=0, padx=10, pady=5, sticky="ew")
+        self.height_entry.grid(row=4, column=0, padx=10, pady=3, sticky="ew")
 
+        self.weight_label = ctk.CTkLabel(self.input_frame, text="Enter Patient Weight:", font=("Arial", 12, "bold"))
+        self.weight_label.grid(row=5, column=0, padx=10, pady=1, sticky="ew")
         self.weight_entry = ctk.CTkEntry(self.input_frame, placeholder_text="Weight")
-        self.weight_entry.grid(row=3, column=0, padx=10, pady=5, sticky="ew")
+        self.weight_entry.grid(row=6, column=0, padx=10, pady=3, sticky="ew")
 
+        self.age_label = ctk.CTkLabel(self.input_frame, text="Enter Patient Age:", font=("Arial", 12, "bold"))
+        self.age_label.grid(row=7, column=0, padx=10, pady=1, sticky="ew")
         self.age_entry = ctk.CTkEntry(self.input_frame, placeholder_text="Age")
-        self.age_entry.grid(row=4, column=0, padx=10, pady=5, sticky="ew")
+        self.age_entry.grid(row=8, column=0, padx=10, pady=3, sticky="ew")
         
         exclusions = list(set(exclusion for treatment in self.data['_default'].values() for eligibility in treatment['eligibility'] for exclusion in eligibility['exclusion']))
         self.exclusions = ctk.CTkLabel(self.input_frame, text="Select exclusions that apply:")
-        self.exclusions.grid(row=5, column=0, padx=10, pady=5)
+        self.exclusions.grid(row=11, column=0, padx=3, pady=5)
 
         self.exclusion_checkboxes = {}
         for i, exclusion in enumerate(exclusions):
@@ -135,59 +146,60 @@ class App(ctk.CTk):
 
         diseases = list(self.disease_to_severity.keys())
         self.diseases_label = ctk.CTkLabel(self.input_frame, text="Select disease:")
-        self.diseases_label.grid(row=12, column=0, padx=10, pady=5)
+        self.diseases_label.grid(row=21, column=0, padx=10, pady=5)
         self.disease_var = tk.StringVar()
         self.disease_dropdown = ctk.CTkOptionMenu(self.input_frame, variable=self.disease_var, values=diseases, command=self.update_severity_dropdown)
-        self.disease_dropdown.grid(row=12, column=1, padx=10, pady=5, sticky="ew")
+        self.disease_dropdown.grid(row=21, column=1, padx=10, pady=5, sticky="ew")
 
         self.severity_label = ctk.CTkLabel(self.input_frame, text="Select severity:")
-        self.severity_label.grid(row=13, column=0, padx=10, pady=5)
+        self.severity_label.grid(row=22, column=0, padx=10, pady=5)
         self.severity_var = tk.StringVar()
         self.severity_dropdown = ctk.CTkOptionMenu(self.input_frame, variable=self.severity_var, values=[])
-        self.severity_dropdown.grid(row=13, column=1, padx=10, pady=5, sticky="ew")
+        self.severity_dropdown.grid(row=22, column=1, padx=10, pady=5, sticky="ew")
 
-        self.medication_entry = ctk.CTkEntry(self.input_frame, placeholder_text="Current medication")
-        self.medication_entry.grid(row=1, column=1, padx=10, pady=10, sticky="ew")
+        self.medication_label = ctk.CTkLabel(self.input_frame, text="Add existing patient medication:", font=("Arial", 12, "bold"))
+        self.medication_label.grid(row=1, column=1, padx=10, pady=1, sticky="ew")
+        self.medication_entry = ctk.CTkEntry(self.input_frame, placeholder_text="Current medication (separated by commas)")
+        self.medication_entry.grid(row=2, column=1, padx=10, pady=3, sticky="ew")
 
         self.pre_existing_conditions_entry = ctk.CTkEntry(self.input_frame, placeholder_text="Pre-existing conditions")
-        self.pre_existing_conditions_entry.grid(row=2, column=1, padx=10, pady=10, sticky="ew")
+        self.pre_existing_conditions_entry.grid(row=3, column=1, padx=10, pady=10, sticky="ew")
 
         self.treatments_label = ctk.CTkLabel(self.treatment_frame, text="Treatment Regimen", font=("Arial", 14, "bold"))
         self.treatments_label.grid(row=0, column=0, columnspan=2, padx=10, pady=5)
 
-        self.display_textbox = ctk.CTkTextbox(self.treatment_frame)
-        self.display_textbox.grid(row=1, column=0, columnspan=2, rowspan=9, padx=10, pady=10, sticky="nsew")
+        self.display_textbox = ctk.CTkTextbox(self.treatment_frame, height=300, width=300)
+        self.display_textbox.grid(row=1, column=0, columnspan=2, rowspan=15, padx=10, pady=10, sticky="nsew")
         self.display_textbox.configure(state=tk.DISABLED)
 
-        self.warning_display = ctk.CTkTextbox(self.treatment_frame)
-        self.warning_display.grid(row=10, column=0, columnspan=2, rowspan=1, padx=10, pady=10, sticky="ew")
-        self.warning_display.configure(state=tk.DISABLED)
+        self.submit_button = ctk.CTkButton(self.input_frame, text="Click to submit disease (selection displayed below)", command=self.submit_disease)
+        self.submit_button.grid(row=24, column=0, columnspan=4, padx=10, pady=10, sticky="ew")
 
-        self.submit_button = ctk.CTkButton(self.input_frame, text="Submit disease (click for each disease)", command=self.submit_disease)
-        self.submit_button.grid(row=18, column=0, columnspan=4, padx=10, pady=10, sticky="ew")
+        self.display_treatment_selection = ctk.CTkTextbox(self.input_frame, height=50, width=300)
+        self.display_treatment_selection.grid(row=25, column=0, columnspan=2, rowspan=3, padx=10, pady=10, sticky="nsew")
+        self.display_treatment_selection.configure(state=tk.DISABLED)
+
         
         self.button = ctk.CTkButton(self.input_frame, text="Retrieve Treatments", command=self.button_callback)
-        self.button.grid(row=19, column=0, columnspan=2, padx=10, pady=10, sticky="ew")
+        self.button.grid(row=30, column=0, columnspan=2, padx=10, pady=10, sticky="ew")
 
         self.confirm_treatment_button = ctk.CTkButton(self.treatment_frame, text="Confirm Treatment", command=self.retrieve_strategies)
-        self.confirm_treatment_button.grid(row=13, column=0, columnspan=2, padx=5, pady=10, sticky="ew")
-        self.confirm_treatment_button.grid_remove()
+        self.confirm_treatment_button.grid(row=18, column=0, columnspan=2, padx=5, pady=10, sticky="ew")
 
-        self.rejection_label = ctk.CTkLabel(self.treatment_frame, text="Enter treatment ID(s) press enter to reject")
-        self.rejection_label.grid(row=11, column=0, columnspan=2, padx=1, pady=1, sticky="ew")
+        self.rejection_label = ctk.CTkLabel(self.treatment_frame, text="Enter treatment ID(s) then press enter to reject")
+        self.rejection_label.grid(row=16, column=0, columnspan=2, padx=1, pady=1, sticky="ew")
         self.reject_treatment_entry = ctk.CTkEntry(self.treatment_frame, placeholder_text="Enter treatment ID(s) to reject")
-        self.reject_treatment_entry.grid(row=12, column=0, columnspan=2, padx=5, pady=5, sticky="ew")
+        self.reject_treatment_entry.grid(row=17, column=0, columnspan=2, padx=5, pady=5, sticky="ew")
         self.reject_treatment_entry.bind("<Return>", self.handle_rejection)
-        self.reject_treatment_entry.grid_remove()
 
         self.strategy_label = ctk.CTkLabel(self.treatment_frame, text="Recommended Strategies (select and enter drug concentration)")
-        self.strategy_label.grid(row=14, column=0, columnspan=2, padx=1, pady=1, sticky="ew")
+        self.strategy_label.grid(row=27, column=0, columnspan=2, padx=1, pady=1, sticky="ew")
 
-        self.confirm_strategies_button = ctk.CTkButton(self.treatment_frame, text="Confirm Strategies", command=self.confirm_strategies)
-        self.confirm_strategies_button.grid(row=19, column=0, columnspan=2, padx=10, pady=10, sticky="ew")
+        self.confirm_strategies_button = ctk.CTkButton(self.treatment_frame, text="Confirm Strategies and Generate Regimen", command=self.confirm_strategies)
+        self.confirm_strategies_button.grid(row=28, column=0, columnspan=2, padx=10, pady=10, sticky="ew")
 
         self.reset_button = ctk.CTkButton(self.treatment_frame, text="Reset", command=self.reset)
-        self.reset_button.grid(row=20, column=0, columnspan=1, padx=10, pady=10, sticky="ew")
+        self.reset_button.grid(row=30, column=0, columnspan=1, padx=10, pady=10, sticky="ew")
 
 
     def reset(self):
@@ -318,7 +330,7 @@ class App(ctk.CTk):
         severities = self.disease_to_severity.get(selected_disease, [])
         self.severity_dropdown.destroy()
         self.severity_dropdown = ctk.CTkOptionMenu(self.input_frame, variable=self.severity_var, values=severities)
-        self.severity_dropdown.grid(row=13, column=1, padx=10, pady=5)
+        self.severity_dropdown.grid(row=22, column=1, padx=10, pady=5)
         if severities:
             self.severity_var.set(severities[0])
         else:
@@ -343,6 +355,11 @@ class App(ctk.CTk):
         disease = self.disease_dropdown.get()
         severity = self.severity_var.get()  
         self.user_data["diseases"].append({"disease": disease, "severity": severity})
+
+        self.display_treatment_selection.configure(state=tk.NORMAL)
+        self.display_treatment_selection.insert('end', f"Disease: {disease}, Severity: {severity}\n")
+        self.display_treatment_selection.configure(state=tk.DISABLED)
+
         print(self.user_data)  
 
     def get_weight(self):
@@ -491,13 +508,6 @@ class App(ctk.CTk):
 
         self.confirm_treatment_button.grid()
         self.reject_treatment_entry.grid()
-
-
-
-
-    
-
-
 
 
 
