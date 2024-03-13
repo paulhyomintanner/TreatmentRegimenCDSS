@@ -73,6 +73,7 @@ class App(ctk.CTk):
         self.strategy_checkboxes = {}
         self.confirmed_strategies = []
         self.rules_engine = SimpleRulesEngine()
+        self.superseded_info = {}
 
         
         self.user_data = {
@@ -232,12 +233,10 @@ class App(ctk.CTk):
             checkbox.destroy()
         self.strategy_checkboxes.clear()
 
-
         for entry in self.concentration_entries.values():
             entry.destroy()
         self.concentration_entries.clear()     
    
-
     def handle_rejection(self,event):
         rejected_ids = self.reject_treatment_entry.get().split(',')  
         self.user_data['exclusions'].extend(rejected_ids)  
@@ -245,30 +244,41 @@ class App(ctk.CTk):
         self.reject_treatment_entry.delete(0, tk.END)
         self.retrieve_treatments() 
 
-    
+
     def retrieve_strategies(self):
         row_offset = len(self.exclusion_checkboxes)
+        processed_strategies = set()  
+
         for disease, treatment in self.recommended_treatments.items():
             treatment_id = treatment.get('treatment_id')
             for medication in treatment.get('medication', []):
-                medication_name = medication.get('drug')  
+                medication_name = medication.get('drug')
                 for dose_strategy in medication.get('dose_strategy', []):
                     strategy = dose_strategy.get('strategy')
-                    strategy_var = tk.BooleanVar()
-                    strategy_text = f"Medication: {medication_name}, Treatment ID: {treatment_id}, Strategy: {strategy}"
-                    strategy_cb = ctk.CTkCheckBox(self.frame, text=strategy_text, variable=strategy_var)
-                    strategy_cb.grid(row=10 + row_offset, column=2, padx=10, pady=2, sticky="nsew")
-                    self.strategy_checkboxes[(treatment_id, medication_name, strategy)] = strategy_cb
 
-                    if medication['form']['divisible']: 
-                        concentration_entry = ctk.CTkEntry(self.frame)
-                        concentration_entry.grid(row=10 + row_offset, column=3, padx=10, pady=2, sticky="nsew")
                     
-                        if hasattr(self, 'concentration_entries'):
-                            self.concentration_entries[(treatment_id, medication_name, strategy)] = concentration_entry
-                        else:
-                            self.concentration_entries = {(treatment_id, medication_name, strategy): concentration_entry}                 
-                    row_offset += 1
+                    strategy_identifier = f"{treatment_id}_{medication_name}_{strategy}"
+
+                    if strategy_identifier not in processed_strategies: 
+                        processed_strategies.add(strategy_identifier)  
+
+                        strategy_var = tk.BooleanVar()
+                        strategy_text = f"Medication: {medication_name}, Treatment ID: {treatment_id}, Strategy: {strategy}"
+                        strategy_cb = ctk.CTkCheckBox(self.frame, text=strategy_text, variable=strategy_var)
+                        strategy_cb.grid(row=10 + row_offset, column=2, padx=10, pady=2, sticky="nsew")
+                        self.strategy_checkboxes[(treatment_id, medication_name, strategy)] = strategy_cb  
+
+                        if medication['form']['divisible']: 
+                            concentration_entry = ctk.CTkEntry(self.frame)
+                            concentration_entry.grid(row=10 + row_offset, column=3, padx=10, pady=2, sticky="nsew")
+                        
+                            if hasattr(self, 'concentration_entries'):
+                                self.concentration_entries[(treatment_id, medication_name, strategy)] = concentration_entry
+                            else:
+                                self.concentration_entries = {(treatment_id, medication_name, strategy): concentration_entry}                 
+                        row_offset += 1
+
+
 
     def calculate_bsa(self, height, weight):    
         return math.sqrt((height * weight) / 3600)
