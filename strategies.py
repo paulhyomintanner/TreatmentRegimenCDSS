@@ -385,8 +385,8 @@ class App(ctk.CTk):
     def apply_superseding_rules(self, candidate_treatments):
         superseding_rules = self.rules["_default"]
         recommended_treatments = {}
-
         treatment_to_diseases = {}
+
         for disease, treatment in candidate_treatments.items():
             treatment_id = treatment.get('treatment_id')
             if treatment_id not in treatment_to_diseases:
@@ -394,26 +394,42 @@ class App(ctk.CTk):
             else:
                 treatment_to_diseases[treatment_id].append(disease)
 
+        # Track which diseases are handled by which treatment after superseding rules are applied
+        superseded_diseases = {}
+
         for rule in superseding_rules.values():
             pair = rule["pair"]
             superseding_id = rule["superseding_id"]
             
             if all(treatment_id in treatment_to_diseases for treatment_id in pair):
                 for treatment_id in pair:
-                    for disease in treatment_to_diseases.get(treatment_id, []):
-                        recommended_treatments[disease] = next((t for t in candidate_treatments.values() if t.get('treatment_id') == superseding_id), candidate_treatments[disease])
+                    diseases = treatment_to_diseases.get(treatment_id, [])
+                    for disease in diseases:
+                        if superseding_id not in superseded_diseases:
+                            superseded_diseases[superseding_id] = set(diseases)
+                        else:
+                            superseded_diseases[superseding_id].update(diseases)
             else:
                 for treatment_id in pair:
                     diseases = treatment_to_diseases.get(treatment_id, [])
                     for disease in diseases:
-                        if disease not in recommended_treatments:  
-                            recommended_treatments[disease] = candidate_treatments[disease]
+                        if treatment_id not in superseded_diseases:
+                            superseded_diseases[treatment_id] = set([disease])
+                        else:
+                            superseded_diseases[treatment_id].add(disease)
 
-        for disease in candidate_treatments:
-            if disease not in recommended_treatments:
-                recommended_treatments[disease] = candidate_treatments[disease]
+        # Now construct the final recommended treatments, merging diseases for superseded treatments
+        for treatment_id, diseases in superseded_diseases.items():
+            for disease in diseases:
+                treatment = next((t for t in candidate_treatments.values() if t.get('treatment_id') == treatment_id), None)
+                if treatment:
+                    if 'merged_diseases' not in treatment:
+                        treatment['merged_diseases'] = set()
+                    treatment['merged_diseases'].update(diseases)
+                    recommended_treatments[disease] = treatment
 
         return recommended_treatments
+
 
     def retrieve_treatments(self):
         user_diseases = self.user_data["diseases"]

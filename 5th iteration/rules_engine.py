@@ -5,9 +5,6 @@ import json
 import math
 
 
-
-
-
 ctk.set_appearance_mode("Dark")
 ctk.set_default_color_theme("green")
 
@@ -231,7 +228,15 @@ class App(ctk.CTk):
         self.age_entry.delete(0, tk.END)
         self.medication_entry.delete(0, tk.END)
 
+        for checkbox in self.strategy_checkboxes.values():
+            checkbox.destroy()
+        self.strategy_checkboxes.clear()
 
+
+        for entry in self.concentration_entries.values():
+            entry.destroy()
+        self.concentration_entries.clear()     
+   
 
     def handle_rejection(self,event):
         rejected_ids = self.reject_treatment_entry.get().split(',')  
@@ -253,7 +258,7 @@ class App(ctk.CTk):
                     strategy_text = f"Medication: {medication_name}, Treatment ID: {treatment_id}, Strategy: {strategy}"
                     strategy_cb = ctk.CTkCheckBox(self.frame, text=strategy_text, variable=strategy_var)
                     strategy_cb.grid(row=10 + row_offset, column=2, padx=10, pady=2, sticky="nsew")
-                    self.strategy_checkboxes[(treatment_id, medication_name, strategy)] = strategy_var
+                    self.strategy_checkboxes[(treatment_id, medication_name, strategy)] = strategy_cb
 
                     if medication['form']['divisible']: 
                         concentration_entry = ctk.CTkEntry(self.frame)
@@ -451,6 +456,7 @@ class App(ctk.CTk):
     def apply_superseding_rules(self, candidate_treatments):
         superseding_rules = self.rules["_default"]
         recommended_treatments = {}
+        superseded_info = {}  
 
         treatment_to_diseases = {}
         for disease, treatment in candidate_treatments.items():
@@ -468,6 +474,8 @@ class App(ctk.CTk):
                 for treatment_id in pair:
                     for disease in treatment_to_diseases.get(treatment_id, []):
                         recommended_treatments[disease] = next((t for t in candidate_treatments.values() if t.get('treatment_id') == superseding_id), candidate_treatments[disease])
+                        if treatment_id != superseding_id:  
+                            superseded_info[disease] = {"superseded": treatment_id, "superseding": superseding_id}
             else:
                 for treatment_id in pair:
                     diseases = treatment_to_diseases.get(treatment_id, [])
@@ -479,12 +487,14 @@ class App(ctk.CTk):
             if disease not in recommended_treatments:
                 recommended_treatments[disease] = candidate_treatments[disease]
 
-        return recommended_treatments
+        return recommended_treatments, superseded_info  
+
 
     def retrieve_treatments(self):
         self.rules_engine = SimpleRulesEngine(rules_file='interaction_rules.json')
         user_diseases = self.user_data["diseases"]
         candidate_treatments = {}
+
 
         for disease_info in user_diseases:
             user_disease = disease_info["disease"]
@@ -503,11 +513,15 @@ class App(ctk.CTk):
             else:
                 candidate_treatments[user_disease] = {"For Disease": user_disease, "Message": "No treatments found according to specified parameters"}
             
-        self.recommended_treatments = self.apply_superseding_rules(candidate_treatments)
+        self.recommended_treatments, superseded_info = self.apply_superseding_rules(candidate_treatments)
+
         warnings = self.rules_engine.evaluate(self.recommended_treatments, self.user_data)
 
         self.display_textbox.configure(state=tk.NORMAL)
         self.display_textbox.delete('1.0', tk.END)
+
+
+
         for disease, treatment in self.recommended_treatments.items():
             if 'disease' in treatment and 'treatment_id' in treatment and 'medication' in treatment:
                 for med in treatment['medication']:
@@ -515,7 +529,15 @@ class App(ctk.CTk):
             else:
                 treatment_text = f"{treatment['For Disease']}: {treatment['Message']}\n"
             self.display_textbox.insert(tk.END, treatment_text)
+
+
+            
+            if disease in superseded_info:
+                supersession_msg = f"Note: Treatment ID {superseded_info[disease]['superseded']} has been superseded by Treatment ID {superseded_info[disease]['superseding']} for {disease}.\n"
+                self.display_textbox.insert(tk.END, supersession_msg)
+
         self.display_textbox.configure(state=tk.DISABLED)
+
 
 
         treatments_str = "Recommended Treatments:\n"
