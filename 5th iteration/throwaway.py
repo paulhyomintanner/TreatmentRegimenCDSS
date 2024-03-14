@@ -255,7 +255,6 @@ class App(ctk.CTk):
                 medication_name = medication.get('drug')
                 for dose_strategy in medication.get('dose_strategy', []):
                     strategy = dose_strategy.get('strategy')
-
                     
                     strategy_identifier = f"{treatment_id}_{medication_name}_{strategy}"
 
@@ -323,46 +322,61 @@ class App(ctk.CTk):
 
 
     def calculate_personalized_treatment_plan(self):
+        # Step 1: Create a mapping of treatment IDs to diseases they cover
+        treatment_to_diseases = {}
+        for disease, treatment_details in self.recommended_treatments.items():
+            if 'treatment_id' in treatment_details:
+                treatment_id = treatment_details['treatment_id']
+            else:
+                treatment_id = None  
+            if treatment_id not in treatment_to_diseases:
+                treatment_to_diseases[treatment_id] = [disease]
+            else:
+                treatment_to_diseases[treatment_id].append(disease)
 
-        popup_window = ctk.CTkToplevel(self)  
+        popup_window = ctk.CTkToplevel(self)
         popup_window.title("Personalized Treatment Plan")
-        popup_window.geometry("600x400")  
+        popup_window.geometry("600x400")
 
         treatment_text_widget = ctk.CTkTextbox(popup_window, width=580, height=380, state='normal')
         treatment_text_widget.pack(padx=10, pady=10)
 
+        for treatment_id, diseases in treatment_to_diseases.items():
+            treatment_details = next((t for d, t in self.recommended_treatments.items() if 'treatment_id' in t and t['treatment_id'] == treatment_id), None)
+            if treatment_details:
+                diseases_text = ", ".join(diseases)  
+                treatment_text_widget.insert('end', f"Diseases: {diseases_text}\nTreatment ID: {treatment_details['treatment_id']}\nDescription: {treatment_details['description']}\n")
+                
 
-        for disease, treatment in self.recommended_treatments.items():
-            treatment_text_widget.insert('end', f"Disease: {disease}\nTreatment ID: {treatment['treatment_id']}\nDescription: {treatment['description']}\n")
-            for medication in treatment.get('medication', []):
-                for dose_strategy in medication.get('dose_strategy', []):
-                    confirmed_strategy = next((item for item in self.confirmed_strategies if item['treatment_id'] == treatment['treatment_id'] and item['medication'] == medication['drug'] and item['strategy'] == dose_strategy['strategy']), None)
-                    if confirmed_strategy:
-                        strategy = dose_strategy.get('strategy')
-                        frequency = dose_strategy.get('timing', {}).get('repeat', {}).get('frequency', 1)
-                        concentration = confirmed_strategy.get('concentration', 0)
-                        dose_info_text = f"Strategy: {strategy}\n"
+                for medication in treatment_details.get('medication', []):
+                    for dose_strategy in medication.get('dose_strategy', []):
+                        confirmed_strategy = next((item for item in self.confirmed_strategies if item['treatment_id'] == treatment_details['treatment_id'] and item['medication'] == medication['drug'] and item['strategy'] == dose_strategy['strategy']), None)
+                        if confirmed_strategy:
+                            strategy = dose_strategy.get('strategy')
+                            frequency = dose_strategy.get('timing', {}).get('repeat', {}).get('frequency', 1)
+                            concentration = confirmed_strategy.get('concentration', 0)
+                            dose_info_text = f"Strategy: {strategy}\n"
 
-                        if strategy in ["weight", "bsa"]:
-                            if strategy == "weight":
-                                dose = self.calculate_dose_based_on_weight(self.user_data['weight'], dose_strategy['doseAndRate'][0]['doseQuantity']['value'])
-                            elif strategy == "bsa":
-                                bsa = self.calculate_bsa(self.user_data['height'], self.user_data['weight'])
-                                dose = self.calculate_dose_based_on_bsa(bsa, dose_strategy['doseAndRate'][0]['doseQuantity']['value'])
+                            if strategy in ["weight", "bsa"]:
+                                if strategy == "weight":
+                                    dose = self.calculate_dose_based_on_weight(self.user_data['weight'], dose_strategy['doseAndRate'][0]['doseQuantity']['value'])
+                                elif strategy == "bsa":
+                                    bsa = self.calculate_bsa(self.user_data['height'], self.user_data['weight'])
+                                    dose = self.calculate_dose_based_on_bsa(bsa, dose_strategy['doseAndRate'][0]['doseQuantity']['value'])
 
-                            max_dose = dose_strategy.get('maxDosePerPeriod', {}).get('numerator', {}).get('value', float('inf'))
-                            dose = min(dose, max_dose)
-                            dose_per_administration = self.calculate_dose_per_administration(dose, frequency) if isinstance(dose, (int, float)) else "N/A"
-                            
-                            if concentration > 0:
-                                volume_per_dose = dose_per_administration / concentration
-                                dose_info_text += f"Volume per Dose: {volume_per_dose:.2f} units (ml/tablet)\n"
-                            
-                            dose_info_text += f"Calculated Dose: {dose}\nDose per Administration: {dose_per_administration} mg\n"
+                                max_dose = dose_strategy.get('maxDosePerPeriod', {}).get('numerator', {}).get('value', float('inf'))
+                                dose = min(dose, max_dose)
+                                dose_per_administration = self.calculate_dose_per_administration(dose, frequency) if isinstance(dose, (int, float)) else "N/A"
+                                
+                                if concentration > 0:
+                                    volume_per_dose = dose_per_administration / concentration
+                                    dose_info_text += f"Volume per Dose: {volume_per_dose:.2f} units (ml/tablet)\n"
+                                
+                                dose_info_text += f"Calculated Dose: {dose}\nDose per Administration: {dose_per_administration} mg\n"
 
-                        treatment_text_widget.insert(
-                            'end',
-                            f"Medication: {medication['drug']}\nForm: {medication['form']['type']}\nSite: {medication['site']}\nRoute: {medication['route']}\nMethod: {medication['method']}\n{dose_info_text}Instruction: {dose_strategy['text']}\nPatient Instruction: {dose_strategy['patientInstruction']}\nMax Dose: {dose_strategy['maxDosePerPeriod']['numerator']['value']} {dose_strategy['maxDosePerPeriod']['numerator']['unit']} per {dose_strategy['maxDosePerPeriod']['denominator']['value']} {dose_strategy['maxDosePerPeriod']['denominator']['unit']}\n\n")
+                            treatment_text_widget.insert(
+                                'end',
+                                f"Medication: {medication['drug']}\nForm: {medication['form']['type']}\nSite: {medication['site']}\nRoute: {medication['route']}\nMethod: {medication['method']}\n{dose_info_text}Instruction: {dose_strategy['text']}\nPatient Instruction: {dose_strategy['patientInstruction']}\nMax Dose: {dose_strategy['maxDosePerPeriod']['numerator']['value']} {dose_strategy['maxDosePerPeriod']['numerator']['unit']} per {dose_strategy['maxDosePerPeriod']['denominator']['value']} {dose_strategy['maxDosePerPeriod']['denominator']['unit']}\n\n")
 
         treatment_text_widget.configure(state='disabled')
         
