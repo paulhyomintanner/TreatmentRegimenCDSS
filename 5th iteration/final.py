@@ -14,7 +14,7 @@ class Data:
         self.rules = self.load_superseding_rules()
         
     def load_data(self):
-        with open('RealCPG.json') as f:
+        with open('menuTinyDB.json') as f:
             data = json.load(f)
         return data
     
@@ -481,16 +481,11 @@ class App(ctk.CTk):
         return filtered_treatments
     
     def matches_severity(self, eligibility_severity, user_severity):
-        for key, values in eligibility_severity.items():
-            if isinstance(values, list):
-                for value in values:
-                    if user_severity == f"{key}: {value}":
-                        return True
-            else:
-                if user_severity == f"{key}: {values}":
-                    return True
+        for key, value in eligibility_severity.items():
+            if user_severity == f"{key}: {value}":
+                return True
         return False
-
+    
     def filter_by_exclusions(self, treatments, exclusions):
         exclusions = [exclusion.strip().lower() for exclusion in exclusions if exclusion.strip()]
         return [treatment for treatment in treatments 
