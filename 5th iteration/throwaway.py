@@ -574,15 +574,11 @@ class App(ctk.CTk):
 
 
 
-        treatments_str = "Recommended Treatments:\n"
-        for treatment in self.recommended_treatments:
-            treatments_str += str(treatment) + "\n"
-
         if warnings:
-            treatments_str += "\nWarnings:\n"
+            warnings_str = "Warnings:\n"
             for warning in warnings:
-                treatments_str += str(warning) + "\n"
-            messagebox.showwarning("Warnings", treatments_str)
+                warnings_str += str(warning) + "\n"
+            messagebox.showwarning("Warnings", warnings_str)
 
 
         self.confirm_treatment_button.grid()

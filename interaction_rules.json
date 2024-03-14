@@ -4,6 +4,6 @@
       "medication": "Drug1",
       "user_medication": "weferin"
     },
-    "action": "Warning: Strongly recommend selecting a different treatment containing penicillin due to interaction with Weferin."
+    "action": "Warning: Strongly recommend selecting a different treatment due to Drug1 interaction with Weferin."
   }
 ]
