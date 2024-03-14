@@ -274,7 +274,7 @@ class App(ctk.CTk):
                         processed_strategies.add(strategy_identifier)  
 
                         strategy_var = tk.BooleanVar()
-                        strategy_text = f"{medication_name}, {treatment_id}, Strategy: {strategy}, Therapeutic dose: {dose_and_rate_text}"
+                        strategy_text = f"{medication_name}, {treatment_id}, Strategy: {strategy}, Therapeutic dose: {dose_and_rate_text}, \nEnter Concentration (mg/unit):"
                         strategy_cb = ctk.CTkCheckBox(self.frame, text=strategy_text, variable=strategy_var)
                         strategy_cb.grid(row=10 + row_offset, column=2, padx=10, pady=2, sticky="nsew")
                         self.strategy_checkboxes[(treatment_id, medication_name, strategy)] = strategy_cb  
