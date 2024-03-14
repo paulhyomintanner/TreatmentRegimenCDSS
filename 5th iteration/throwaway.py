@@ -167,8 +167,8 @@ class App(ctk.CTk):
         self.treatments_label = ctk.CTkLabel(self.treatment_frame, text="Step 2: Confirm or Reject Treatment Regimens", font=("Arial", 14, "bold"))
         self.treatments_label.grid(row=0, column=0, columnspan=2, padx=10, pady=5)
 
-        self.display_textbox = ctk.CTkTextbox(self.treatment_frame, height=300, width=300)
-        self.display_textbox.grid(row=1, column=0, columnspan=2, rowspan=15, padx=10, pady=10, sticky="nsew")
+        self.display_textbox = ctk.CTkTextbox(self.treatment_frame, height=280, width=300)
+        self.display_textbox.grid(row=1, column=0, columnspan=2, rowspan=14, padx=10, pady=10, sticky="nsew")
         self.display_textbox.configure(state=tk.DISABLED)
 
         self.submit_button = ctk.CTkButton(self.input_frame, text="Click to submit disease (selection displayed below)", command=self.submit_disease)
@@ -183,15 +183,17 @@ class App(ctk.CTk):
         self.button.grid(row=30, column=0, columnspan=2, padx=10, pady=10, sticky="ew")
 
         self.confirm_treatment_button = ctk.CTkButton(self.treatment_frame, text="Confirm Treatment", command=self.retrieve_strategies)
-        self.confirm_treatment_button.grid(row=18, column=0, columnspan=2, padx=5, pady=10, sticky="ew")
+        self.confirm_treatment_button.grid(row=17, column=0, columnspan=2, padx=5, pady=10, sticky="ew")
 
         self.step_3_label = ctk.CTkLabel(self.treatment_frame, text="Step 3: Select Treatment Strategies", font=("Arial", 14, "bold"))
-        self.step_3_label.grid(row=19, column=0, columnspan=2, padx=1, pady=1, sticky="ew")
+        self.step_3_label.grid(row=18, column=0, columnspan=2, padx=1, pady=1, sticky="ew")
+        self.step_3_explanation = ctk.CTkLabel(self.treatment_frame, text="Select strategies for each medication you require and enter drug concentration if applicable")
+        self.step_3_explanation.grid(row=19, column=0, columnspan=2, padx=1, pady=1, sticky="ew")
 
         self.rejection_label = ctk.CTkLabel(self.treatment_frame, text="Enter treatment ID(s) then press enter to reject")
-        self.rejection_label.grid(row=16, column=0, columnspan=2, padx=1, pady=1, sticky="ew")
+        self.rejection_label.grid(row=15, column=0, columnspan=2, padx=1, pady=1, sticky="ew")
         self.reject_treatment_entry = ctk.CTkEntry(self.treatment_frame, placeholder_text="Enter treatment ID(s) to reject")
-        self.reject_treatment_entry.grid(row=17, column=0, columnspan=2, padx=5, pady=5, sticky="ew")
+        self.reject_treatment_entry.grid(row=16, column=0, columnspan=2, padx=5, pady=5, sticky="ew")
         self.reject_treatment_entry.bind("<Return>", self.handle_rejection)
 
         self.strategy_label = ctk.CTkLabel(self.treatment_frame, text="Recommended Strategies (select and enter drug concentration)")
@@ -256,13 +258,23 @@ class App(ctk.CTk):
                 for dose_strategy in medication.get('dose_strategy', []):
                     strategy = dose_strategy.get('strategy')
                     
+                    dose_and_rate = dose_strategy.get('doseAndRate')
+                    if dose_and_rate:
+                        type_dict = dose_and_rate[0].get('type')
+                        if type_dict:
+                            dose_and_rate_text = type_dict.get('text')
+                        else:
+                            dose_and_rate_text = 'N/A'
+                    else:
+                        dose_and_rate_text = 'N/A'
+
                     strategy_identifier = f"{treatment_id}_{medication_name}_{strategy}"
 
                     if strategy_identifier not in processed_strategies: 
                         processed_strategies.add(strategy_identifier)  
 
                         strategy_var = tk.BooleanVar()
-                        strategy_text = f"Medication: {medication_name}, Treatment ID: {treatment_id}, Strategy: {strategy}"
+                        strategy_text = f"{medication_name}, {treatment_id}, Strategy: {strategy}, Therapeutic dose: {dose_and_rate_text}"
                         strategy_cb = ctk.CTkCheckBox(self.frame, text=strategy_text, variable=strategy_var)
                         strategy_cb.grid(row=10 + row_offset, column=2, padx=10, pady=2, sticky="nsew")
                         self.strategy_checkboxes[(treatment_id, medication_name, strategy)] = strategy_cb  
@@ -322,7 +334,6 @@ class App(ctk.CTk):
 
 
     def calculate_personalized_treatment_plan(self):
-        # Step 1: Create a mapping of treatment IDs to diseases they cover
         treatment_to_diseases = {}
         for disease, treatment_details in self.recommended_treatments.items():
             if 'treatment_id' in treatment_details:
@@ -559,10 +570,11 @@ class App(ctk.CTk):
         for disease, treatment in self.recommended_treatments.items():
             if 'disease' in treatment and 'treatment_id' in treatment and 'medication' in treatment:
                 for med in treatment['medication']:
-                    treatment_text = f"Disease: {disease}\nTreatment ID: {treatment['treatment_id']}\nDescription: {treatment['description']}\nMedication: {med['drug']}\n"
+                    treatment_text = f"Disease: {disease}\nTreatment ID: {treatment['treatment_id']}\nDescription: {treatment['description']}\nMedication: {med['drug']}\nRoute: {med['route']}\nMethod: {med['method']}\nSite: {med['site']}\nForm: {med['form']['type']}\n\n"
+                    self.display_textbox.insert(tk.END, treatment_text)  
             else:
                 treatment_text = f"{treatment['For Disease']}: {treatment['Message']}\n"
-            self.display_textbox.insert(tk.END, treatment_text)
+                self.display_textbox.insert(tk.END, treatment_text)
 
 
             

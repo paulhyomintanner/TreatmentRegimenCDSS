@@ -564,7 +564,7 @@ class App(ctk.CTk):
             warnings_str = "Warnings:\n"
             for warning in warnings:
                 warnings_str += str(warning) + "\n"
-            messagebox.showwarning("Warnings", warnings_str)
+            messagebox.showwarning("Warnings", warnings_str) 
 
 
         self.confirm_treatment_button.grid()
