@@ -359,13 +359,13 @@ class App(ctk.CTk):
                             concentration = confirmed_strategy.get('concentration', 0)
                             dose_info_text = f"Strategy: {strategy}\n"
 
-                            if strategy in ["weight", "bsa", "Single Dose"]:
+                            if strategy in ["weight", "bsa", "single dose"]:
                                 if strategy == "weight":
                                     dose = self.calculate_dose_based_on_weight(self.user_data['weight'], dose_strategy['doseAndRate'][0]['doseQuantity']['value'])
                                 elif strategy == "bsa":
                                     bsa = self.calculate_bsa(self.user_data['height'], self.user_data['weight'])
                                     dose = self.calculate_dose_based_on_bsa(bsa, dose_strategy['doseAndRate'][0]['doseQuantity']['value'])
-                                elif strategy == "Single Dose":
+                                elif strategy == "single dose":
                                     dose = dose_strategy['doseAndRate'][0]['doseQuantity']['value']
 
 
