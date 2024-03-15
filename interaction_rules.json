@@ -1,7 +1,7 @@
 [
   {
     "conditions": {
-      "medication": "Drug1",
+      "medication": "Amoxicillin",
       "user_medication": "weferin"
     },
     "action": "Warning: Strongly recommend selecting a different treatment due to Drug1 interaction with Weferin."

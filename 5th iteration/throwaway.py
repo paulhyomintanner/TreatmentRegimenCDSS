@@ -257,24 +257,15 @@ class App(ctk.CTk):
                 medication_name = medication.get('drug')
                 for dose_strategy in medication.get('dose_strategy', []):
                     strategy = dose_strategy.get('strategy')
-                    
-                    dose_and_rate = dose_strategy.get('doseAndRate')
-                    if dose_and_rate:
-                        type_dict = dose_and_rate[0].get('type')
-                        if type_dict:
-                            dose_and_rate_text = type_dict.get('text')
-                        else:
-                            dose_and_rate_text = 'N/A'
-                    else:
-                        dose_and_rate_text = 'N/A'
+                    therapeutic_dose = dose_strategy.get('therapeuticDose', 'N/A')
 
-                    strategy_identifier = f"{treatment_id}_{medication_name}_{strategy}"
+                    strategy_identifier = f"{treatment_id}_{medication_name}_{strategy}_{therapeutic_dose}" 
 
                     if strategy_identifier not in processed_strategies: 
                         processed_strategies.add(strategy_identifier)  
 
                         strategy_var = tk.BooleanVar()
-                        strategy_text = f"{medication_name}, {treatment_id}, Strategy: {strategy}, Therapeutic dose: {dose_and_rate_text}, \nEnter Concentration (mg/unit):"
+                        strategy_text = f"{medication_name}, {treatment_id}, Strategy: {strategy}, Therapeutic dose: {therapeutic_dose}, \nEnter Concentration (mg/unit):"
                         strategy_cb = ctk.CTkCheckBox(self.frame, text=strategy_text, variable=strategy_var)
                         strategy_cb.grid(row=10 + row_offset, column=2, padx=10, pady=2, sticky="nsew")
                         self.strategy_checkboxes[(treatment_id, medication_name, strategy)] = strategy_cb  
@@ -368,26 +359,30 @@ class App(ctk.CTk):
                             concentration = confirmed_strategy.get('concentration', 0)
                             dose_info_text = f"Strategy: {strategy}\n"
 
-                            if strategy in ["weight", "bsa"]:
+                            if strategy in ["weight", "bsa", "Single Dose"]:
                                 if strategy == "weight":
                                     dose = self.calculate_dose_based_on_weight(self.user_data['weight'], dose_strategy['doseAndRate'][0]['doseQuantity']['value'])
                                 elif strategy == "bsa":
                                     bsa = self.calculate_bsa(self.user_data['height'], self.user_data['weight'])
                                     dose = self.calculate_dose_based_on_bsa(bsa, dose_strategy['doseAndRate'][0]['doseQuantity']['value'])
+                                elif strategy == "Single Dose":
+                                    dose = dose_strategy['doseAndRate'][0]['doseQuantity']['value']
+
+
 
                                 max_dose = dose_strategy.get('maxDosePerPeriod', {}).get('numerator', {}).get('value', float('inf'))
                                 dose = min(dose, max_dose)
-                                dose_per_administration = self.calculate_dose_per_administration(dose, frequency) if isinstance(dose, (int, float)) else "N/A"
+                                #dose_per_administration = self.calculate_dose_per_administration(dose, frequency) if isinstance(dose, (int, float)) else "N/A"
                                 
                                 if concentration > 0:
-                                    volume_per_dose = dose_per_administration / concentration
+                                    volume_per_dose = dose / concentration
                                     dose_info_text += f"Volume per Dose: {volume_per_dose:.2f} units (ml/tablet)\n"
                                 
-                                dose_info_text += f"Calculated Dose: {dose}\nDose per Administration: {dose_per_administration} mg\n"
+                                dose_info_text += f"Calculated Dose: {dose}mg\nDose per Administration: {dose} mg\n"
 
                             treatment_text_widget.insert(
                                 'end',
-                                f"Medication: {medication['drug']}\nForm: {medication['form']['type']}\nSite: {medication['site']}\nRoute: {medication['route']}\nMethod: {medication['method']}\n{dose_info_text}Instruction: {dose_strategy['text']}\nPatient Instruction: {dose_strategy['patientInstruction']}\nMax Dose: {dose_strategy['maxDosePerPeriod']['numerator']['value']} {dose_strategy['maxDosePerPeriod']['numerator']['unit']} per {dose_strategy['maxDosePerPeriod']['denominator']['value']} {dose_strategy['maxDosePerPeriod']['denominator']['unit']}\n\n")
+                                f"Medication: {medication['drug']}\nForm: {medication['form']['type']}\nSite: {medication['site']}\nRoute: {medication['route']}\nMethod: {medication['method']}\n{dose_info_text}Instruction: {dose_strategy['instruction']}\nPatient Instruction: {dose_strategy['patientInstruction']}\nMax Dose: {dose_strategy['maxDosePerPeriod']['numerator']['value']} {dose_strategy['maxDosePerPeriod']['numerator']['unit']} per {dose_strategy['maxDosePerPeriod']['denominator']['value']} {dose_strategy['maxDosePerPeriod']['denominator']['unit']}\n\n")
 
         treatment_text_widget.configure(state='disabled')
         
@@ -492,10 +487,10 @@ class App(ctk.CTk):
         return False
 
     def filter_by_exclusions(self, treatments, exclusions):
-        exclusions = [exclusion.strip().lower() for exclusion in exclusions if exclusion.strip()]
         return [treatment for treatment in treatments 
             if not any(any(exclusion in eligibility.get('exclusion', []) 
-                           for exclusion in exclusions) for eligibility in treatment['eligibility'])]
+                        for exclusion in exclusions) for eligibility in treatment['eligibility'])]
+
 
     def filter_patient_profile(self, treatments, age_entry, weight_entry):
         return [treatment for treatment in treatments for eligibility in treatment['eligibility']

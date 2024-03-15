@@ -221,7 +221,7 @@ treatment_data = [
                         "doseAndRate": [
                             {
                                 "doseQuantity": {
-                                    "value": 400/57,
+                                    "value": 457,
                                     "unit": "mg",
                                     "system": "http://unitsofmeasure.org",
                                     "code": "mg"
@@ -372,7 +372,7 @@ treatment_data = [
                         ],
                         "maxDosePerPeriod": {
                             "numerator": {
-                                "value": 20,
+                                "value": 200,
                                 "unit": "mg",
                                 "system": "http://unitsofmeasure.org",
                                 "code": "mg"
@@ -610,7 +610,7 @@ treatment_data = [
             {
                 "strategy": "Basic strategy",
                 "severity": {"Seriousness": "High"},
-                "exclusion": ["Dysphagia"],
+                "exclusion": ["Dysphagia", "Penicillin allergy"],
                 "patient_profile": {"age_range": {"min": 2, "max": 8}, "min_weight": 1}
             }
         ],
@@ -657,6 +657,748 @@ treatment_data = [
                         "maxDosePerPeriod": {
                             "numerator": {
                                 "value": 300,
+                                "unit": "mg",
+                                "system": "http://unitsofmeasure.org",
+                                "code": "mg"
+                            },
+                            "denominator": {
+                                "value": 1,
+                                "unit": "day",
+                                "system": "http://unitsofmeasure.org",
+                                "code": "d"
+                            }
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "treatment_id": "I",
+        "disease": "Acute Otitis Media",
+        "description": "Used in adult bacterial infection cases",
+        "eligibility": [
+            {
+                "strategy": "Basic strategy",
+                "severity": {"Seriousness": "Low"},
+                "exclusion": ["Dysphagia", "Penicillin allergy"],
+                "patient_profile": {"age_range": {"min": 18, "max": 100}, "min_weight": 40}
+            }
+        ],
+        "rank": [
+            {
+                "GHANA-STG": 1,
+                "BNF": 5
+            }
+        ],
+        "medication": [
+            {
+                "drug": "Amoxicillin",
+                "form": {"type": "tablet", "divisible": True},
+                "site": "mouth",
+                "route": "oral",
+                "method": "swallow",
+                "dose_strategy": [
+                    {
+                        "strategy": "Single Dose",
+                        "sequence": 1,
+                        "instruction": "500 mg every 8 hours for 5 days",
+                        "patientInstruction": "Take twice a day",
+                        "therapeuticDose": "500mg",
+                        "timing": {
+                            "repeat": {
+                                "frequency": 3,
+                                "period": 1,
+                                "periodUnit": "d",
+                                "code": {
+                                    "text": "Every 8 hours"
+                                }
+                            }
+                        },
+                        "doseAndRate": [
+                            {
+                                "doseQuantity": {
+                                    "value": 500,
+                                    "unit": "mg",
+                                    "system": "http://unitsofmeasure.org",
+                                    "code": "mg"
+                                }
+                            }
+                        ],
+                        "maxDosePerPeriod": {
+                            "numerator": {
+                                "value": 2000,
+                                "unit": "mg",
+                                "system": "http://unitsofmeasure.org",
+                                "code": "mg"
+                            },
+                            "denominator": {
+                                "value": 1,
+                                "unit": "day",
+                                "system": "http://unitsofmeasure.org",
+                                "code": "d"
+                            }
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "treatment_id": "J",
+        "disease": "Acute Otitis Media",
+        "description": "Used in less serious adult bacterial infection cases",
+        "eligibility": [
+            {
+                "strategy": "Basic strategy",
+                "severity": {"Seriousness": "High"},
+                "exclusion": ["Dysphagia", "Penicillin allergy"],
+                "patient_profile": {"age_range": {"min": 18, "max": 100}, "min_weight": 40}
+            }
+        ],
+        "rank": [
+            {
+                "GHANA-STG": 1,
+                "BNF": 5
+            }
+        ],
+        "medication": [
+            {
+                "drug": "Amoxicillin + Clavulanic Acid",
+                "form": {"type": "tablet", "divisible": True},
+                "site": "mouth",
+                "route": "oral",
+                "method": "swallow",
+                "dose_strategy": [
+                    {
+                        "strategy": "Single Dose",
+                        "sequence": 1,
+                        "instruction": "1000mg every 12 hours for 5 days",
+                        "patientInstruction": "Take twice a day",
+                        "therapeuticDose": "1000mg",
+                        "timing": {
+                            "repeat": {
+                                "frequency": 2,
+                                "period": 1,
+                                "periodUnit": "d",
+                                "code": {
+                                    "text": "Every 12 hours"
+                                }
+                            }
+                        },
+                        "doseAndRate": [
+                            {
+                                "doseQuantity": {
+                                    "value": 1000,
+                                    "unit": "mg",
+                                    "system": "http://unitsofmeasure.org",
+                                    "code": "mg"
+                                }
+                            }
+                        ],
+                        "maxDosePerPeriod": {
+                            "numerator": {
+                                "value": 3000,
+                                "unit": "mg",
+                                "system": "http://unitsofmeasure.org",
+                                "code": "mg"
+                            },
+                            "denominator": {
+                                "value": 1,
+                                "unit": "day",
+                                "system": "http://unitsofmeasure.org",
+                                "code": "d"
+                            }
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "treatment_id": "K",
+        "disease": "Acute Otitis Media",
+        "description": "Used in more serious adult bacterial infection cases",
+        "eligibility": [
+            {
+                "strategy": "Basic strategy",
+                "severity": {"Seriousness": "High"},
+                "exclusion": ["Dysphagia"],
+                "patient_profile": {"age_range": {"min": 18, "max": 100}, "min_weight": 40}
+            }
+        ],
+        "rank": [
+            {
+                "GHANA-STG": 3,
+                "BNF": 5
+            }
+        ],
+        "medication": [
+            {
+                "drug": "Erythromycin",
+                "form": {"type": "tablet", "divisible": True},
+                "site": "mouth",
+                "route": "oral",
+                "method": "swallow",
+                "dose_strategy": [
+                    {
+                        "strategy": "Single Dose",
+                        "sequence": 1,
+                        "instruction": "250-500mg every 6 hours for 10 days",
+                        "patientInstruction": "Take 4 a day",
+                        "therapeuticDose": "500mg",
+                        "timing": {
+                            "repeat": {
+                                "frequency": 4,
+                                "period": 1,
+                                "periodUnit": "d",
+                                "code": {
+                                    "text": "Every 12 hours"
+                                }
+                            }
+                        },
+                        "doseAndRate": [
+                            {
+                                "doseQuantity": {
+                                    "value": 500,
+                                    "unit": "mg",
+                                    "system": "http://unitsofmeasure.org",
+                                    "code": "mg"
+                                }
+                            }
+                        ],
+                        "maxDosePerPeriod": {
+                            "numerator": {
+                                "value": 3000,
+                                "unit": "mg",
+                                "system": "http://unitsofmeasure.org",
+                                "code": "mg"
+                            },
+                            "denominator": {
+                                "value": 1,
+                                "unit": "day",
+                                "system": "http://unitsofmeasure.org",
+                                "code": "d"
+                            }
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "treatment_id": "L",
+        "disease": "Acute Otitis Media",
+        "description": "Used in less serious adult bacterial infection cases",
+        "eligibility": [
+            {
+                "strategy": "Basic strategy",
+                "severity": {"Seriousness": "Low"},
+                "exclusion": ["Dysphagia"],
+                "patient_profile": {"age_range": {"min": 18, "max": 100}, "min_weight": 40}
+            }
+        ],
+        "rank": [
+            {
+                "GHANA-STG": 3,
+                "BNF": 5
+            }
+        ],
+        "medication": [
+            {
+                "drug": "Azithromycin",
+                "form": {"type": "tablet", "divisible": True},
+                "site": "mouth",
+                "route": "oral",
+                "method": "swallow",
+                "dose_strategy": [
+                    {
+                        "strategy": "Single Dose",
+                        "sequence": 1,
+                        "instruction": "500mg 1 a day for 5 days",
+                        "patientInstruction": "Take 1 a day",
+                        "therapeuticDose": "500mg",
+                        "timing": {
+                            "repeat": {
+                                "frequency": 3,
+                                "period": 1,
+                                "periodUnit": "d",
+                                "code": {
+                                    "text": "Every 12 hours"
+                                }
+                            }
+                        },
+                        "doseAndRate": [
+                            {
+                                "doseQuantity": {
+                                    "value": 500,
+                                    "unit": "mg",
+                                    "system": "http://unitsofmeasure.org",
+                                    "code": "mg"
+                                }
+                            }
+                        ],
+                        "maxDosePerPeriod": {
+                            "numerator": {
+                                "value": 3000,
+                                "unit": "mg",
+                                "system": "http://unitsofmeasure.org",
+                                "code": "mg"
+                            },
+                            "denominator": {
+                                "value": 1,
+                                "unit": "day",
+                                "system": "http://unitsofmeasure.org",
+                                "code": "d"
+                            }
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "treatment_id": "M",
+        "disease": "Acute Otitis Media",
+        "description": "2nd line treatment for less serious adult bacterial infection cases",
+        "eligibility": [
+            {
+                "strategy": "Basic strategy",
+                "severity": {"Seriousness": "Low"},
+                "exclusion": ["Dysphagia", "Penicillin allergy"],
+                "patient_profile": {"age_range": {"min": 18, "max": 100}, "min_weight": 40}
+            }
+        ],
+        "rank": [
+            {
+                "GHANA-STG": 3,
+                "BNF": 5
+            }
+        ],
+        "medication": [
+            {
+                "drug": "Cefuroxime",
+                "form": {"type": "tablet", "divisible": True},
+                "site": "mouth",
+                "route": "oral",
+                "method": "swallow",
+                "dose_strategy": [
+                    {
+                        "strategy": "Single Dose",
+                        "sequence": 1,
+                        "instruction": "250mg twice a day for 5 days",
+                        "patientInstruction": "Take 2 a day",
+                        "therapeuticDose": "250",
+                        "timing": {
+                            "repeat": {
+                                "frequency": 3,
+                                "period": 1,
+                                "periodUnit": "d",
+                                "code": {
+                                    "text": "Every 12 hours"
+                                }
+                            }
+                        },
+                        "doseAndRate": [
+                            {
+                                "doseQuantity": {
+                                    "value": 250,
+                                    "unit": "mg",
+                                    "system": "http://unitsofmeasure.org",
+                                    "code": "mg"
+                                }
+                            }
+                        ],
+                        "maxDosePerPeriod": {
+                            "numerator": {
+                                "value": 750,
+                                "unit": "mg",
+                                "system": "http://unitsofmeasure.org",
+                                "code": "mg"
+                            },
+                            "denominator": {
+                                "value": 1,
+                                "unit": "day",
+                                "system": "http://unitsofmeasure.org",
+                                "code": "d"
+                            }
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "treatment_id": "N",
+        "disease": "Acute Otitis Media",
+        "description": "2nd line treatment for more serious adult bacterial infection cases",
+        "eligibility": [
+            {
+                "strategy": "Basic strategy",
+                "severity": {"Seriousness": "High"},
+                "exclusion": ["Dysphagia", "Penicillin allergy"],
+                "patient_profile": {"age_range": {"min": 18, "max": 100}, "min_weight": 40}
+            }
+        ],
+        "rank": [
+            {
+                "GHANA-STG": 3,
+                "BNF": 5
+            }
+        ],
+        "medication": [
+            {
+                "drug": "Cefuroxime",
+                "form": {"type": "tablet", "divisible": True},
+                "site": "mouth",
+                "route": "oral",
+                "method": "swallow",
+                "dose_strategy": [
+                    {
+                        "strategy": "Single Dose",
+                        "sequence": 1,
+                        "instruction": "250mg twice a day for 5 days",
+                        "patientInstruction": "Take 2 a day",
+                        "therapeuticDose": "250",
+                        "timing": {
+                            "repeat": {
+                                "frequency": 3,
+                                "period": 1,
+                                "periodUnit": "d",
+                                "code": {
+                                    "text": "Every 12 hours"
+                                }
+                            }
+                        },
+                        "doseAndRate": [
+                            {
+                                "doseQuantity": {
+                                    "value": 250,
+                                    "unit": "mg",
+                                    "system": "http://unitsofmeasure.org",
+                                    "code": "mg"
+                                }
+                            }
+                        ],
+                        "maxDosePerPeriod": {
+                            "numerator": {
+                                "value": 750,
+                                "unit": "mg",
+                                "system": "http://unitsofmeasure.org",
+                                "code": "mg"
+                            },
+                            "denominator": {
+                                "value": 1,
+                                "unit": "day",
+                                "system": "http://unitsofmeasure.org",
+                                "code": "d"
+                            }
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "treatment_id": "O",
+        "disease": "Pneumonia",
+        "description": "1st line treatment for less serious adult bacterial infection cases",
+        "eligibility": [
+            {
+                "strategy": "Basic strategy",
+                "severity": {"CURB-65": "<2"},
+                "exclusion": ["Dysphagia", "Penicillin allergy"],
+                "patient_profile": {"age_range": {"min": 18, "max": 100}, "min_weight": 10}
+            }
+        ],
+        "rank": [
+            {
+                "GHANA-STG": 1,
+                "BNF": 5
+            }
+        ],
+        "medication": [
+            {
+                "drug": "Amoxicillin",
+                "form": {"type": "tablet", "divisible": True},
+                "site": "mouth",
+                "route": "oral",
+                "method": "swallow",
+                "dose_strategy": [
+                    {
+                        "strategy": "Single Dose",
+                        "sequence": 1,
+                        "instruction": "1000mg 3 times a day for 7 days",
+                        "patientInstruction": "Take 3 a day",
+                        "therapeuticDose": "1000g",
+                        "timing": {
+                            "repeat": {
+                                "frequency": 3,
+                                "period": 1,
+                                "periodUnit": "d",
+                                "code": {
+                                    "text": "Every 8 hours"
+                                }
+                            }
+                        },
+                        "doseAndRate": [
+                            {
+                                "doseQuantity": {
+                                    "value": 1000,
+                                    "unit": "mg",
+                                    "system": "http://unitsofmeasure.org",
+                                    "code": "mg"
+                                }
+                            }
+                        ],
+                        "maxDosePerPeriod": {
+                            "numerator": {
+                                "value": 3000,
+                                "unit": "mg",
+                                "system": "http://unitsofmeasure.org",
+                                "code": "mg"
+                            },
+                            "denominator": {
+                                "value": 1,
+                                "unit": "day",
+                                "system": "http://unitsofmeasure.org",
+                                "code": "d"
+                            }
+                        }
+                    }
+                ]
+            }
+        ],
+        "medication": [
+            {
+                "drug": "Azithromycin",
+                "form": {"type": "tablet", "divisible": True},
+                "site": "mouth",
+                "route": "oral",
+                "method": "swallow",
+                "dose_strategy": [
+                    {
+                        "strategy": "Single Dose",
+                        "sequence": 1,
+                        "instruction": "500mg once a day for 7 days",
+                        "patientInstruction": "Take 3 a day",
+                        "therapeuticDose": "1000g",
+                        "timing": {
+                            "repeat": {
+                                "frequency": 1,
+                                "period": 1,
+                                "periodUnit": "d",
+                                "code": {
+                                    "text": "Every 8 hours"
+                                }
+                            }
+                        },
+                        "doseAndRate": [
+                            {
+                                "doseQuantity": {
+                                    "value": 500,
+                                    "unit": "mg",
+                                    "system": "http://unitsofmeasure.org",
+                                    "code": "mg"
+                                }
+                            }
+                        ],
+                        "maxDosePerPeriod": {
+                            "numerator": {
+                                "value": 500,
+                                "unit": "mg",
+                                "system": "http://unitsofmeasure.org",
+                                "code": "mg"
+                            },
+                            "denominator": {
+                                "value": 1,
+                                "unit": "day",
+                                "system": "http://unitsofmeasure.org",
+                                "code": "d"
+                            }
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "treatment_id": "P",
+        "disease": "Cefuroxime",
+        "description": "2nd line treatment for less serious adult bacterial infection cases",
+        "eligibility": [
+            {
+                "strategy": "Basic strategy",
+                "severity": {"CURB-65": "<2"},
+                "exclusion": ["Dysphagia", "Penicillin allergy"],
+                "patient_profile": {"age_range": {"min": 18, "max": 100}, "min_weight": 10}
+            }
+        ],
+        "rank": [
+            {
+                "GHANA-STG": 2,
+                "BNF": 5
+            }
+        ],
+        "medication": [
+            {
+                "drug": "Amoxicillin",
+                "form": {"type": "tablet", "divisible": True},
+                "site": "mouth",
+                "route": "oral",
+                "method": "swallow",
+                "dose_strategy": [
+                    {
+                        "strategy": "Single Dose",
+                        "sequence": 1,
+                        "instruction": "500mg 2 times a day for 7 days",
+                        "patientInstruction": "Take 3 a day",
+                        "therapeuticDose": "1000g",
+                        "timing": {
+                            "repeat": {
+                                "frequency": 2,
+                                "period": 1,
+                                "periodUnit": "d",
+                                "code": {
+                                    "text": "Every 8 hours"
+                                }
+                            }
+                        },
+                        "doseAndRate": [
+                            {
+                                "doseQuantity": {
+                                    "value": 500,
+                                    "unit": "mg",
+                                    "system": "http://unitsofmeasure.org",
+                                    "code": "mg"
+                                }
+                            }
+                        ],
+                        "maxDosePerPeriod": {
+                            "numerator": {
+                                "value": 1000,
+                                "unit": "mg",
+                                "system": "http://unitsofmeasure.org",
+                                "code": "mg"
+                            },
+                            "denominator": {
+                                "value": 1,
+                                "unit": "day",
+                                "system": "http://unitsofmeasure.org",
+                                "code": "d"
+                            }
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "treatment_id": "Q",
+        "disease": "Pnenicillin allergy",
+        "description": "1st line treatment for Penicillin Allergy",
+        "eligibility": [
+            {
+                "strategy": "Basic strategy",
+                "severity": {"CURB-65": "<2"},
+                "exclusion": ["Dysphagia"],
+                "patient_profile": {"age_range": {"min": 18, "max": 100}, "min_weight": 10}
+            }
+        ],
+        "rank": [
+            {
+                "GHANA-STG": 3,
+                "BNF": 5
+            }
+        ],
+        "medication": [
+            {
+                "drug": "Erythromycin",
+                "form": {"type": "tablet", "divisible": True},
+                "site": "mouth",
+                "route": "oral",
+                "method": "swallow",
+                "dose_strategy": [
+                    {
+                        "strategy": "Single Dose",
+                        "sequence": 1,
+                        "instruction": "500mg 4 times a day for 7 days",
+                        "patientInstruction": "Take 3 a day",
+                        "therapeuticDose": "1000g",
+                        "timing": {
+                            "repeat": {
+                                "frequency": 4,
+                                "period": 1,
+                                "periodUnit": "d",
+                                "code": {
+                                    "text": "Every 8 hours"
+                                }
+                            }
+                        },
+                        "doseAndRate": [
+                            {
+                                "doseQuantity": {
+                                    "value": 500,
+                                    "unit": "mg",
+                                    "system": "http://unitsofmeasure.org",
+                                    "code": "mg"
+                                }
+                            }
+                        ],
+                        "maxDosePerPeriod": {
+                            "numerator": {
+                                "value": 1000,
+                                "unit": "mg",
+                                "system": "http://unitsofmeasure.org",
+                                "code": "mg"
+                            },
+                            "denominator": {
+                                "value": 1,
+                                "unit": "day",
+                                "system": "http://unitsofmeasure.org",
+                                "code": "d"
+                            }
+                        }
+                    }
+                ]
+            }
+        "medication": [
+            {
+                "drug": "Azithromycin",
+                "form": {"type": "tablet", "divisible": True},
+                "site": "mouth",
+                "route": "oral",
+                "method": "swallow",
+                "dose_strategy": [
+                    {
+                        "strategy": "Single Dose",
+                        "sequence": 1,
+                        "instruction": "500mg once a day for 7 days",
+                        "patientInstruction": "Take 3 a day",
+                        "therapeuticDose": "1000g",
+                        "timing": {
+                            "repeat": {
+                                "frequency": 1,
+                                "period": 1,
+                                "periodUnit": "d",
+                                "code": {
+                                    "text": "Every 8 hours"
+                                }
+                            }
+                        },
+                        "doseAndRate": [
+                            {
+                                "doseQuantity": {
+                                    "value": 500,
+                                    "unit": "mg",
+                                    "system": "http://unitsofmeasure.org",
+                                    "code": "mg"
+                                }
+                            }
+                        ],
+                        "maxDosePerPeriod": {
+                            "numerator": {
+                                "value": 500,
                                 "unit": "mg",
                                 "system": "http://unitsofmeasure.org",
                                 "code": "mg"

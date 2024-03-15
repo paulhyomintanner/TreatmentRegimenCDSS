@@ -487,7 +487,6 @@ class App(ctk.CTk):
         return False
     
     def filter_by_exclusions(self, treatments, exclusions):
-        exclusions = [exclusion.strip().lower() for exclusion in exclusions if exclusion.strip()]
         return [treatment for treatment in treatments 
             if not any(any(exclusion in eligibility.get('exclusion', []) 
                            for exclusion in exclusions) for eligibility in treatment['eligibility'])]
