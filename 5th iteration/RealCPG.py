@@ -1656,7 +1656,7 @@ treatment_data = [
                         "sequence": 1,
                         "instruction": "1000mg 3 times a day for 7 days",
                         "patientInstruction": "Take 3 a day",
-                        "therapeuticDose": "1000g",
+                        "therapeuticDose": "1000mg",
                         "timing": {
                             "repeat": {
                                 "frequency": 3,
@@ -1707,7 +1707,7 @@ treatment_data = [
                         "strategy": "single dose",
                         "sequence": 1,
                         "instruction": "500mg once a day for 7 days",
-                        "patientInstruction": "Take 3 a day",
+                        "patientInstruction": "Take 3 times a day",
                         "therapeuticDose": "1000g",
                         "timing": {
                             "repeat": {
