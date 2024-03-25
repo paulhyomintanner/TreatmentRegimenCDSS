@@ -109,6 +109,7 @@ class App(ctk.CTk):
         self.frame = ctk.CTkScrollableFrame(self.treatment_frame)
         self.frame.grid(row=20, rowspan=3, column=0, columnspan=2, padx=10, pady=10, sticky="nsew")
 
+        
         self.user_input_label = ctk.CTkLabel(self.input_frame, text="Step 1: Input Data", font=("Arial", 14, "bold"))
         self.user_input_label.grid(row=0, column=0, columnspan=2, padx=10, pady=5)
 
@@ -265,28 +266,24 @@ class App(ctk.CTk):
                         processed_strategies.add(strategy_identifier)  
 
                         strategy_var = tk.BooleanVar()
-                        strategy_text = f"{medication_name}, Treatment ID: {treatment_id}, Strategy: {strategy}, Therapeutic dose: {therapeutic_dose}, \nEnter Concentration (mg/unit):"
+                        strategy_text = f"{medication_name}, Treatment ID: {treatment_id}, Strategy: {strategy}, \nTherapeutic dose: {therapeutic_dose}, \nEnter Concentration (mg/unit):"
                         strategy_cb = ctk.CTkCheckBox(self.frame, text=strategy_text, variable=strategy_var)
                         strategy_cb.grid(row=10 + row_offset, column=2, padx=10, pady=2, sticky="nsew")
                         self.strategy_checkboxes[(treatment_id, medication_name, strategy)] = strategy_cb  
 
-                        row_offset += 1  # Move to the next row
+                        row_offset += 1  
 
                         if medication['form']['divisible']: 
                             concentration_entry = ctk.CTkEntry(self.frame)
-                            concentration_entry.grid(row=10 + row_offset, column=2, padx=10, pady=2, sticky="ns")  # Place the concentration entry on the new row
+                            concentration_entry.grid(row=10 + row_offset, column=2, padx=10, pady=2, sticky="ns")  
 
                             if hasattr(self, 'concentration_entries'):
                                 self.concentration_entries[(treatment_id, medication_name, strategy)] = concentration_entry
                             else:
                                 self.concentration_entries = {(treatment_id, medication_name, strategy): concentration_entry}                 
 
-                        row_offset += 1  # Move to the next row for the next strategy
+                        row_offset += 1  
                     
-
-
-
-
 
     def calculate_bsa(self, height, weight):    
         return math.sqrt((height * weight) / 3600)
@@ -563,7 +560,7 @@ class App(ctk.CTk):
         return [treatment for treatment in treatments if treatment['disease'] == disease]
 
     def rank_treatments(self, treatments, preferred_cpg):
-        return sorted(treatments, key=lambda x: x['rank'][0][preferred_cpg])
+        return sorted(treatments, key=lambda x: x['rank'][0].get(preferred_cpg, 0))
     
     def filter_treatments_by_severity(self, treatments, user_severity):
         filtered_treatments = []
