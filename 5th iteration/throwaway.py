@@ -265,20 +265,28 @@ class App(ctk.CTk):
                         processed_strategies.add(strategy_identifier)  
 
                         strategy_var = tk.BooleanVar()
-                        strategy_text = f"{medication_name}, {treatment_id}, Strategy: {strategy}, Therapeutic dose: {therapeutic_dose}, \nEnter Concentration (mg/unit):"
+                        strategy_text = f"{medication_name}, Treatment ID: {treatment_id}, Strategy: {strategy}, Therapeutic dose: {therapeutic_dose}, \nEnter Concentration (mg/unit):"
                         strategy_cb = ctk.CTkCheckBox(self.frame, text=strategy_text, variable=strategy_var)
                         strategy_cb.grid(row=10 + row_offset, column=2, padx=10, pady=2, sticky="nsew")
                         self.strategy_checkboxes[(treatment_id, medication_name, strategy)] = strategy_cb  
 
+                        row_offset += 1  # Move to the next row
+
                         if medication['form']['divisible']: 
                             concentration_entry = ctk.CTkEntry(self.frame)
-                            concentration_entry.grid(row=10 + row_offset, column=3, padx=10, pady=2, sticky="nsew")
-                        
+                            concentration_entry.grid(row=10 + row_offset, column=2, padx=10, pady=2, sticky="ns")  # Place the concentration entry on the new row
+
                             if hasattr(self, 'concentration_entries'):
                                 self.concentration_entries[(treatment_id, medication_name, strategy)] = concentration_entry
                             else:
                                 self.concentration_entries = {(treatment_id, medication_name, strategy): concentration_entry}                 
-                        row_offset += 1
+
+                        row_offset += 1  # Move to the next row for the next strategy
+                    
+
+
+
+
 
     def calculate_bsa(self, height, weight):    
         return math.sqrt((height * weight) / 3600)
@@ -323,6 +331,85 @@ class App(ctk.CTk):
         self.confirmed_strategies = confirmed_strategies
         self.calculate_personalized_treatment_plan()
 
+    def calculate_combined_dose(self, user_data, medication_details):
+        dose_info = {}  
+
+        if 'ratio' in medication_details:
+            primary_drug, primary_ratio = next(iter(medication_details['ratio'].items()))
+            if medication_details.get('strategy') == 'weight':
+                primary_drug_dose = user_data['weight'] * medication_details['doseAndRate'][0]['doseQuantity']['value']
+            elif medication_details.get('strategy') == 'bsa':
+                bsa = self.calculate_bsa(user_data['height'], user_data['weight'])
+                primary_drug_dose = bsa * medication_details['doseAndRate'][0]['doseQuantity']['value']
+            else:
+                raise ValueError("Unsupported dosing strategy") 
+
+            
+            dose_info[primary_drug] = primary_drug_dose
+
+            for drug, ratio in medication_details['ratio'].items():
+                if drug != primary_drug:  
+                    drug_dose = (primary_drug_dose / primary_ratio) * ratio
+                    dose_info[drug] = drug_dose
+        else:
+            print("No ratio defined for this medication.")
+        
+        print("Calculated dose information:", dose_info)
+        return dose_info
+
+    def confirm_strategies(self):
+        confirmed_strategies = []
+        for (treatment_id, medication_name, strategy), checkbox_var in self.strategy_checkboxes.items():
+            if checkbox_var.get():  
+                concentration = 0  
+                if (treatment_id, medication_name, strategy) in self.concentration_entries:  
+                    concentration_entry = self.concentration_entries[(treatment_id, medication_name, strategy)]
+                    concentration_str = concentration_entry.get()
+                    if concentration_str:  
+                        try:
+                            concentration = float(concentration_str)
+                        except ValueError:
+                            print(f"Invalid concentration entered for strategy {strategy} in treatment {treatment_id}")
+                            continue
+                confirmed_strategies.append({
+                    'treatment_id': treatment_id,
+                    'medication': medication_name,
+                    'strategy': strategy,
+                    'concentration': concentration
+                })
+        print(confirmed_strategies)
+        print(self.recommended_treatments)
+        self.confirmed_strategies = confirmed_strategies
+        self.calculate_personalized_treatment_plan()
+
+    def calculate_combined_dose(self, user_data, medication_details):
+        dose_info = {}  
+
+        if 'ratio' in medication_details:
+            primary_drug, primary_ratio = next(iter(medication_details['ratio'].items()))
+            if medication_details.get('strategy') == 'weight':
+                primary_drug_dose = user_data['weight'] * medication_details['doseAndRate'][0]['doseQuantity']['value']
+            elif medication_details.get('strategy') == 'bsa':
+                bsa = self.calculate_bsa(user_data['height'], user_data['weight'])
+                primary_drug_dose = bsa * medication_details['doseAndRate'][0]['doseQuantity']['value']
+            elif medication_details.get('strategy') == "single dose":
+                primary_drug_dose = medication_details['doseAndRate'][0]['doseQuantity']['value'] 
+
+            
+            dose_info[primary_drug] = primary_drug_dose
+
+            for drug, ratio in medication_details['ratio'].items():
+                if drug != primary_drug:  
+                    drug_dose = (primary_drug_dose / primary_ratio) * ratio
+                    dose_info[drug] = drug_dose
+        else:
+            print("No ratio defined for this medication.")
+        
+        print("Calculated dose information:", dose_info)
+        return dose_info
+
+
+
 
     def calculate_personalized_treatment_plan(self):
         treatment_to_diseases = {}
@@ -358,7 +445,17 @@ class App(ctk.CTk):
                             frequency = dose_strategy.get('timing', {}).get('repeat', {}).get('frequency', 1)
                             concentration = confirmed_strategy.get('concentration', 0)
                             dose_info_text = f"Strategy: {strategy}\n"
-
+                            
+                            #If there is the ratio parameter available in the data, then the the calculate combined dose function is called to calculate the ratio dose.
+                            if 'ratio' in dose_strategy:
+                                print(f"Found ratio in {medication['drug']} for treatment {treatment_details['treatment_id']}")
+                                dose_info = self.calculate_combined_dose(self.user_data, dose_strategy)
+                                for drug, dose in dose_info.items():
+                                    dose_info_text += f"{drug} Dose: {dose:.2f}mg\n"
+                            
+                            #If there is no ratio parameter available in the data, then the dose is calculated based on the strategy.
+                            #Weight, BSA or single dose are just some examples of a list of strategies that can be used to calculate the dose.
+                            
                             if strategy in ["weight", "bsa", "single dose"]:
                                 if strategy == "weight":
                                     dose = self.calculate_dose_based_on_weight(self.user_data['weight'], dose_strategy['doseAndRate'][0]['doseQuantity']['value'])
@@ -368,15 +465,16 @@ class App(ctk.CTk):
                                 elif strategy == "single dose":
                                     dose = dose_strategy['doseAndRate'][0]['doseQuantity']['value']
 
-
-
                                 max_dose = dose_strategy.get('maxDosePerPeriod', {}).get('numerator', {}).get('value', float('inf'))
                                 dose = min(dose, max_dose)
                                 #dose_per_administration = self.calculate_dose_per_administration(dose, frequency) if isinstance(dose, (int, float)) else "N/A"
                                 
+                                #Calculates the volume needed for the administrative dose to 4 decimals.
                                 if concentration > 0:
                                     volume_per_dose = dose / concentration
-                                    dose_info_text += f"Volume per Dose: {volume_per_dose:.2f} units (ml/tablet)\n"
+                                    dose_info_text += f"Volume per Dose: {volume_per_dose:.4f} units (ml/tablet)\n"   
+                                
+                                
                                 
                                 dose_info_text += f"Calculated Dose: {dose}mg\nDose per Administration: {dose} mg\n"
 
