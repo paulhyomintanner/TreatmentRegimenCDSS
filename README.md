@@ -37,4 +37,9 @@ Fixes:
 
 -ignore version4.2.
 
+ - throwaway.py deals with all CPGs in oine json file. You then select the different CPG that is available through the rank parameter
+
+- poc.py is the latest iteration and accesses the GhanaSTG and the MSF_CPG in the directory which you then select. From then on the script just uses the defined CPG available. Its a lot cleaner this way and makes it clear which CPG you are using. 
+
+- the interaction warning, superceding rules, and CPGs are availabe in the file directory. 
 
