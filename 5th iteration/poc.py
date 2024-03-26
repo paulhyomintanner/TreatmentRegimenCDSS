@@ -82,6 +82,8 @@ class App(ctk.CTk):
 
         self.geometry("1000x700")
 
+
+
         cpgs = list(self.data.keys())
         self.cpg_dropdown = ctk.CTkOptionMenu(self.input_frame, values=cpgs)
         self.cpg_dropdown.pack()
@@ -133,19 +135,19 @@ class App(ctk.CTk):
         self.user_input_label.grid(row=0, column=0, columnspan=2, padx=10, pady=5)
 
         self.height_label = ctk.CTkLabel(self.input_frame, text="Enter Patient Height:", font=("Arial", 12, "bold"))
-        self.height_label.grid(row=3, column=0, padx=10, pady=1, sticky="ew")
+        self.height_label.grid(row=1, column=0, padx=10, pady=1, sticky="ew")
         self.height_entry = ctk.CTkEntry(self.input_frame, placeholder_text="Height")
-        self.height_entry.grid(row=4, column=0, padx=10, pady=3, sticky="ew")
+        self.height_entry.grid(row=2, column=0, padx=10, pady=3, sticky="ew")
 
         self.weight_label = ctk.CTkLabel(self.input_frame, text="Enter Patient Weight:", font=("Arial", 12, "bold"))
-        self.weight_label.grid(row=5, column=0, padx=10, pady=1, sticky="ew")
+        self.weight_label.grid(row=3, column=0, padx=10, pady=1, sticky="ew")
         self.weight_entry = ctk.CTkEntry(self.input_frame, placeholder_text="Weight")
-        self.weight_entry.grid(row=6, column=0, padx=10, pady=3, sticky="ew")
+        self.weight_entry.grid(row=4, column=0, padx=10, pady=3, sticky="ew")
 
         self.age_label = ctk.CTkLabel(self.input_frame, text="Enter Patient Age:", font=("Arial", 12, "bold"))
-        self.age_label.grid(row=7, column=0, padx=10, pady=1, sticky="ew")
+        self.age_label.grid(row=5, column=0, padx=10, pady=1, sticky="ew")
         self.age_entry = ctk.CTkEntry(self.input_frame, placeholder_text="Age")
-        self.age_entry.grid(row=8, column=0, padx=10, pady=3, sticky="ew")
+        self.age_entry.grid(row=6, column=0, padx=10, pady=3, sticky="ew")
         
         exclusions = list(set(exclusion for treatment in self.chosen_cpg['_default'].values() for eligibility in treatment['eligibility'] for exclusion in eligibility['exclusion']))
         self.exclusions = ctk.CTkLabel(self.input_frame, text="Select exclusions that apply:")
@@ -181,12 +183,9 @@ class App(ctk.CTk):
         self.severity_dropdown.grid(row=22, column=1, padx=10, pady=5, sticky="ew")
 
         self.medication_label = ctk.CTkLabel(self.input_frame, text="Add existing patient medication:", font=("Arial", 12, "bold"))
-        self.medication_label.grid(row=1, column=1, padx=10, pady=1, sticky="ew")
+        self.medication_label.grid(row=7, column=0, padx=10, pady=1, sticky="ew")
         self.medication_entry = ctk.CTkEntry(self.input_frame, placeholder_text="Current medication (separated by commas)")
-        self.medication_entry.grid(row=2, column=1, padx=10, pady=3, sticky="ew")
-
-        self.pre_existing_conditions_entry = ctk.CTkEntry(self.input_frame, placeholder_text="Pre-existing conditions")
-        self.pre_existing_conditions_entry.grid(row=3, column=1, padx=10, pady=10, sticky="ew")
+        self.medication_entry.grid(row=8, column=0, padx=10, pady=3, sticky="ew")
 
         self.treatments_label = ctk.CTkLabel(self.treatment_frame, text="Step 2: Confirm or Reject Treatment Regimens", font=("Arial", 14, "bold"))
         self.treatments_label.grid(row=0, column=0, columnspan=2, padx=10, pady=5)
@@ -267,7 +266,6 @@ class App(ctk.CTk):
             'cpg': '',
             'diseases': [],
             'medications': [],
-            'pre_existing_conditions': [],
             'exclusions': []
         }
 
@@ -550,10 +548,6 @@ class App(ctk.CTk):
         medications = [medication.strip() for medication in self.medication_entry.get().split(',') if medication.strip()]
         self.user_data['medications'] = medications
 
-    def get_pre_existing_conditions(self):
-        pre_existing_conditions = [condition.strip() for condition in self.pre_existing_conditions_entry.get().split(',') if condition.strip()]
-        self.user_data['pre_existing_conditions'] = pre_existing_conditions
-
     def submit_disease(self):
         disease = self.disease_dropdown.get()
         severity = self.severity_var.get()  
@@ -588,7 +582,6 @@ class App(ctk.CTk):
 
     def button_callback(self):
         self.get_medications()
-        self.get_pre_existing_conditions()
         self.get_weight()
         self.get_height()
         self.get_age()

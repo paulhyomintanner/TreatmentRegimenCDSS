@@ -699,3 +699,6 @@ if __name__ == "__main__":
 
 
 
+"""This script is handles 1 json form that is just a database representation. It does not have the capacity to handle multiple json files as treament CPGs
+The next version also dela with ratios for the medication and leaves out the input for th eexisting condition. 
+the logic behind this is that if there is a pre-existing condition than it will beincluded in the exclusion criteria to simplify the process """
