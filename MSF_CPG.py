@@ -78,7 +78,7 @@ treatment_data = [
     {
         "treatment_id": "MSF 2",
         "disease": "Acute Otitis Media",
-        "description": "Treatment for children with high severity Acute Otitis Media",
+        "description": "Treatment for children <40kg with high severity Acute Otitis Media",
         "eligibility": [
             {
                 "strategy": "Basic strategy",
@@ -295,11 +295,11 @@ treatment_data = [
                 "method": "swallow (oral suspension)",
                 "dose_strategy": [
                     {
-                        "strategy": "weight",
+                        "strategy": "single dose",
                         "sequence": 1,
                         "instruction": "Administer 1000mg(Amoxicillin)/125mg(Clavulanic acid) 2 times daily)",
                         "patientInstruction": "Take every 12 hours",
-                        "therapeuticDose": "Ratio 8:1 of Amoxicillin (2000mg) to Clavulanic acid",
+                        "therapeuticDose": "Ratio 8:1 of Amoxicillin (1000mg) to Clavulanic acid",
                         "ratio": {
                             "amoxicillin": 8,
                             "clavulanic_acid": 1

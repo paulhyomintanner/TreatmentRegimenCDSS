@@ -1710,7 +1710,7 @@ treatment_data = [
                         "sequence": 1,
                         "instruction": "500mg once a day for 7 days",
                         "patientInstruction": "Take 3 times a day",
-                        "therapeuticDose": "1000g",
+                        "therapeuticDose": "500mg",
                         "timing": {
                             "repeat": {
                                 "frequency": 1,

@@ -4,7 +4,7 @@ import tkinter as tk
 import json
 import math
 import os
-
+import sys
 
 ctk.set_appearance_mode("Dark")
 ctk.set_default_color_theme("green")
@@ -225,9 +225,15 @@ class App(ctk.CTk):
         self.confirm_strategies_button = ctk.CTkButton(self.treatment_frame, text="Confirm Strategies and Generate Regimen", command=self.confirm_strategies)
         self.confirm_strategies_button.grid(row=28, column=0, columnspan=2, padx=10, pady=10, sticky="ew")
 
-        self.reset_button = ctk.CTkButton(self.treatment_frame, text="Reset", command=self.reset)
+        self.reset_button = ctk.CTkButton(self.treatment_frame, text="Reset user data", command=self.reset)
         self.reset_button.grid(row=30, column=0, columnspan=1, padx=10, pady=10, sticky="ew")
-        
+
+        self.restart_button = ctk.CTkButton(self.treatment_frame, text="Restart to Change CPG", command=self.restart_program)
+        self.restart_button.grid(row=30, column=1, columnspan=1, padx=10, pady=10, sticky="ew")
+
+    def restart_program(self):
+        python = sys.executable
+        os.execl(python, python, * sys.argv)   
 
     def update_severity_dropdown(self, *args):
         selected_disease = self.disease_var.get()
