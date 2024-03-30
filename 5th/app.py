@@ -111,16 +111,50 @@ def main(page: Page) -> None:
             )
         )
             
+        def update_severity_options(e):
+            selected_disease = e.control.value
+            unique_severities = set()
+
+
+            for treatment in selected_cpg_data['_default'].values():
+                if treatment['disease'] == selected_disease:
+                    for eligibility in treatment['eligibility']:
+                        for key, value in eligibility['severity'].items():
+                            severity = f"{key}: {value}"  
+                            unique_severities.add(severity)
+
+            severity_options = [ft.dropdown.Option(severity) for severity in sorted(unique_severities)]
+            
+            severity_dd.options = severity_options
+            severity_dd.update()  
+
+
 
 
         if '_default' in selected_cpg_data:
             unique_exclusions = {exclusion for treatment in selected_cpg_data['_default'].values() for eligibility in treatment['eligibility'] for exclusion in eligibility['exclusion']}
-            
+            unique_diseases = {treatment['disease'] for treatment in selected_cpg_data['_default'].values()}            
+            disease_options = [ft.dropdown.Option(disease) for disease in sorted(unique_diseases)]
+            disease_dd = Dropdown(label='Disease Criteria', options=disease_options, on_change=update_severity_options)
+
+            severity_dd = Dropdown(label="Add severity", options=[])
+
             exclusion_options = [ft.dropdown.Option(exclusion) for exclusion in sorted(unique_exclusions)]
             exclusion_dd = Dropdown(label='Exclusion Criteria', options=exclusion_options)
-        else:
-            print("The '_default' key is not in the selected_cpg_data dictionary.")
-    
+        
+        def get_disease_data(e):
+            disease_severity = {
+                'disease': disease_dd.value,
+                'severity': severity_dd.value
+            }
+            user_data['diseases'].append(disease_severity)
+            disease_severity_text.value += f"Selected: {disease_severity.values()}\n"
+            print(user_data)
+            page.update()
+
+        submit_disease_button = ElevatedButton(text='Add Disease', on_click=get_disease_data)
+        disease_severity_text = Text(value='')
+
         if page.route == '/Exclusions':
             page.views.append(
             View(
@@ -128,8 +162,10 @@ def main(page: Page) -> None:
                 controls=[
                     AppBar(title=Text('Input Exclusions'), bgcolor='blue'),
                     Text(value='Input Exclusions', size=30),
-                    Dropdown(label="Add diagnosis", options=[ft.dropdown.Option('pneumonia'), ft.dropdown.Option('DiseaseX')]),
-                    Dropdown(label="Add severity", options=[ft.dropdown.Option('Very Severe'), ft.dropdown.Option('Less Severe')]),
+                    disease_dd,
+                    severity_dd,
+                    submit_disease_button,   
+                    disease_severity_text,        
                     exclusion_dd,                    
                     ElevatedButton(text='Next', on_click=lambda _: page.go('/SelectTreatmentPlan')),
                     ElevatedButton(text='Go back', on_click=lambda _: page.go('/UserInput'))
