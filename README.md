@@ -2,6 +2,7 @@
 Thesis topic on dynamically selecting treatment regimens for clinicians. The treatments are not to be used as actual treatments. 
 
 To test, clone the repository. Then run the `poc.py` script to use the GUI. 
+Dependencies: customtkinter, tkinter, json, math, os, and sys
 
 ## Test case for superseding treatments: 
 
