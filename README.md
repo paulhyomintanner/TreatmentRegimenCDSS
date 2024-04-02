@@ -1,45 +1,61 @@
 # TreatmentRegimenCDSS
 Thesis topic on dynamically selecting treatment regimens for clinicians.
-None of the example drugs and examples are accurate and are just placeholders. 
 
-1st iteration - rudimentary application of filters and exclusion criteria, with no rules for superceeding. Run main() in 1st iteration
+To test clone the repositiory. Then run the poc.py script to use the gui. 
 
-Core funtions: filtering, ranking, user_exclusion, treaments as instances. 
+Test case for superseding treatments: 
 
-Version 2 - use superceding.py to run from treatment evaluation process to the superceding process. It will take the IDs of the top ranking treatments, then run them against the superceding_rules_db rules, if non-are matched then the both the top treatments will print. If there is a match
-then only the superceeding treatment will match. Will refactor code once the core process has been done - run superceding.py.
+Step 1: Input Data 
+    1. input - Select GhanaSTG
+    2. input - Enter patient details: height: 120, weight: int > 10, age: 8, current medication: empty, Exclusions: Select none. 
+    3. input - Select Pneumonia and CURB-65 >2 then click submit.
+    4. input - Select Acute Otitis Media Seriousness: High then click submit.
+    5. click - click retrieve Treatments
 
-Core functions: filtering, ranking, user_exclusion, treatments in db, superceding rules and db.  The ranking is also dealt with using the CPG guideline that the user can select. This will indicate to the system which CPG ranking should be used. 
-1. Primary filter applied using the disease from the user input.
-2. Eligiblity criteria: exclusion and severity filters applied.
-3. Ranking of treatments based on CPG.
-4. User exclusion
-5. Treatments re-ranked after the user exclusion.
-6. Superseding rules applied.
-7. Top treatments printed or treatment if rules are applied.
+Step 2: Confirm or Reject Treatment Regimens
+    1. Acute Otitis Media will have have treatment AC. Scroll down for Pneumonia:
+    "Treatment id: Note: Treatment ID A has been superseded by Treatment ID AC for Acute Otitis Media"
+    2. If you want to reject a treatment, type it into the "Enter Treatmen ID(s) to reject" input, and press enter.
+    The process will re-run again minus the rejected treatments, and provide different treatment options until the list is exhausted.
+    IF AC is rejected, then Pneumonia will have a new treatment recommendation "AD", and Acute Otitis Media will have "A".
+    3. Click Confirm treatment when you are happy with the recommendations.
 
-Version 3
+Step 3: Select Treatment Strategies 
+    1. Select the medication you want to be part of the treatment plan and if you want, the concentration of the medication - mg/unit. 
+    - if the dosing strategy is "single dose" then the medication will not be dosed even if the dose is given in mg/kg
+    - if the dosing strategy is "weight" then the the patient dose will be calculated per weight.
+    2. Click "Confirm Strategies and Generate Regimen" - The regimen will pop up in a seperate window.
 
-1. Validation for treatment
-2. Dosing function added - strategies are based on "standard", "child" , "neonate" that determine the dose. 
-3. Takes weight as a parameter to be used in the calculation. 
 
-Version 4 
+- To trigger warning: add "weferin" to "add existing patient medication:" and if a treatment contains penicillin then it will be triggered.
+- Exclusion criteria will narrow down treatment selection. They are arbitrary for now - needs to be updated. 
 
-1. Changed the data structure from "exclusion" and "severity" as seperate lists, into a dictionary called "eligibility". Add post-coordination as a aligibility. 
-2. Have the superceding before the the user exclusion. only display top ranked treatment. The user exclusion wil only be the top ranked treatments being displayed. IF they reject the treatment THEN the whole treatment evaluation process will be looped, until either the user accepts a treatment. OR there are no more treatments available. - each time the user rejects a tretment it enters a rejection list which is used as a filter the next loop. 
-3. Instead of "diagnosis" and "comobidity" there is now diagnosis, and additional diseases added. All the treatments are stored ina  dictionary - before it was two seperate lists. - allows for a more flexible approach. 
-- This will move the user acceptance of the treatment plan from before the drug is calculated to before that to after the superceding rules. 
-Fixes: 
-- added the recommended dictionary to be returned by the rules function
-- allow you to add more than one treatment for rejection at once. 
-- loop ends when no more treatments found 
+Test case for ratios:
 
--ignore version4.2.
+Step 1: Input Data 
+    1. input - Select MSF_CPG
+    2. input - Enter patient details: height: 40, weight: 20, age: 5, current medication: empty, Exclusions: Select none. 
+    3. input - Select Acute Otitis Media Seriousness: High then click submit.
+    5. click - click retrieve Treatments
 
- - throwaway.py deals with all CPGs in oine json file. You then select the different CPG that is available through the rank parameter
+Step 2: Confirm or Reject Treatment Regimens
+    1. Acute Otitis Media will have have treatment will be treatment: MSF 2
+    2. Confirm treatment
 
-- poc.py is the latest iteration and accesses the GhanaSTG and the MSF_CPG in the directory which you then select. From then on the script just uses the defined CPG available. Its a lot cleaner this way and makes it clear which CPG you are using. 
+Step 3:  Select Treatment Strategies 
+    1. Add treatment strategies and add concentration, then confirm strategy.
+    - the ratio will be calculated acording to the therapeutic dose for the main drug. In this case Amoxicillin. 
+    - Currently the "calculated dose" is just for the primary drug, but that will be changed. 
 
-- the interaction warning, superceding rules, and CPGs are availabe in the file directory. 
+Changes that will  be made:
+- clear up dosing strategies
+- add more information for user to decide on treatment
+- Currently the "calculated dose" is just for the primary drug, but that will be changed. 
+
+link to video on the ratios: https://youtu.be/ussRG5I1eiU
+
+
+- CPGs are found in the CPGs folder
+- Flet folder contains ui changes that would be implmented if time permits - not finished. 
+
 

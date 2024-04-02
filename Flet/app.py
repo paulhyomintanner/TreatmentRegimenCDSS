@@ -16,7 +16,6 @@ def load_data():
     return data
 
 
-
 def load_superseding_rules():
     with open('superseding_rules_db.json') as f:
         rules = json.load(f)
@@ -82,8 +81,6 @@ def main(page: Page) -> None:
         height_input = TextField(label="Insert Patient Height (cm)")
 
 
-
-
         def get_user_data(e):
             user_data['age'] = age_input.value
             user_data['weight'] = weight_input.value
@@ -112,6 +109,16 @@ def main(page: Page) -> None:
         )
             
         def update_severity_options(e):
+            """
+            Updates the severity options dropdown based on the selected disease, this is found in the selected_cpg_data.
+
+            Parameters:
+                e (Event): The event object that triggered the function, in this case the selection of the disease from
+                the disease drop down menu.
+
+            Returns:
+                None
+            """
             selected_disease = e.control.value
             unique_severities = set()
 
@@ -143,6 +150,17 @@ def main(page: Page) -> None:
             exclusion_dd = Dropdown(label='Exclusion Criteria', options=exclusion_options)
         
         def get_disease_data(e):
+            """Once the submit button is clicked then the function will get the selected disease and severity and add it to the 
+            user_data dictionary. This way the user can add as many diseases as they want.
+            
+            Parameters:
+                e (Event): The event object that triggered the function is the submit button click, in this case the selection of the disease from
+                the disease drop down menu.
+
+            Returns:
+                None
+            """
+
             disease_severity = {
                 'disease': disease_dd.value,
                 'severity': severity_dd.value
@@ -152,8 +170,17 @@ def main(page: Page) -> None:
             print(user_data)
             page.update()
 
+        def add_exclusions(e):
+            user_data['exclusions'].append(exclusion_dd.value)
+            exclusion_text.value += f"Selected: {exclusion_dd.value}\n"
+            print(user_data)
+            page.update()
+
+
         submit_disease_button = ElevatedButton(text='Add Disease', on_click=get_disease_data)
+        add_exclusion_button = ElevatedButton(text='Add Exclusion', on_click=add_exclusions)
         disease_severity_text = Text(value='')
+        exclusion_text = Text(value='')
 
         if page.route == '/Exclusions':
             page.views.append(
@@ -166,7 +193,9 @@ def main(page: Page) -> None:
                     severity_dd,
                     submit_disease_button,   
                     disease_severity_text,        
-                    exclusion_dd,                    
+                    exclusion_dd,
+                    exclusion_text,
+                    add_exclusion_button,                    
                     ElevatedButton(text='Next', on_click=lambda _: page.go('/SelectTreatmentPlan')),
                     ElevatedButton(text='Go back', on_click=lambda _: page.go('/UserInput'))
                 ],
