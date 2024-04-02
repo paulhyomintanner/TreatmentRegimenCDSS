@@ -1,7 +1,7 @@
 # TreatmentRegimenCDSS
-Thesis topic on dynamically selecting treatment regimens for clinicians.
+Thesis topic on dynamically selecting treatment regimens for clinicians. The treatments are not to be used as actual treatments. 
 
-To test clone the repository. Then run the `poc.py` script to use the GUI. 
+To test, clone the repository. Then run the `poc.py` script to use the GUI. 
 
 ## Test case for superseding treatments: 
 
@@ -9,7 +9,7 @@ To test clone the repository. Then run the `poc.py` script to use the GUI.
 1. input - Select `GhanaSTG`
 2. input - Enter patient details: height: 120, weight: int > 10, age: 8, current medication: empty, Exclusions: Select none. 
 3. input - Select `Pneumonia` and `CURB-65 >2` then click submit.
-4. input - Select `Acute Otitis Media` Seriousness: High then click submit.
+4. input - Select `Acute Otitis Media` and `Seriousness High` then click submit.
 5. click - click `retrieve Treatments`
 
 ### Step 2: Confirm or Reject Treatment Regimens
