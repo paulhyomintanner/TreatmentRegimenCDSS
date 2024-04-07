@@ -23,6 +23,8 @@ def load_superseding_rules():
 
 def main(page: Page) -> None:
     page.title = 'CDSS Regimen Builder'
+    page.window_width = 350
+    page.window_height = 700
 
     user_data = {
         'weight': 0,
@@ -64,7 +66,6 @@ def main(page: Page) -> None:
             View(
                 route='/',
                 controls=[
-                    AppBar(title=Text('Start'), bgcolor='blue'),
                     Text(value='Select CPG', size=30),
                     cpgdropdown,
                     confirm_cpg_button
@@ -76,9 +77,9 @@ def main(page: Page) -> None:
         )
 
 
-        age_input = TextField(label="Insert Patient Age")
-        weight_input = TextField(label="Insert Patient Weight (kg)")
-        height_input = TextField(label="Insert Patient Height (cm)")
+        age_input = TextField(label="Insert Patient Age", width=200)
+        weight_input = TextField(label="Insert Patient Weight (kg)", width=200)
+        height_input = TextField(label="Insert Patient Height (cm)", width=200)
 
 
         def get_user_data(e):
@@ -94,7 +95,6 @@ def main(page: Page) -> None:
             View(
                 route='/UserInput',
                 controls=[
-                    AppBar(title=Text('User input'), bgcolor='blue'),
                     Text(value='User input', size=30),
                     ElevatedButton(text='Go back', on_click=lambda _: page.go('/')),
                     age_input,
@@ -177,40 +177,68 @@ def main(page: Page) -> None:
             page.update()
 
 
-        submit_disease_button = ElevatedButton(text='Add Disease', on_click=get_disease_data)
-        add_exclusion_button = ElevatedButton(text='Add Exclusion', on_click=add_exclusions)
+        submit_disease_button = ElevatedButton(text='Add Disease', on_click=get_disease_data, height=25)
+        add_exclusion_button = ElevatedButton(text='Add Exclusion', on_click=add_exclusions, height=25)
         disease_severity_text = Text(value='')
         exclusion_text = Text(value='')
 
+
+        scroll_container =ft.Container(
+            content= ft.Column(
+                            controls=[
+                                disease_severity_text,
+                                exclusion_text
+                            ],
+                            height=130,
+                            width=350,
+                            spacing=5, 
+                            scroll=ft.ScrollMode.ALWAYS
+                            ),
+            width=350,
+            height=200,
+            bgcolor=ft.colors.INDIGO_100,
+            border=ft.border.all(1, ft.colors.BLACK),
+            border_radius=ft.border_radius.all(5),
+            padding=ft.padding.all(10)
+        )
+
+
+
+
         if page.route == '/Exclusions':
             page.views.append(
-            View(
-                route='/Exclusions',
-                controls=[
-                    AppBar(title=Text('Input Exclusions'), bgcolor='blue'),
-                    Text(value='Input Exclusions', size=30),
-                    disease_dd,
-                    severity_dd,
-                    submit_disease_button,   
-                    disease_severity_text,        
-                    exclusion_dd,
-                    exclusion_text,
-                    add_exclusion_button,                    
-                    ElevatedButton(text='Next', on_click=lambda _: page.go('/SelectTreatmentPlan')),
-                    ElevatedButton(text='Go back', on_click=lambda _: page.go('/UserInput'))
-                ],
-                vertical_alignment=MainAxisAlignment.CENTER,
-                horizontal_alignment=CrossAxisAlignment.CENTER,
-                spacing=20
+                View(
+                    route='/Exclusions',
+                    controls=[
+                        Text(value='Input Exclusions', size=30),
+                        Column(
+                            controls=[
+                                disease_dd,
+                                severity_dd,
+                                submit_disease_button,          
+                                exclusion_dd,
+                                add_exclusion_button, 
+                                scroll_container,                 
+                            ],
+                        spacing=10,
+                        height=500,
+                        width=350,
+                        scroll=ft.ScrollMode.ALWAYS
+                        ),
+                        ElevatedButton(text='Next', height=25, on_click=lambda _: page.go('/SelectTreatmentPlan')),
+                        ElevatedButton(text='Go back', height=25,on_click=lambda _: page.go('/UserInput')) 
+                    ],
+                    vertical_alignment=MainAxisAlignment.CENTER,
+                    horizontal_alignment=CrossAxisAlignment.CENTER,
+                    spacing=10
+                )
             )
-        )
             
         if page.route == '/SelectTreatmentPlan':
             page.views.append(
             View(
                 route='/SelectTreatmentPlan',
                 controls=[
-                    AppBar(title=Text('Select Treatment Plan'), bgcolor='blue'),
                     Text(value='Select Treatment', size=30),
                     ElevatedButton(text='reject treatment'),
                     ElevatedButton(text='Go back', on_click=lambda _: page.go('/Exclusions')),               
@@ -227,7 +255,6 @@ def main(page: Page) -> None:
             View(
                 route='/SelectDosingStrategy',
                 controls=[
-                    AppBar(title=Text('Select Dosing Strategy'), bgcolor='blue'),
                     Text(value='User input', size=30),
                     ElevatedButton(text='Go back', on_click=lambda _: page.go('/SelectTreatmentPlan')),
                     ElevatedButton(text='Build Regimen', on_click=lambda _: page.go('/BuildRegimen'))
@@ -243,7 +270,6 @@ def main(page: Page) -> None:
             View(
                 route='/BuildRegimen',
                 controls=[
-                    AppBar(title=Text('Personalized Regimen'), bgcolor='blue'),
                     Text(value='Personalized regimen', size=30),
                     ElevatedButton(text='Restart', on_click=lambda _: page.go('/'))
                 ],
