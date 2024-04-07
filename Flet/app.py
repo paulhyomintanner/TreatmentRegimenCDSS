@@ -4,7 +4,6 @@ from flet import RouteChangeEvent, ViewPopEvent, CrossAxisAlignment, MainAxisAli
 import json
 import os
 
-
 def load_data():
     data = {}
     directory = 'CPGs'
@@ -43,6 +42,8 @@ def main(page: Page) -> None:
     rules = load_superseding_rules()
     selected_cpg = []
     selected_cpg_data = {}  
+    candidate_treatments = {}
+
 
     def route_change(e: RouteChangeEvent) -> None:
         nonlocal selected_cpg, selected_cpg_data  
@@ -160,7 +161,6 @@ def main(page: Page) -> None:
             Returns:
                 None
             """
-
             disease_severity = {
                 'disease': disease_dd.value,
                 'severity': severity_dd.value
@@ -202,8 +202,9 @@ def main(page: Page) -> None:
             padding=ft.padding.all(10)
         )
 
-
-
+        def get_treatments(e):
+            page.go('/SelectTreatmentPlan')
+            #retrieve_treatments() #Add the function to retrieve the treatments here
 
         if page.route == '/Exclusions':
             page.views.append(
@@ -225,24 +226,55 @@ def main(page: Page) -> None:
                         width=350,
                         scroll=ft.ScrollMode.ALWAYS
                         ),
-                        ElevatedButton(text='Next', height=25, on_click=lambda _: page.go('/SelectTreatmentPlan')),
-                        ElevatedButton(text='Go back', height=25,on_click=lambda _: page.go('/UserInput')) 
+                        ElevatedButton(text='Next', height=30, on_click=get_treatments),
+                        ElevatedButton(text='Go back', height=30,on_click=lambda _: page.go('/UserInput')) 
                     ],
                     vertical_alignment=MainAxisAlignment.CENTER,
                     horizontal_alignment=CrossAxisAlignment.CENTER,
                     spacing=10
                 )
             )
-            
+
+
+
+
+        treatment_text = Text(value='')
+ 
+        treatment_container =ft.Container(
+            content= ft.Column(
+                            controls=[
+                                treatment_text
+                            ],
+                            height=130,
+                            width=350,
+                            spacing=5, 
+                            scroll=ft.ScrollMode.ALWAYS
+                            ),
+            width=350,
+            height=200,
+            bgcolor=ft.colors.INDIGO_100,
+            border=ft.border.all(1, ft.colors.BLACK),
+            border_radius=ft.border_radius.all(5),
+            padding=ft.padding.all(10)
+        )
+    
         if page.route == '/SelectTreatmentPlan':
             page.views.append(
             View(
                 route='/SelectTreatmentPlan',
                 controls=[
-                    Text(value='Select Treatment', size=30),
-                    ElevatedButton(text='reject treatment'),
-                    ElevatedButton(text='Go back', on_click=lambda _: page.go('/Exclusions')),               
-                    ElevatedButton(text='Proceed Without Rejections', on_click=lambda _: page.go('/SelectDosingStrategy'))
+                    Column(
+                        controls=[
+                            Text(value='Select Treatment', size=30),
+                            ElevatedButton(text='reject treatment'),
+                            ElevatedButton(text='Go back', on_click=lambda _: page.go('/Exclusions')),               
+                            ElevatedButton(text='Proceed Without Rejections', on_click=lambda _: page.go('/SelectDosingStrategy')),
+                            treatment_container
+                        ],
+                        height=500,
+                        width=350,
+                        scroll=ft.ScrollMode.ALWAYS
+                    ),
                 ],
                 vertical_alignment=MainAxisAlignment.CENTER,
                 horizontal_alignment=CrossAxisAlignment.CENTER,
@@ -294,3 +326,7 @@ def main(page: Page) -> None:
 
 if __name__ == "__main__":
     ft.app(target=main)
+
+
+
+
