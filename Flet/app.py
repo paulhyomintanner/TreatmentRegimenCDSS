@@ -4,6 +4,8 @@ from flet import RouteChangeEvent, ViewPopEvent, CrossAxisAlignment, MainAxisAli
 import json
 import os
 
+
+
 def load_data():
     data = {}
     directory = 'CPGs'
@@ -13,6 +15,10 @@ def load_data():
                 key = filename[:-5]  
                 data[key] = json.load(f)
     return data
+
+
+
+
 
 
 def load_superseding_rules():
@@ -56,7 +62,7 @@ def main(page: Page) -> None:
             selected_cpg = e.control.value
             selected_cpg_data = cpgdata[selected_cpg]
             user_data['cpg'] = selected_cpg  
-            print(selected_cpg, selected_cpg_data)
+            print(selected_cpg_data)
 
 
         cpg_options = [ft.dropdown.Option(key) for key in cpgdata.keys()]
@@ -204,7 +210,7 @@ def main(page: Page) -> None:
 
         def get_treatments(e):
             page.go('/SelectTreatmentPlan')
-            #retrieve_treatments() #Add the function to retrieve the treatments here
+            retrieve_treatments(user_data, selected_cpg_data)
 
         if page.route == '/Exclusions':
             page.views.append(
@@ -234,6 +240,50 @@ def main(page: Page) -> None:
                     spacing=10
                 )
             )
+
+        def retrieve_treatments(user_data, selected_cpg_data):
+            user_diseases = user_data['diseases']
+            user_age = int(user_data['age'])
+            user_weight = int(user_data['weight'])
+            user_exclusions = user_data['exclusions']
+
+            for user_disease in user_diseases:
+                disease_name = user_disease['disease']
+                disease_severity = user_disease['severity']
+
+                # Filter the selected_cpg_data for treatments that match the disease and user criteria
+                eligible_treatments = []
+                for treatment in selected_cpg_data['_default'].values():
+                    if treatment['disease'] == disease_name:
+                        for eligibility in treatment['eligibility']:
+                            # Direct severity matching and check against user profile and exclusions
+                            severity_condition = "{}: {}".format(list(eligibility['severity'].keys())[0], 
+                                                                list(eligibility['severity'].values())[0])
+                            if disease_severity == severity_condition:
+                                age_range = eligibility['patient_profile']['age_range']
+                                min_weight = eligibility['patient_profile']['min_weight']
+                                exclusions = eligibility['exclusion']
+                                
+                                # Check age, weight, and exclusions
+                                if (age_range['min'] <= user_age <= age_range['max'] and 
+                                        user_weight >= min_weight and 
+                                        not any(exclusion in user_exclusions for exclusion in exclusions)):
+                                    eligible_treatments.append(treatment)
+                                    break
+
+                eligible_treatments.sort(key=lambda x: list(x['rank'][0].values())[0])
+
+                if eligible_treatments:
+                    print(f"The highest ranked treatment for {disease_name} with {disease_severity} is: {eligible_treatments[0]['treatment_id']}")
+                else:
+                    print(f"No treatment found for {disease_name} with {disease_severity}")
+
+
+
+
+
+
+
 
 
 
