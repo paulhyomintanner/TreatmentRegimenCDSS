@@ -207,7 +207,7 @@ def main(page: Page) -> None:
 
         def get_treatments(e):
             page.go('/SelectTreatmentPlan')
-            retrieve_treatments(user_data, selected_cpg_data)
+            
 
         if page.route == '/Exclusions':
             page.views.append(
@@ -239,11 +239,6 @@ def main(page: Page) -> None:
             )
 
 
-
-
-
-
-
         from datetime import datetime
 
         def calculate_age_in_days_and_years(birth_date_str):
@@ -262,9 +257,6 @@ def main(page: Page) -> None:
             print(f"Age in Days: {age_in_days}, Age in Years: {age_in_years}")  
 
             return age_in_days, age_in_years
-
-
-
 
 
         def retrieve_treatments(user_data, selected_cpg_data):
@@ -286,7 +278,7 @@ def main(page: Page) -> None:
                                                                 list(eligibility['severity'].values())[0])
                             if disease_severity == severity_condition:
                                 patient_profile = eligibility['patient_profile']
-                                age_range_unit = patient_profile.get('age_range_unit', 'years')  # This will default to years if not specified
+                                age_range_unit = patient_profile.get('age_range_unit', 'years')  #This will default to years if not specified
                                 age_range = patient_profile['age_range']
                                 min_weight = patient_profile.get('min_weight', 0)
                                 exclusions = eligibility['exclusion']
@@ -302,22 +294,21 @@ def main(page: Page) -> None:
 
 
                 eligible_treatments.sort(key=lambda x: list(x['rank'][0].values())[0])
-
+                
                 if eligible_treatments:
-                    print(f"The highest ranked treatment for {disease_name} with {disease_severity} is: {eligible_treatments[0]['treatment_id']}")
+                    recommended_treatments_text.value = f"The highest ranked treatment for {disease_name} with {disease_severity} is: {eligible_treatments[0]['treatment_id']}"
+                    print(recommended_treatments_text.value)
                 else:
-                    print(f"No treatment found for {disease_name} with {disease_severity}")
+                    recommended_treatments_text.value = f"No treatment found for {disease_name} with {disease_severity}"
+                    print(recommended_treatments_text.value)
+                page.update()
 
-
-
-
-
-        treatment_text = Text(value='')
+        recommended_treatments_text = Text(value='')
  
         treatment_container =ft.Container(
             content= ft.Column(
                             controls=[
-                                treatment_text
+                                recommended_treatments_text
                             ],
                             height=130,
                             width=350,
@@ -340,10 +331,12 @@ def main(page: Page) -> None:
                     Column(
                         controls=[
                             Text(value='Select Treatment', size=30),
+                            ElevatedButton(text='retrieve treatments', on_click=lambda _: retrieve_treatments(user_data, selected_cpg_data)),
                             ElevatedButton(text='reject treatment'),
                             ElevatedButton(text='Go back', on_click=lambda _: page.go('/Exclusions')),               
                             ElevatedButton(text='Proceed Without Rejections', on_click=lambda _: page.go('/SelectDosingStrategy')),
-                            treatment_container
+                            #treatment_container,
+                            recommended_treatments_text,
                         ],
                         height=500,
                         width=350,
