@@ -4,8 +4,6 @@ from flet import RouteChangeEvent, ViewPopEvent, CrossAxisAlignment, MainAxisAli
 import json
 import os
 
-
-
 def load_data():
     data = {}
     directory = 'CPGs'
@@ -15,8 +13,6 @@ def load_data():
                 key = filename[:-5]  
                 data[key] = json.load(f)
     return data
-
-
 
 def load_superseding_rules():
     with open('superseding_rules_db.json') as f:
@@ -46,6 +42,7 @@ def main(page: Page) -> None:
     selected_cpg = []
     selected_cpg_data = {}  
     candidate_treatments = {}
+    excluded_treatments = []
 
 
     def route_change(e: RouteChangeEvent) -> None:
@@ -278,35 +275,16 @@ def main(page: Page) -> None:
                             return (treatments_dict[superseding_id], superseding_rule, message)
             return (None, "No superseding rules apply.", None)
 
-
-        """
-        def check_superseding_rules(highest_ranked_treatments, rules):
-            treatments_dict = {t['treatment_id']: t for t in highest_ranked_treatments}
-            for rule_details in rules['_default'].values():
-                pair = rule_details['pair']
-                superseding_id = rule_details['superseding_id']
-
-                # Check if both treatments in the pair are present in the highest ranked treatments list
-                if all(treatment_id in treatments_dict for treatment_id in pair):
-                    # If a pair is found, determine which one is superseded
-                    for treatment_id in pair:
-                        if treatment_id != superseding_id:
-                            diseaseA = treatments_dict[treatment_id]['disease']
-                            diseaseB = treatments_dict[superseding_id]['disease']
-                            superseding_rule = f"Superseding Rule Triggered: {rule_details}"
-                            message = f"Treatment {superseding_id} can be used for both {diseaseA} and {diseaseB}"
-                            return (superseding_id, superseding_rule, message)
-            return ([t['treatment_id'] for t in highest_ranked_treatments], "No superseding rules applied.", None)
-        """
-        """
+        
         def retrieve_treatments(user_data, selected_cpg_data):
             user_diseases = user_data['diseases']
-            user_dob = user_data['dob']  
-            age_in_days, age_in_years = calculate_age_in_days_and_years(user_dob)  
+            user_dob = user_data['dob']
+            age_in_days, age_in_years = calculate_age_in_days_and_years(user_dob)
             user_weight = int(user_data['weight'])
             user_exclusions = user_data['exclusions']
 
             highest_ranked_treatments = []
+            output_text = []
 
             for user_disease in user_diseases:
                 disease_name = user_disease['disease']
@@ -328,126 +306,22 @@ def main(page: Page) -> None:
 
                                 if (age_range['min'] <= user_age <= age_range['max'] and 
                                     user_weight >= min_weight and 
-                                    not any(exclusion in user_exclusions for exclusion in exclusions)):
+                                    not any(exclusion in user_exclusions for exclusion in exclusions) and
+                                    treatment['treatment_id'] not in excluded_treatments):  # Check if treatment is not excluded
                                     eligible_treatments.append(treatment)
-                
-                if eligible_treatments:                  
-                    eligible_treatments.sort(key=lambda x: list(x['rank'][0].values())[0])
-                    print(eligible_treatments)
-                    highest_ranked_treatments.append(eligible_treatments[0])
-                    print(highest_ranked_treatments)
 
-            
-            result = check_superseding_rules(highest_ranked_treatments, rules)
-            if result[2]: 
-                recommended_treatments_text.value = (result[1])  # Print the rule triggered
-                print(recommended_treatments_text.value)  
-            else:
-                for treatment_id in result[0]:
-                    recommended_treatments_text.value = f"Recommended treatment: {treatment_id}, ({result[1]})"
-                print(recommended_treatments_text.value)  
-            page.update()
-            return result"""
 
-        """
-        def retrieve_treatments(user_data, selected_cpg_data):
-            user_diseases = user_data['diseases']
-            user_dob = user_data['dob']  
-            age_in_days, age_in_years = calculate_age_in_days_and_years(user_dob)  
-            user_weight = int(user_data['weight'])
-            user_exclusions = user_data['exclusions']
-
-            highest_ranked_treatments = []
-
-            for user_disease in user_diseases:
-                disease_name = user_disease['disease']
-                disease_severity = user_disease['severity']
-                eligible_treatments = []
-
-                for treatment in selected_cpg_data['_default'].values():
-                    if treatment['disease'] == disease_name:
-                        for eligibility in treatment['eligibility']:
-                            severity_condition = "{}: {}".format(list(eligibility['severity'].keys())[0], 
-                                                                list(eligibility['severity'].values())[0])
-                            if disease_severity == severity_condition:
-                                patient_profile = eligibility['patient_profile']
-                                age_range_unit = patient_profile.get('age_range_unit', 'years')
-                                age_range = patient_profile['age_range']
-                                min_weight = patient_profile.get('min_weight', 0)
-                                exclusions = eligibility['exclusion']
-                                        
-                                user_age = age_in_days if age_range_unit == 'days' else age_in_years
-
-                                if (age_range['min'] <= user_age <= age_range['max'] and 
-                                    user_weight >= min_weight and 
-                                    not any(exclusion in user_exclusions for exclusion in exclusions)):
-                                    eligible_treatments.append(treatment)
-                        
                 if eligible_treatments:
                     eligible_treatments.sort(key=lambda x: list(x['rank'][0].values())[0])
                     highest_ranked_treatments.append(eligible_treatments[0])
 
+                else:
+                    print(f"No treatment found for {disease_name} with severity {disease_severity}")
+                    output_text.append(f"No treatment found for {disease_name} with severity {disease_severity}")
+
+
             result = check_superseding_rules(highest_ranked_treatments, rules)
-            output_text = []
-
-            if result[2]:  # if there is a message about superseding
-                output_text.append(result[1])  
-                output_text.append(result[2])  
-            else:
-                # Handle no superseding rule: display all highest ranked treatments
-                for treatment in highest_ranked_treatments:
-                    treatment_details = f"Recommended treatment: {treatment['treatment_id']} for {treatment['disease']}\nDescription: {treatment['description']}"
-                    for medication in treatment['medication']:
-                        treatment_details += f"\n  Medication: {medication['drug']}, Form: {medication['form']['type']}, Dose: {medication['dose_strategy'][0]['instruction']}"
-                    output_text.append(treatment_details)
-                output_text.append(result[1])  
-
             
-            recommended_treatments_text.value = "\n\n".join(output_text)
-            print(recommended_treatments_text.value)  
-            page.update()
-            return result
-            """
-        
-        def retrieve_treatments(user_data, selected_cpg_data):
-            user_diseases = user_data['diseases']
-            user_dob = user_data['dob']  
-            age_in_days, age_in_years = calculate_age_in_days_and_years(user_dob)  
-            user_weight = int(user_data['weight'])
-            user_exclusions = user_data['exclusions']
-
-            highest_ranked_treatments = []
-
-            for user_disease in user_diseases:
-                disease_name = user_disease['disease']
-                disease_severity = user_disease['severity']
-                eligible_treatments = []
-
-                for treatment in selected_cpg_data['_default'].values():
-                    if treatment['disease'] == disease_name:
-                        for eligibility in treatment['eligibility']:
-                            severity_condition = "{}: {}".format(list(eligibility['severity'].keys())[0], 
-                                                                list(eligibility['severity'].values())[0])
-                            if disease_severity == severity_condition:
-                                patient_profile = eligibility['patient_profile']
-                                age_range_unit = patient_profile.get('age_range_unit', 'years')
-                                age_range = patient_profile['age_range']
-                                min_weight = patient_profile.get('min_weight', 0)
-                                exclusions = eligibility['exclusion']
-                                        
-                                user_age = age_in_days if age_range_unit == 'days' else age_in_years
-
-                                if (age_range['min'] <= user_age <= age_range['max'] and 
-                                    user_weight >= min_weight and 
-                                    not any(exclusion in user_exclusions for exclusion in exclusions)):
-                                    eligible_treatments.append(treatment)
-                        
-                if eligible_treatments:
-                    eligible_treatments.sort(key=lambda x: list(x['rank'][0].values())[0])
-                    highest_ranked_treatments.append(eligible_treatments[0])
-
-            result = check_superseding_rules(highest_ranked_treatments, rules)
-            output_text = []
 
             if result[0]:  
                 treatment_details = f"{result[1]}\n{result[2]}\nDetailed Information for {result[0]['treatment_id']}:\nDescription: {result[0]['description']}"
@@ -464,14 +338,29 @@ def main(page: Page) -> None:
 
             recommended_treatments_text.value = "\n\n".join(output_text)
             print(recommended_treatments_text.value)
+            #Updating the radio buttons dynamically to reflect current options based on the highest ranked treatments.
+            rejection_radiobuttons.content = ft.Column([
+                ft.Radio(value=t_id, label=t_id) for t_id in [t['treatment_id'] for t in highest_ranked_treatments]
+            ])
             page.update()
-            return result
+            return result, [t['treatment_id'] for t in highest_ranked_treatments], highest_ranked_treatments
+
 
 
         recommended_treatments_text = Text(value='')
- 
 
-    
+        rejection_radiobuttons = ft.RadioGroup(content=ft.Column([]))
+        reject_button = ElevatedButton(text='Submit', on_click=lambda _: get_rejection(rejection_radiobuttons.value))
+        rejection_text = ft.Text()
+
+        def get_rejection(e):
+            excluded_treatments.append(rejection_radiobuttons.value)
+            retrieve_treatments(user_data, selected_cpg_data) 
+            rejection_text.value = f"You have rejected:  {rejection_radiobuttons.value}"
+            print(rejection_text.value)
+            page.update()
+
+
         if page.route == '/SelectTreatmentPlan':
             page.views.append(
             View(
@@ -481,10 +370,12 @@ def main(page: Page) -> None:
                         controls=[
                             Text(value='Select Treatment', size=30),
                             ElevatedButton(text='retrieve treatments', on_click=lambda _: retrieve_treatments(user_data, selected_cpg_data)),
-                            ElevatedButton(text='reject treatment'),
                             ElevatedButton(text='Go back', on_click=lambda _: page.go('/Exclusions')),               
                             ElevatedButton(text='Proceed With Treatments', on_click=lambda _: page.go('/SelectDosingStrategy')),
                             recommended_treatments_text,
+                            rejection_radiobuttons,
+                            reject_button,
+                            rejection_text,
                         ],
                         height=500,
                         width=350,
