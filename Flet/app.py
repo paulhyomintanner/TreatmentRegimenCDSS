@@ -379,13 +379,13 @@ def main(page: Page) -> None:
                     Column(
                         controls=[
                             Text(value='Select Treatment', size=30),
-                            ElevatedButton(text='retrieve treatments', on_click=lambda _: retrieve_treatments(user_data, selected_cpg_data)),
-                            ElevatedButton(text='Go back', on_click=lambda _: page.go('/Exclusions')),               
-                            ElevatedButton(text='Proceed With Treatments', on_click=lambda _: page.go('/SelectDosingStrategy')),
+                            ElevatedButton(text='Retrieve treatments', on_click=lambda _: retrieve_treatments(user_data, selected_cpg_data)),               
+                            ElevatedButton(text='Proceed With Displayed Treatments', on_click=lambda _: page.go('/SelectDosingStrategy')),
                             recommended_treatments_text,
                             rejection_radiobuttons,
                             reject_button,
                             rejection_text,
+                            ElevatedButton(text='Go back', on_click=lambda _: page.go('/Exclusions')),
                         ],
                         height=600,
                         width=350,
@@ -521,11 +521,27 @@ def main(page: Page) -> None:
             scroll=ft.ScrollMode.ALWAYS
         )
 
+        regimen_container = ft.Container(
+            content=regimen_output,
+            width=350,
+            height=350,
+            bgcolor=ft.colors.INDIGO_100,
+            border=ft.border.all(1, ft.colors.BLACK),
+            border_radius=ft.border_radius.all(5),
+            padding=ft.padding.all(10)
+        )
+
+
+
+
+
         def build_regimen(e):
+            regimen_output.controls.clear()
 
             weight = float(user_data['weight'])
             height = float(user_data['height'])
 
+            # Process each selected strategy found in the medications
             for strategy in selected_strategies:
                 medication = strategy['medication']
                 dose_info = strategy['strategy']
@@ -533,6 +549,14 @@ def main(page: Page) -> None:
                 dose_quantity = dose_info['doseQuantity']['value']
                 frequency = dose_info['rate']['repeat']['frequency']
                 max_dose_per_period = dose_info['maxDosePerPeriod']['numerator']['value']
+                concentration = strategy['concentration']
+
+                #Extracting additional information for the user
+                strategy_name = dose_info['strategy']
+                sequence = dose_info['sequence']
+                instruction = dose_info['instruction']
+                patient_instruction = dose_info['patientInstruction']
+                therapeutic_dose = dose_info['therapeuticDose']
 
                 if calculation_method == 'mg/kg':
                     dose_per_administration = calculate_dose_by_weight(dose_quantity, weight)
@@ -546,20 +570,63 @@ def main(page: Page) -> None:
                 if daily_dose > max_dose_per_period:
                     dose_per_administration = max_dose_per_period / frequency
 
-                
+                additional_medication_info = ""
+        
+                if 'ratio' in dose_info:
+                    primary_ratio = dose_info['ratio'][list(dose_info['ratio'].keys())[0]]
+                    secondary_ratio = dose_info['ratio'][list(dose_info['ratio'].keys())[1]]
+                    primary_dose = dose_per_administration / primary_ratio
+                    secondary_dose = primary_dose * secondary_ratio
+                    additional_medication_info = f"\n{list(dose_info['ratio'].keys())[1]} dose: {secondary_dose:.2f} mg"
 
-                regimen_details = f"Regimen for {strategy['treatment_id']} - {strategy['disease']}:\nMedication: {medication}\nDose per administration: {dose_per_administration:.2f} mg\nDaily dose: {daily_dose:.2f} mg (limited to {max_dose_per_period} mg/day)\n"
+                dose_volume = ""
+                if concentration:
+                    try:
+                        concentration_value = float(concentration)
+                        dose_volume = f"\nVolume for administration: {dose_per_administration / concentration_value:.2f} units"
+                        if 'secondary_dose' in locals():
+                            secondary_dose_volume = f"\nVolume for secondary dose: {secondary_dose / concentration_value:.2f} units"
+                            additional_medication_info += secondary_dose_volume
+                    except ValueError:
+                        dose_volume = "\nInvalid concentration value."
 
+                regimen_details = f"Regimen for {strategy['treatment_id']} - {strategy['disease']}:\nMedication: {medication}\nDose per administration: {dose_per_administration:.2f} mg{dose_volume}\nDaily dose: {daily_dose:.2f} mg (limited to {max_dose_per_period} mg/day){additional_medication_info}\nStrategy: {strategy_name}\nSequence: {sequence}\nInstruction: {instruction}\nPatient Instruction: {patient_instruction}\nTherapeutic Dose: {therapeutic_dose}"
                 print(regimen_details)
+                regimen_output.controls.append(ft.Text(value=regimen_details))
+
+            page.update()
+
+
+        def restart(e):
+            user_data['weight'] = 0
+            user_data['height'] = 0
+            user_data['dob'] = []
+            user_data['diseases'] = []
+            user_data['medications'] = []
+            user_data['exclusions'] = []
+            
+            result.clear()
+
+            page.go('/')
+
+
 
         if page.route == '/BuildRegimen':
             page.views.append(
                 View(
                     route='/BuildRegimen',
                     controls=[
-                        regimen_output,
-                        ElevatedButton(text='Restart', on_click=lambda _: page.go('/')),
-                        ElevatedButton(text='Build Regimen', on_click=build_regimen),
+                        Column(
+                            controls=[
+                                Text(value='Personalized Regimen Details', size=30, color=ft.colors.BLUE_800),
+                                ElevatedButton(text='Build Regimen', on_click=build_regimen),
+                                regimen_container,
+                                ElevatedButton(text='Restart', on_click=restart),
+                            ],
+                            height=700,
+                            width=350,
+                            scroll=ft.ScrollMode.ALWAYS
+                        ),
                     ],
                     vertical_alignment=MainAxisAlignment.CENTER,
                     horizontal_alignment=CrossAxisAlignment.CENTER,
@@ -567,7 +634,8 @@ def main(page: Page) -> None:
                 )
             )
 
-        page.update()
+            page.update()
+
 
 
     def view_pop(e: ViewPopEvent) -> None:
