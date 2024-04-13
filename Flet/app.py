@@ -418,9 +418,8 @@ def main(page: Page) -> None:
             border_radius=ft.border_radius.all(5),
             padding=ft.padding.all(10)
         )
-
         def retrieve_dosing_guide(e):
-            dose_content.controls.clear()  
+            dose_content.controls.clear()
             for treatment in highest_ranked_treatments:
                 dose_content.controls.append(Text(value=f"Treatment ID: {treatment['treatment_id']} - {treatment['disease']}"))
                 for medication in treatment['medication']:
@@ -428,30 +427,53 @@ def main(page: Page) -> None:
                     for idx, strategy in enumerate(medication['dose_strategy']):
                         checkbox = ft.Checkbox(
                             label=f"{strategy['strategy']} - {strategy['calculation']} - {strategy['therapeuticDose']}",
-                            data=strategy #store strat. for later use 
+                            data={'treatment': treatment, 'medication': medication, 'strategy': strategy}  # Storing comprehensive context
                         )
                         dose_content.controls.append(checkbox)
                         
-                        # Check if the medication is divisible and add a TextField if it is so the user can input a concentration
+                        # Adding concentration input if the medication is divisible
                         if medication['form']['divisible']:
                             concentration_input = TextField(
                                 label="Concentration mg/unit",
                                 hint_text="Enter concentration",
-                                width=300  
+                                width=300
                             )
+                            # Using a tag to identify related checkboxes and textfields
+                            concentration_input.tag = checkbox
                             dose_content.controls.append(concentration_input)
 
             submit_button = ElevatedButton(text="Submit Choices", on_click=submit_choices)
-            dose_content.controls.append(submit_button)  
+            dose_content.controls.append(submit_button)
             page.update()
 
         def submit_choices(e):
+            global selected_strategies
             selected_strategies = []
+            concentration_inputs = {}
+
+            # Collect concentration inputs first
+            for control in dose_content.controls:
+                if isinstance(control, TextField) and control.tag and control.tag.value:
+                    concentration_inputs[control.tag] = control.value
+
+            # Process checkboxes and retrieve full data
             for control in dose_content.controls:
                 if isinstance(control, ft.Checkbox) and control.value:
-                    selected_strategies.append(control.data)  #Retrieve strategies data from the checkbox
+                    strategy_data = control.data
+                    concentration = concentration_inputs.get(control, "")  # Get concentration if available
+                    full_data = {
+                        'treatment_id': strategy_data['treatment']['treatment_id'],
+                        'disease': strategy_data['treatment']['disease'],
+                        'medication': strategy_data['medication']['drug'],
+                        'strategy': strategy_data['strategy'],
+                        'concentration': concentration  # include concentration if available
+                    }
+                    selected_strategies.append(full_data)
+
             print("Selected Strategies:", selected_strategies)
             page.update()
+
+
 
         if page.route == '/SelectDosingStrategy':
             page.views.append(
@@ -464,7 +486,7 @@ def main(page: Page) -> None:
                                 ElevatedButton(text='Go back', on_click=lambda _: page.go('/SelectTreatmentPlan')),
                                 ElevatedButton(text='Get Dosing strategies', on_click=retrieve_dosing_guide),
                                 dose_container,
-                                ElevatedButton(text='Build Regimen', on_click=lambda _: page.go('/BuildRegimen')),
+                                ElevatedButton(text='Proceed to Regimen', on_click=lambda _: page.go('/BuildRegimen')),
                             ],
                             height=700,
                             width=350,
@@ -477,23 +499,76 @@ def main(page: Page) -> None:
                 )
             )
 
-    
-            
+
+        import math
+
+        def calculate_dose_by_weight(dose_mg_per_kg, weight):
+            return dose_mg_per_kg * weight
+
+        def calculate_bsa(height_cm, weight_kg):
+            return math.sqrt((height_cm * weight_kg) / 3600)
+
+        def calculate_dose_by_bsa(dose_mg_per_bsa, bsa):
+            return dose_mg_per_bsa * bsa
+        
+
+
+        regimen_output = ft.Column(
+            controls=[],
+            height=350,
+            width=350,
+            spacing=5,
+            scroll=ft.ScrollMode.ALWAYS
+        )
+
+        def build_regimen(e):
+
+            weight = float(user_data['weight'])
+            height = float(user_data['height'])
+
+            for strategy in selected_strategies:
+                medication = strategy['medication']
+                dose_info = strategy['strategy']
+                calculation_method = dose_info['calculation']
+                dose_quantity = dose_info['doseQuantity']['value']
+                frequency = dose_info['rate']['repeat']['frequency']
+                max_dose_per_period = dose_info['maxDosePerPeriod']['numerator']['value']
+
+                if calculation_method == 'mg/kg':
+                    dose_per_administration = calculate_dose_by_weight(dose_quantity, weight)
+                elif calculation_method == 'BSA':
+                    bsa = calculate_bsa(height, weight)
+                    dose_per_administration = calculate_dose_by_bsa(dose_quantity, bsa)
+                else:
+                    dose_per_administration = dose_quantity  
+
+                daily_dose = dose_per_administration * frequency
+                if daily_dose > max_dose_per_period:
+                    dose_per_administration = max_dose_per_period / frequency
+
+                
+
+                regimen_details = f"Regimen for {strategy['treatment_id']} - {strategy['disease']}:\nMedication: {medication}\nDose per administration: {dose_per_administration:.2f} mg\nDaily dose: {daily_dose:.2f} mg (limited to {max_dose_per_period} mg/day)\n"
+
+                print(regimen_details)
+
         if page.route == '/BuildRegimen':
             page.views.append(
-            View(
-                route='/BuildRegimen',
-                controls=[
-                    Text(value='Personalized regimen', size=30),
-                    ElevatedButton(text='Restart', on_click=lambda _: page.go('/'))
-                ],
-                vertical_alignment=MainAxisAlignment.CENTER,
-                horizontal_alignment=CrossAxisAlignment.CENTER,
-                spacing=20
+                View(
+                    route='/BuildRegimen',
+                    controls=[
+                        regimen_output,
+                        ElevatedButton(text='Restart', on_click=lambda _: page.go('/')),
+                        ElevatedButton(text='Build Regimen', on_click=build_regimen),
+                    ],
+                    vertical_alignment=MainAxisAlignment.CENTER,
+                    horizontal_alignment=CrossAxisAlignment.CENTER,
+                    spacing=20
+                )
             )
-        )
-            
+
         page.update()
+
 
     def view_pop(e: ViewPopEvent) -> None:
         page.views.pop()
