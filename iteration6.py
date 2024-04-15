@@ -53,7 +53,7 @@ def main(page: Page) -> None:
         selected_cpg = []
 
         
-        def confirm_cpg(e):
+        def confirm_cpg(e): #Confirm CPG option from dropdown
             nonlocal selected_cpg, selected_cpg_data  
             selected_cpg = e.control.value
             selected_cpg_data = cpgdata[selected_cpg]
@@ -98,7 +98,7 @@ def main(page: Page) -> None:
             View(
                 route='/UserInput',
                 controls=[
-                    Text(value='User input', size=30),
+                    Text(value='Patient Input', size=30),
                     ElevatedButton(text='Go back', on_click=lambda _: page.go('/')),
                     dob_input,
                     weight_input,
@@ -112,16 +112,6 @@ def main(page: Page) -> None:
         )
             
         def update_severity_options(e):
-            """
-            Updates the severity options dropdown based on the selected disease, this is found in the selected_cpg_data.
-
-            Parameters:
-                e (Event): The event object that triggered the function, in this case the selection of the disease from
-                the disease drop down menu.
-
-            Returns:
-                None
-            """
             selected_disease = e.control.value
             unique_severities = set()
 
@@ -168,7 +158,9 @@ def main(page: Page) -> None:
                 'severity': severity_dd.value
             }
             user_data['diseases'].append(disease_severity)
-            disease_severity_text.value += f"Selected: {disease_severity.values()}\n"
+            values_text = ', '.join(map(str, disease_severity.values()))
+            disease_severity_text.value += f"Selected: {values_text}\n"
+
             print(user_data)
             page.update()
 
@@ -213,7 +205,7 @@ def main(page: Page) -> None:
                 View(
                     route='/Exclusions',
                     controls=[
-                        Text(value='Input Exclusions', size=30),
+                        Text(value='Indicator Input', size=30),
                         Column(
                             controls=[
                                 disease_dd,
@@ -541,7 +533,7 @@ def main(page: Page) -> None:
             weight = float(user_data['weight'])
             height = float(user_data['height'])
 
-            # Process each selected strategy found in the medications
+            # Process each selected strategy
             for strategy in selected_strategies:
                 medication = strategy['medication']
                 dose_info = strategy['strategy']
@@ -618,7 +610,7 @@ def main(page: Page) -> None:
                     controls=[
                         Column(
                             controls=[
-                                Text(value='Personalized Regimen Details', size=30, color=ft.colors.BLUE_800),
+                                Text(value='Personalized Regimen', size=30),
                                 ElevatedButton(text='Build Regimen', on_click=build_regimen),
                                 regimen_container,
                                 ElevatedButton(text='Restart', on_click=restart),

@@ -1,1 +1,1 @@
-{"_default": {"1": {"pair": ["I", "O"], "superseding_id": "O"}, "2": {"pair": ["A", "F"], "superseding_id": "F"}, "3": {"pair": ["A", "E"], "superseding_id": "E"}, "4": {"pair": ["A", "AC"], "superseding_id": "AC"}}}
+{"_default": {"1": {"pair": ["I", "O"], "superseding_id": "O"}, "2": {"pair": ["A", "F"], "superseding_id": "F"}, "3": {"pair": ["A", "E"], "superseding_id": "E"}, "4": {"pair": ["A", "AC"], "superseding_id": "AC"}, "5": {"pair": ["MSF 5", "MSF 1"], "superseding_id": "MSF 1"}}}
