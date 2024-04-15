@@ -80,3 +80,10 @@ Link to video demonstration of the test case: https://youtu.be/oC-VRhtK05M
 ### Step 4: Generate Regimen
 1. Click on build regimen, and the display will be populated with the personalised treatment plan. 
 
+### sources for testing data
+1. Acute otitis media (AOM) | MSF Medical Guidelines. (2024). https://medicalguidelines.msf.org/en/viewport/CG/english/acute-otitis-media-aom-16689234.html
+2. Bacterial meningitis | MSF Medical Guidelines. (2024). https://medicalguidelines.msf.org/en/viewport/CG/english/bacterial-meningitis-16689907.html
+3. Acute pneumonia | MSF Medical Guidelines. (2024). https://medicalguidelines.msf.org/en/viewport/CG/english/acute-pneumonia-16689522.html
+4. Africa Centres for Disease Control and Prevention. (2021b, November 19). African Antibiotic Treatment Guidelines for common bacterial infections and syndromes - Recommended antibiotic treatments in neonatal and pediatric patients – Africa CDC. Africa CDC. https://africacdc.org/download/african-antibiotic-treatment-guidelines-for-common-bacterial-infections-and-syndromes-recommended-antibiotic-treatments-in-neonatal-and-pediatric-patients/
+5. Republic of Ghana Ministry of Health Standard Treatment Guidelines (2017)hhttps://www.moh.gov.gh/wp-content/uploads/2016/02/Standard-Treatment-Guideline-2010.pdf
+
