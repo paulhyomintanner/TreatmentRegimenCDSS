@@ -1,0 +1,77 @@
+{
+	"treatment_id":"<string: unique identifier for the treatment>",
+	"disease":"<string: name of the disease>",
+	"description":"<string: detailed summary of treatment>",
+	"eligibility":[
+		{
+			"strategy":"<string: treatment strategy>",
+			"severity":{
+				"<Measure of Severity (e.g., Seriousness, CURB-65)>":"<string: Level of severity>"
+			},
+			"exclusion":[
+				"<string: list of reasons that will contraindicate a treatment(e.g. pregnancy)>"
+			],
+			"patient_profile":{
+				"age_range_unit":"<string: unit of time, e.g., 'years', 'months'>",
+				"age_range":{
+					"min":"<int: minimum age>",
+					"max":"<int: maximum age>"
+				},
+				"min_weight":"<int: minimum weight in kg>",
+				"max_weight":"<int: maximum weight in kg - optional when not specified>"
+			}
+		}
+	],
+	"rank":[
+		{
+			"<string: Guideline Name>":"<int: rank of the treatment for given profile>"
+		}
+	],
+	"medication":[
+		{
+			"drug":"<string: name of the medication>",
+			"form":{
+				"type":"<string: form of medication, e.g., 'tablet', 'liquid', etc>",
+				"divisible":"<boolean: indicates if the medication can be divided>"
+			},
+			"site":"<string: site of administration, e.g., 'arm', 'mouth'>",
+			"route":"<string: route of administration, e.g., 'oral', 'IV'>",
+			"method":"<string: method of administration, e.g., 'swallow', 'inject'>",
+			"dose_strategy":[
+				{
+					"strategy":"<string: Type of dosing strategy, e.g., 'normal dose', maintenance>",
+					"calculation":"<string: Basis for dose calculation, e.g., 'mg/kg', 'BSA', or 'none'>",
+					"sequence":"<int: order in which the medication (if multiple) should be taken >",
+					"instruction":"<string: detailed dosing instructions>",
+					"patientInstruction":"<string: instructions for the patient - optional>",
+					"therapeuticDose":"<string: Therapeutic dose description - optional>",
+					"ratio":{
+						"<string: Drug A name>":"<int: ratio part for Drug A - optional>",
+						"<string: Drug B name>":"<int: ratio part for Drug B - optional if not relevant>"
+					},
+					"rate":{
+						"repeat":{
+							"frequency":"<int: number of times to administer per period>",
+							"period":"<int: length of the period>",
+							"periodUnit":"<string: unit of time for the period>"
+						}
+					},
+					"doseQuantity":{
+						"value":"<int: amount of medication per dose>",
+						"unit":"<string: unit of measure, e.g., 'mg'>"
+					},
+					"maxDosePerPeriod":{
+						"numerator":{
+							"value":"<int: maximum dose per period>",
+							"unit":"<string: unit of measure>"
+						},
+						"denominator":{
+							"value":"<int: period for the maximum dose>",
+							"unit":"<string: unit of time for the period>"
+						}
+					}
+				}
+			]
+		}
+	]
+}

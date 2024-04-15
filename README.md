@@ -45,19 +45,12 @@ Dependencies: customtkinter, tkinter, json, math, os, and sys
 ### Step 3:  Select Treatment Strategies 
 1. Add treatment strategies and add concentration, then confirm strategy.
    - the ratio will be calculated according to the therapeutic dose for the main drug. In this case, Amoxicillin. 
-   - Currently the "calculated dose" is just for the primary drug, but that will be changed. 
 
-### Changes that will be made:
-- clear up dosing strategies
-- add more information for user to decide on treatment
-- Currently the "calculated dose" is just for the primary drug, but that will be changed. 
-- more treatments will be added
 
 Link to video on the ratios: [https://youtu.be/ussRG5I1eiU](https://youtu.be/ussRG5I1eiU)
 
 - CPGs are found in the `CPGs` folder
-- `Flet` folder contains UI changes that would be implemented if time permits - not finished. 
-
+ 
 
 To test the Flet application (iteration 6), clone the repository. Then run the `iteration6.py` script. 
 Dependencies: customtkinter, flet, json, math, os, and sys
