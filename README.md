@@ -1,5 +1,5 @@
 # TreatmentRegimenCDSS
-Thesis topic on dynamically selecting treatment regimens for clinicians. The treatments are not to be used as actual treatments. 
+Thesis topic on dynamically selecting treatment regimens for clinicians. The data and treatments are not to be used as actual treatments and are inaccurate. They are for testing the Proof of concept only. 
 
 To test the Tkinter application (iteration5), clone the repository. Then run the `iteration5.py` script to use the GUI. 
 Dependencies: customtkinter, tkinter, json, math, os, and sys
@@ -54,6 +54,7 @@ Link to video on the ratios: [https://youtu.be/ussRG5I1eiU](https://youtu.be/uss
 
 To test the Flet application (iteration 6), clone the repository. Then run the `iteration6.py` script. 
 Dependencies: customtkinter, flet, json, math, os, and sys
+Link to video demonstration of the test case: https://youtu.be/oC-VRhtK05M
 
 ## Test case for superseding treatments: 
 
