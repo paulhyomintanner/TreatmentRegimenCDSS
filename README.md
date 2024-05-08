@@ -1,5 +1,5 @@
 # TreatmentRegimenCDSS
-Thesis topic on dynamically selecting treatment regimens for clinicians. The data and treatments are not to be used as actual treatments and are inaccurate. They are for testing the Proof of concept only. 
+Thesis topic on dynamically selecting treatment regimens for clinicians. The data and treatments are not to be used as actual treatments and are inaccurate. They are for testing the Proof of concept only and for demonstrative purposes.  
 
 To test the Tkinter application (iteration5), clone the repository. Then run the `iteration5.py` script to use the GUI. 
 Dependencies: customtkinter, tkinter, json, math, os, and sys
@@ -50,13 +50,13 @@ Dependencies: customtkinter, tkinter, json, math, os, and sys
 Link to video on the ratios: [https://youtu.be/ussRG5I1eiU](https://youtu.be/ussRG5I1eiU)
 
 - CPGs are found in the `CPGs` folder
- 
+
+## Test case for superseding treatments with Flet: 
 
 To test the Flet application (iteration 6), clone the repository. Then run the `iteration6.py` script. 
 Dependencies: customtkinter, flet, json, math, os, and sys
 Link to video demonstration of the test case: https://youtu.be/oC-VRhtK05M
 
-## Test case for superseding treatments: 
 
 ### Step 1: Input Patient data
 1. input - Select `MSF_3` - (other CPGs have not been updated to the final data model)
@@ -74,11 +74,12 @@ Link to video demonstration of the test case: https://youtu.be/oC-VRhtK05M
 3. Click `Proceed with displayed treatments` when you are happy with the recommendations.
 
 ### Step 3: Select Treatment Strategies 
-1. Select the medication you want to be part of the treatment plan and if you displayed the concentration of the medication - mg/unit. 
-2. Click "Confirm Strategies then click 'Proceed with Regimen'
+1. Click "Get dosing strategies".
+2. Select the medication you want to be part of the treatment plan and if displayed the concentration of the medication - mg/unit. 
+3. Click "Submit Choices" then click 'Proceed to Regimen'
 
 ### Step 4: Generate Regimen
-1. Click on build regimen, and the display will be populated with the personalised treatment plan. 
+1. Click on "Build Regimen", and the display will be print the personalised treatment regimen. 
 
 ### sources for testing data
 1. Acute otitis media (AOM) | MSF Medical Guidelines. (2024). https://medicalguidelines.msf.org/en/viewport/CG/english/acute-otitis-media-aom-16689234.html
