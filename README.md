@@ -54,7 +54,7 @@ Link to video on the ratios: [https://youtu.be/ussRG5I1eiU](https://youtu.be/uss
 ## Test case for superseding treatments with Flet: 
 
 To test the Flet application (iteration 6), clone the repository. Then run the `iteration6.py` script. 
-Dependencies: customtkinter, flet, json, math, os, and sys
+Dependencies: json, math, os, sys, flet (version 0.19.0 only - pip install flet==0.19.0)
 Link to video demonstration of the test case: https://youtu.be/oC-VRhtK05M
 
 
@@ -62,8 +62,8 @@ Link to video demonstration of the test case: https://youtu.be/oC-VRhtK05M
 1. input - Select `MSF_3` - (other CPGs have not been updated to the final data model)
 2. input - Enter patient details: height: 50, weight: 2, dob: 'date the that makes patient 4 days old', current medication: empty, Exclusions: Select none.
 3. Click 'next' 
-4. input - Select `Bacterial Meningitis` and `Severity: Moderate Severity` then click add disease.
-5. input - Select `Acute Otitis Media` and `Seriousness Low` then click add disease.
+4. input - Select `Bacterial Meningitis` and `Seriousness: Moderate Severity` then click add disease.
+5. input - Select `Acute Otitis Media` and `Seriousness: Low Severity` then click add disease.
 6. click - click `next`
 
 ### Step 2: Confirm or Reject Treatment Regimens
