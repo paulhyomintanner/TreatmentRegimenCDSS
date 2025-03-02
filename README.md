@@ -79,7 +79,9 @@ Link to video demonstration of the test case: https://youtu.be/oC-VRhtK05M
 3. Click "Submit Choices" then click 'Proceed to Regimen'
 
 ### Step 4: Generate Regimen
-1. Click on "Build Regimen", and the display will be print the personalised treatment regimen. 
+1. Click on "Build Regimen", and the display will be print the personalised treatment regimen.
+   ![regimen](https://github.com/user-attachments/assets/28a466ae-cdb6-437d-8199-9441b4d4acf2)
+
 
 ### sources for testing data
 1. Acute otitis media (AOM) | MSF Medical Guidelines. (2024). https://medicalguidelines.msf.org/en/viewport/CG/english/acute-otitis-media-aom-16689234.html
