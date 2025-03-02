@@ -1,5 +1,5 @@
 # TreatmentRegimenCDSS
-Thesis topic on dynamically selecting treatment regimens for clinicians. The data and treatments are not to be used as actual treatments and are inaccurate. They are for testing the Proof of concept only and for demonstrative purposes.  
+Thesis topic on dynamically selecting treatment regimens for clinicians. Disclaimer Warning: The data and treatments are not to be used as actual treatments and are fake. They are for testing the Proof of concept only and for demonstrative purposes. All patient data is fake and all treatment suggestions, dosing strategies, and patient data is fake and dummy and should not be used to influence treatment decisions. 
 
 To test the Tkinter application (iteration5), clone the repository. Then run the `iteration5.py` script to use the GUI. 
 Dependencies: customtkinter, tkinter, json, math, os, and sys
@@ -64,8 +64,9 @@ Link to video demonstration of the test case: https://youtu.be/oC-VRhtK05M
 3. Click 'next' 
 4. input - Select `Bacterial Meningitis` and `Seriousness: Moderate Severity` then click add disease.
 5. input - Select `Acute Otitis Media` and `Seriousness: Low Severity` then click add disease.
-6. click - click `next`
+6. click - click `next`. Below is an example of a dummy patient for testing - it should not be used to treat a patient.
    ![input](https://github.com/user-attachments/assets/f7e660c2-f4cb-473f-8c59-503aed88e3ec)
+   
 
 
 ### Step 2: Confirm or Reject Treatment Regimens
@@ -78,11 +79,11 @@ Link to video demonstration of the test case: https://youtu.be/oC-VRhtK05M
 ### Step 3: Select Treatment Strategies 
 1. Click "Get dosing strategies".
 2. Select the medication you want to be part of the treatment plan and if displayed the concentration of the medication - mg/unit. 
-3. Click "Submit Choices" then click 'Proceed to Regimen'
+3. Click "Submit Choices" then click 'Proceed to Regimen'. Below is an example of a dummy treatment strategy. Disclaimer: This is fake information and should not be used to treat a patient. 
 ![dose](https://github.com/user-attachments/assets/9a15a7cc-065e-416d-b36c-d0c2e35b6c60)
 
 ### Step 4: Generate Regimen
-1. Click on "Build Regimen", and the display will be print the personalised treatment regimen.
+1. Click on "Build Regimen", and the display will be print the personalised treatment regimen. Disclaimer: Below is a fake treatment suggestion and it should not be used to treat a patient. 
 ![regimen](https://github.com/user-attachments/assets/28a466ae-cdb6-437d-8199-9441b4d4acf2)
 
 
