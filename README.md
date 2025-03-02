@@ -65,6 +65,8 @@ Link to video demonstration of the test case: https://youtu.be/oC-VRhtK05M
 4. input - Select `Bacterial Meningitis` and `Seriousness: Moderate Severity` then click add disease.
 5. input - Select `Acute Otitis Media` and `Seriousness: Low Severity` then click add disease.
 6. click - click `next`
+   ![input](https://github.com/user-attachments/assets/f7e660c2-f4cb-473f-8c59-503aed88e3ec)
+
 
 ### Step 2: Confirm or Reject Treatment Regimens
 1. Click 'retrieve treatments' - given the above inputs a a rule will be printed and a treatment superseded
@@ -77,10 +79,11 @@ Link to video demonstration of the test case: https://youtu.be/oC-VRhtK05M
 1. Click "Get dosing strategies".
 2. Select the medication you want to be part of the treatment plan and if displayed the concentration of the medication - mg/unit. 
 3. Click "Submit Choices" then click 'Proceed to Regimen'
+![dose](https://github.com/user-attachments/assets/9a15a7cc-065e-416d-b36c-d0c2e35b6c60)
 
 ### Step 4: Generate Regimen
 1. Click on "Build Regimen", and the display will be print the personalised treatment regimen.
-   ![regimen](https://github.com/user-attachments/assets/28a466ae-cdb6-437d-8199-9441b4d4acf2)
+![regimen](https://github.com/user-attachments/assets/28a466ae-cdb6-437d-8199-9441b4d4acf2)
 
 
 ### sources for testing data
