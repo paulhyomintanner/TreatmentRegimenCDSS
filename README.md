@@ -3,6 +3,8 @@ Thesis topic on dynamically selecting treatment regimens for clinicians. Disclai
 
 To test the Tkinter application (iteration5), clone the repository. Then run the `iteration5.py` script to use the GUI. 
 Dependencies: customtkinter, tkinter, json, math, os, and sys
+![Screenshot 2025-03-02 132857](https://github.com/user-attachments/assets/14ac1a1e-33e0-4d6e-9fee-0fec91bc3499)
+
 
 [MSMI_Tanner_Paul_Poster.pdf](https://github.com/user-attachments/files/19043181/MSMI_Tanner_Paul_Poster.pdf)
 
